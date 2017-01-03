@@ -9,6 +9,8 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class MainView extends JFrame {
 
@@ -27,6 +29,14 @@ public class MainView extends JFrame {
     private JPanel leftPanel;
 
     public MainView(){
+        // call onCancel() when cross is clicked
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                onCancel();
+            }
+        });
+
         setSize(1024, 768);
         setLocationRelativeTo(null);
         setLayout(null);
@@ -43,14 +53,20 @@ public class MainView extends JFrame {
         JTableHeader header = scheduleTable.getTableHeader();
         header.setReorderingAllowed(false);
         TableColumnModel columnModel = scheduleTable.getColumnModel();
-        for (int c = 0; c < model.getColumnCount(); c++) {
+        columnModel.getColumn(0).setHeaderValue(null);
+        for (int c = 1; c < model.getColumnCount(); c++) {
             TableColumn column = columnModel.getColumn(c);
-            Day day = WeekView.toDay(c);
-            column.setHeaderValue(day == null ? "" : String.valueOf(day));
+            Day day = Day.toDay(c);
+            column.setHeaderValue(day == null ? "" : String.valueOf(day.toString()));
         }
         ListSelectionModel selectionModel = scheduleTable.getSelectionModel();
         selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        calendarPanel.add(scheduleTable.getTableHeader(), BorderLayout.NORTH);
+        calendarPanel.add(header, BorderLayout.NORTH);
         calendarPanel.add(scheduleTable, BorderLayout.CENTER);
+    }
+
+    private void onCancel(){
+        dispose();
+        System.exit(0);
     }
 }

@@ -27,7 +27,7 @@ public class Availability {
     private TimeOfDay end;
 
     /**
-     * Constructs a new Availability
+     * Constructs a new Availability with recurrence
      * @param recurrence when this availability recurs
      * @param days the day(s) of the week this availability occurs on
      * @param start the time of day this availability begins at
@@ -41,7 +41,7 @@ public class Availability {
     }
 
     /**
-     * Constructs a new Availability
+     * Constructs a new Availability with no recurrence
      * @param days the day(s) of the week this availability occurs on
      * @param start the time of day this availability begins at
      * @param end the time of day this availability ends at

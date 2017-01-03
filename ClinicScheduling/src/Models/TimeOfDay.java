@@ -30,4 +30,35 @@ public class TimeOfDay {
         this.minute = minute;
         this.pm = pm;
     }
+
+    /**
+     * Gets the hour of the day
+     * @return the hour of the day
+     */
+    public int getHour(){
+        return hour;
+    }
+
+    /**
+     * Gets the minute of the hour
+     * @return the minute of the hour
+     */
+    public int getMinute(){
+        return minute;
+    }
+
+    /**
+     * Gets whether the time is AM/PM
+     * @return true for pm, false for am
+     */
+    public boolean getPM(){
+        return pm;
+    }
+
+    @Override
+    public String toString(){
+        String time = String.format("%1$01d:%2$02d", hour, minute);
+        if (pm) return time + "PM";
+        else return time + "AM";
+    }
 }

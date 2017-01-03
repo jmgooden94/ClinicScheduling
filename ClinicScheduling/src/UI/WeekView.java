@@ -4,9 +4,10 @@ package UI;
 import Models.Appointment.Appointment;
 import Models.Day;
 import Models.TimeOfDay;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.swing.table.AbstractTableModel;
-import java.time.DayOfWeek;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ public class WeekView extends AbstractTableModel{
     /**
      * number of rows in the table
      */
-    private static int ROW_COUNT = 24;
+    private static int ROW_COUNT = 20;
     /**
      * number of columns; 5 days/week + label column
      */
@@ -30,8 +31,23 @@ public class WeekView extends AbstractTableModel{
      */
     private List<Appointment> appointments;
 
+    /**
+     * Constructs a new weekView and populates it with the appointments in appointments
+     * @param appointments a list of appointments to populate the view with
+     */
     public WeekView(List<Appointment> appointments){
         this.appointments = appointments;
+    }
+
+    /**
+     * Constructs a new WeekView showing the given date
+     * @param appointments the appointment list
+     * @param date the date to include
+     */
+    public WeekView(List<Appointment> appointments, GregorianCalendar date){
+        this.appointments = appointments;
+        throw new NotImplementedException();
+        //TODO
     }
 
     /**
@@ -76,11 +92,11 @@ public class WeekView extends AbstractTableModel{
 
         TimeOfDay time = toTime(rowIndex);
         if (columnIndex == 0) {
-            return time;   // a time label in the leftmost column
+            return time.toString();   // a time label in the leftmost column
         }
 
-        Day day = toDay(columnIndex);
-        return 0;
+        Day day = Day.toDay(columnIndex);
+        return null;
     }
 
     // A helper that throws an IllegalArgumentException if the given
@@ -96,24 +112,6 @@ public class WeekView extends AbstractTableModel{
     private void checkRow(int row) {
         if (row < 0 || row >= getRowCount()) {
             throw new IllegalArgumentException("row out of range: " + row);
-        }
-    }
-
-    /**
-     * Returns the day of the week corresponding to the given column in the table.
-     * The first column (0) is the header column; the second (1) is Monday, the
-     * third (2) is Tuesday, and so on.
-     * @param column the 0-based column to examine
-     * @return the corresponding weekday, from MONDAY to FRIDAY
-     */
-    public static Day toDay(int column) {
-        if (column < 0 || column >= COLUMN_COUNT) {
-            throw new IllegalArgumentException("column out of range: " + column);
-        }
-        if (column == 0) {
-            return null;
-        } else {
-            return Day.values()[column];
         }
     }
 
