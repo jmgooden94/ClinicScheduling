@@ -49,4 +49,24 @@ public class Appointment {
         this.apptStart = apptStart;
         this.apptEnd = apptEnd;
     }
+
+    public Patient getPatient(){
+        return patient;
+    }
+
+    public Provider getProvider(){
+        return provider;
+    }
+
+    public String reason(){
+        return reason;
+    }
+
+    public GregorianCalendar getApptStart(){
+        return apptStart;
+    }
+
+    public GregorianCalendar getApptEnd(){
+        return apptEnd;
+    }
 }

@@ -31,7 +31,7 @@ public class Patient {
     /**
      * patient's ZIP code
      */
-    private short zip;
+    private int zip;
 
     /**
      * Constructor for patient class
@@ -43,7 +43,7 @@ public class Patient {
      * @param state patient's state of residence
      * @param zip patient's zip code
      */
-    public Patient(String firstName, String lastName, String phone, String street, String city, State state, short zip) {
+    public Patient(String firstName, String lastName, String phone, String street, String city, State state, int zip) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
