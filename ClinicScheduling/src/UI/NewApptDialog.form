@@ -70,6 +70,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <labelFor value="5cd71"/>
               <text value="Last Name"/>
             </properties>
           </component>
@@ -78,6 +79,7 @@
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <labelFor value="f5bb0"/>
               <text value="Phone"/>
             </properties>
           </component>
@@ -86,6 +88,7 @@
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <labelFor value="f383"/>
               <text value="Street"/>
             </properties>
           </component>
@@ -94,6 +97,7 @@
               <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <labelFor value="2f145"/>
               <text value="City"/>
             </properties>
           </component>
@@ -102,6 +106,7 @@
               <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <labelFor value="a30e7"/>
               <text value="Zip"/>
             </properties>
           </component>
@@ -126,10 +131,11 @@
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <labelFor value="17ccc"/>
               <text value="First Name"/>
             </properties>
           </component>
-          <component id="f5bb0" class="javax.swing.JFormattedTextField" binding="phoneBox">
+          <component id="f5bb0" class="javax.swing.JFormattedTextField" binding="phoneBox" custom-create="true">
             <constraints>
               <grid row="3" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -153,13 +159,16 @@
             </constraints>
             <properties/>
           </component>
-          <component id="a30e7" class="javax.swing.JFormattedTextField" binding="zipBox">
+          <component id="a30e7" class="javax.swing.JFormattedTextField" binding="zipBox" custom-create="true">
             <constraints>
               <grid row="7" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <columns value="0"/>
+              <verifyInputWhenFocusTarget value="true"/>
+            </properties>
           </component>
           <component id="fa3ec" class="javax.swing.JLabel">
             <constraints>
@@ -197,7 +206,9 @@
             <constraints>
               <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <verifyInputWhenFocusTarget value="true"/>
+            </properties>
           </component>
           <component id="9210" class="javax.swing.JSpinner" binding="startMinuteBox">
             <constraints>
@@ -260,6 +271,7 @@
               <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <labelFor value="fa7eb"/>
               <text value="State"/>
             </properties>
           </component>
@@ -274,12 +286,19 @@
               <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <labelFor value="dcf91"/>
               <text value="Provider"/>
             </properties>
           </component>
           <component id="dcf91" class="javax.swing.JSpinner" binding="providerSpinner">
             <constraints>
-              <grid row="12" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="12" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="c118d" class="javax.swing.JSpinner" binding="providerTypeSpinner">
+            <constraints>
+              <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
           </component>

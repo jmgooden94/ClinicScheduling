@@ -30,7 +30,7 @@ public class MainView extends JFrame {
     private JPanel calendarPanel;
     private JPanel leftPanel;
 
-    public MainView(){
+    public MainView() {
         // call onCancel() when cross is clicked
         addWindowListener(new WindowAdapter() {
             @Override
@@ -53,7 +53,7 @@ public class MainView extends JFrame {
         });
     }
 
-    private void createWeekView(){
+    private void createWeekView() {
         AbstractTableModel model = new WeekView(null);
         JTable scheduleTable = new JTable(model);
 
@@ -73,12 +73,13 @@ public class MainView extends JFrame {
         calendarPanel.add(scheduleTable, BorderLayout.CENTER);
     }
 
-    private void onCancel(){
+    private void onCancel() {
         dispose();
         System.exit(0);
     }
 
-    private void onNewAppt(){
+    private void onNewAppt() {
         new NewApptDialog();
     }
+
 }

@@ -1,5 +1,8 @@
 package Models.Provider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Enumerator for types of providers in the clinic
  */
@@ -43,5 +46,17 @@ public enum ProviderType {
      */
     public String getAbbreviation(){
         return abbreviation;
+    }
+
+    /**
+     * Gets the plain text names of all provider types
+     * @return a list containing the plain text names of all provider types
+     */
+    public static List<String> getNames(){
+        List<String> names = new ArrayList<>();
+        for (ProviderType pt : values()){
+            names.add(pt.name);
+        }
+        return names;
     }
 }

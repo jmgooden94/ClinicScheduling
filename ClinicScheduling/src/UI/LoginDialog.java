@@ -1,6 +1,7 @@
 package UI;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 
 public class LoginDialog extends JDialog {
@@ -38,7 +39,7 @@ public class LoginDialog extends JDialog {
         });
 
         // set dialog size and center
-        setSize(400,200);
+        setSize(400, 200);
         setLocationRelativeTo(null);
     }
 
@@ -59,4 +60,5 @@ public class LoginDialog extends JDialog {
         dialog.pack();
         dialog.setVisible(true);
     }
+
 }

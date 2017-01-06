@@ -1,4 +1,6 @@
-package Models.Patient;
+package Models;
+
+import java.util.HashMap;
 
 /**
  * Enumerator for US states
@@ -18,8 +20,7 @@ public enum State {
     "PW"), PENNSYLVANIA("Pennsylvania", "PA"), PUERTO_RICO("Puerto Rico", "PR"), RHODE_ISLAND("Rhode Island", "RI"), SOUTH_CAROLINA(
     "South Carolina", "SC"), SOUTH_DAKOTA("South Dakota", "SD"), TENNESSEE("Tennessee", "TN"), TEXAS("Texas", "TX"), UTAH(
     "Utah", "UT"), VERMONT("Vermont", "VT"), VIRGIN_ISLANDS("Virgin Islands", "VI"), VIRGINIA("Virginia", "VA"), WASHINGTON(
-    "Washington", "WA"), WEST_VIRGINIA("West Virginia", "WV"), WISCONSIN("Wisconsin", "WI"), WYOMING("Wyoming", "WY"), UNKNOWN(
-    "Unknown", "");
+    "Washington", "WA"), WEST_VIRGINIA("West Virginia", "WV"), WISCONSIN("Wisconsin", "WI"), WYOMING("Wyoming", "WY");
 
     /**
      * Constructor for State enumerator
@@ -39,4 +40,42 @@ public enum State {
      * The abbreviation for the state
      */
     private String abbreviation;
+
+    /**
+     * Gets all of the names of the states
+     * @return String array containing the names of the states
+     */
+    public static String[] getNames(){
+        String[] names = new String[values().length];
+        for(int i = 0; i < values().length; i++){
+            names[i] = values()[i].name;
+        }
+        return names;
+    }
+
+    /**
+     * Gets all of the abbreviations of the states
+     * @return String array containing the abbreviations of the states
+     */
+    public static String[] getAbbreviations(){
+        String[] abbrs = new String[values().length];
+        for(int i = 0; i < values().length; i++){
+            abbrs[i] = values()[i].name;
+        }
+        return abbrs;
+    }
+
+    /**
+     * Gets the number of states
+     * @return the number of states
+     */
+    public static int count(){
+        return values().length;
+    }
+
+    public static State fromName(String name){
+        String key = name.toUpperCase();
+        key.replace(' ', '_');
+        return valueOf(key);
+    }
 }

@@ -2,14 +2,15 @@ package UI;
 
 import Models.Appointment.Appointment;
 import Models.Patient.Patient;
+import Models.State;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
+import javax.swing.text.MaskFormatter;
 import java.awt.event.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.text.*;
 import java.util.*;
 
 public class NewApptDialog extends JDialog {
@@ -33,6 +34,7 @@ public class NewApptDialog extends JDialog {
     private JSpinner endMinuteBox;
     private JSpinner endPMBox;
     private JSpinner providerSpinner;
+    private JSpinner providerTypeSpinner;
     private JDatePickerImpl jDatePicker;
 
     public NewApptDialog() {
@@ -40,9 +42,8 @@ public class NewApptDialog extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        setSize(600,600);
+        setSize(600, 600);
         setLocationRelativeTo(null);
-        setVisible(true);
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -69,26 +70,40 @@ public class NewApptDialog extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        setVisible(true);
     }
 
+    /**
+     * Event handler for OK; records data in form and stores
+     */
     private void onOK() {
-        // add your code here
-        Patient newPatient = new Patient(firstNameBox.getText(), lastNameBox.getText(), phoneBox.getText(), streetBox.getText(), cityBox.getText(), Models.Patient.State.valueOf((String)stateSpinner.getValue()), Integer.parseInt(zipBox.getText()));
-        int year = jDatePicker.getModel().getYear();
-        int month = jDatePicker.getModel().getMonth();
-        int day = jDatePicker.getModel().getDay();
-        int startHour = (int) startHourBox.getValue();
-        int endHour = (int) endHourBox.getValue();
-        if ((boolean) startPMBox.getValue()){
-            startHour += 12;
+        if (validateForm()){
+            Patient newPatient = new Patient(firstNameBox.getText(), lastNameBox.getText(),
+                    phoneBox.getValue().toString(), streetBox.getText(), cityBox.getText(),
+                    State.fromName((String) stateSpinner.getValue()), Integer.parseInt(zipBox.getValue().toString()));
+            int year = jDatePicker.getModel().getYear();
+            int month = jDatePicker.getModel().getMonth();
+            int day = jDatePicker.getModel().getDay();
+            int startHour = (int) startHourBox.getValue();
+            int endHour = (int) endHourBox.getValue();
+            if (startPMBox.getValue() == "PM") {
+                startHour += 11;
+            }
+            if (endPMBox.getValue() == "PM") {
+                endHour += 11;
+            }
+            GregorianCalendar start = new GregorianCalendar(year, month, day, startHour, (int) startMinuteBox.getValue());
+            GregorianCalendar end = new GregorianCalendar(year, month, day, endHour, (int) endMinuteBox.getValue());
+            //TODO: get provider from list of providers and replace null with provider
+            Appointment newAppt = new Appointment(newPatient, null, reasonBox.getText(), start, end);
+            //TODO: store newAppt in DB
+            dispose();
         }
-        if ((boolean) endPMBox.getValue()){
-            endHour += 12;
+        else{
+            JOptionPane.showMessageDialog(contentPane, "Missing or incorrect form information. " +
+                    "Please verify all fields are filled completely.");
         }
-        GregorianCalendar start = new GregorianCalendar(year, month, day, startHour, (int) startMinuteBox.getValue());
-        GregorianCalendar end = new GregorianCalendar(year, month, day, endHour, (int) endMinuteBox.getValue());
-        //TODO: get provider from list of providers and replace null with provider
-        Appointment newAppt = new Appointment(newPatient, null, reasonBox.getText(), start, end);
     }
 
     private void onCancel() {
@@ -96,14 +111,41 @@ public class NewApptDialog extends JDialog {
         dispose();
     }
 
-    private void createComponents(){
+    /**
+     * Setup formatters and other custom component settings
+     */
+    private void createComponents() {
         createDatePickerPanel();
+
+        SpinnerListModel stateList = new SpinnerListModel(State.getNames());
+        stateSpinner.setModel(stateList);
+
+        SpinnerNumberModel startHours = new SpinnerNumberModel(1, 1, 12, 1);
+        startHourBox.setModel(startHours);
+        SpinnerNumberModel endHours = new SpinnerNumberModel(1, 1, 12, 1);
+        endHourBox.setModel(endHours);
+
+        SpinnerNumberModel startMinutes = new SpinnerNumberModel(0, 0, 59, 5);
+        startMinuteBox.setModel(startMinutes);
+        startMinuteBox.setEditor(new JSpinner.NumberEditor(startMinuteBox, "00"));
+        SpinnerNumberModel endMinutes = new SpinnerNumberModel(0, 0, 59, 5);
+        endMinuteBox.setModel(endMinutes);
+        endMinuteBox.setEditor(new JSpinner.NumberEditor(endMinuteBox, "00"));
+
+        String[] pmOps = {"AM", "PM"};
+        SpinnerListModel startPm = new SpinnerListModel(Arrays.asList(pmOps));
+        SpinnerListModel endPm = new SpinnerListModel(Arrays.asList(pmOps));
+        startPMBox.setModel(startPm);
+        endPMBox.setModel(endPm);
+
+        SpinnerListModel provTypes = new SpinnerListModel(Models.Provider.ProviderType.getNames());
+        providerTypeSpinner.setModel(provTypes);
     }
 
     /**
      * Creates a new JDatePicker and adds it to the datePickerPanel
      */
-    private void createDatePickerPanel(){
+    private void createDatePickerPanel() {
         UtilDateModel model = new UtilDateModel();
         Properties p = new Properties();
         p.put("text.today", "Today");
@@ -112,8 +154,7 @@ public class NewApptDialog extends JDialog {
         JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
         jDatePicker = new JDatePickerImpl(datePanel, new JFormattedTextField.AbstractFormatter() {
 
-            private String datePattern = "MMMM dd, yyyy";
-            private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
+            private SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
 
             @Override
             public Object stringToValue(String text) throws ParseException {
@@ -131,5 +172,33 @@ public class NewApptDialog extends JDialog {
             }
         });
         datePickerPanel.add(jDatePicker);
+    }
+
+    /**
+     * Creates custom UI fields
+     */
+    private void createUIComponents() {
+        try {
+            MaskFormatter zipFormat = new MaskFormatter("#####");
+            zipBox = new JFormattedTextField(zipFormat);
+        } catch (ParseException e) {
+            JOptionPane.showMessageDialog(contentPane, "Invalid ZIP");
+        }
+
+        try {
+            MaskFormatter phoneFormat = new MaskFormatter("(###) ###-####");
+            phoneBox = new JFormattedTextField(phoneFormat);
+        } catch (ParseException e){
+            JOptionPane.showMessageDialog(contentPane, "Invalid phone number.");
+        }
+    }
+
+    private boolean validateForm(){
+        if(firstNameBox.getText() == "" || lastNameBox.getText() == "" || streetBox.getText() == "" ||
+                cityBox.getText() == "" || zipBox.getValue() == null || phoneBox.getValue() == null
+                ){
+            return false;
+        }
+        return true;
     }
 }

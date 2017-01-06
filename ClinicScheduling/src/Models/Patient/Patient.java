@@ -1,5 +1,7 @@
 package Models.Patient;
 
+import Models.State;
+
 /**
  * Class to store clinic patients
  */

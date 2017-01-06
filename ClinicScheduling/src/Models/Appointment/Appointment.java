@@ -44,7 +44,8 @@ public class Appointment {
     public Appointment(Patient patient, Provider provider, String reason, GregorianCalendar apptStart, GregorianCalendar apptEnd) {
         this.patient = patient;
         this.provider = provider;
-        this.apptType = provider.getProviderType().toString();
+        //TODO: uncomment this once we get providers figured out
+        //this.apptType = provider.getProviderType().toString();
         this.reason = reason;
         this.apptStart = apptStart;
         this.apptEnd = apptEnd;
