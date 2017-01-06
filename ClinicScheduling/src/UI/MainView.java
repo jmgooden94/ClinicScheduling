@@ -29,6 +29,7 @@ public class MainView extends JFrame {
     private JPanel providerPanel;
     private JPanel calendarPanel;
     private JPanel leftPanel;
+    private boolean weeklyView;
 
     public MainView() {
         // call onCancel() when cross is clicked
@@ -39,12 +40,20 @@ public class MainView extends JFrame {
             }
         });
 
+        toggleViewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onToggle();
+            }
+        });
+
         setSize(1024, 768);
         setLocationRelativeTo(null);
         setLayout(null);
         setContentPane(contentPane);
         setVisible(true);
         createWeekView();
+        weeklyView = true;
 
         newApptButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -82,4 +91,25 @@ public class MainView extends JFrame {
         new NewApptDialog();
     }
 
+    /**
+     * Toggles between weekly and monthly views
+     */
+    private void onToggle(){
+        calendarPanel.removeAll();
+        if (weeklyView){
+            createMonthView();
+        }
+        else {
+            createWeekView();
+        }
+        calendarPanel.updateUI();
+        weeklyView = !weeklyView;
+    }
+
+    /**
+     * Creates a new monthly view and adds it to the calendar panel
+     */
+    private void createMonthView(){
+
+    }
 }
