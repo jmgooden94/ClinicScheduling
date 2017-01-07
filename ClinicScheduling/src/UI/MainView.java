@@ -97,9 +97,11 @@ public class MainView extends JFrame {
     private void onToggle(){
         calendarPanel.removeAll();
         if (weeklyView){
+            toggleViewButton.setText("Weekly View");
             createMonthView();
         }
         else {
+            toggleViewButton.setText("Monthly View");
             createWeekView();
         }
         calendarPanel.updateUI();

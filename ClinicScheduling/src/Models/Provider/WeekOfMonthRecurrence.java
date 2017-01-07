@@ -7,13 +7,13 @@ public class WeekOfMonthRecurrence implements Recurrence {
     /**
      * Array of weeks the availability recurs on
      */
-    short[] weeks;
+    int[] weeks;
 
     /**
      * Constructs a new WeekOfMonthRecurrence
      * @param weeks Array of weeks of the month the availability recurs on
      */
-    public WeekOfMonthRecurrence(short[] weeks){
+    public WeekOfMonthRecurrence(int[] weeks){
         if (weeks.length > 5){
             throw new IllegalArgumentException("weeks array cannot be longer than 5");
         }
