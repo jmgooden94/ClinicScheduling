@@ -2,33 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1d936b40-2669-4a64-a3e9-51b6f0f33a30" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/Utils/DocumentSizeFilter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/Utils/MySqlUtils.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/Utils/UserRole.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jBCrypt-0.4/LICENSE" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jBCrypt-0.4/README" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jBCrypt-0.4/TODO" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jBCrypt-0.4/build.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jBCrypt-0.4/src/org/mindrot/jbcrypt/BCrypt.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jBCrypt-0.4/test/org/mindrot/jbcrypt/TestBCrypt.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/LoginDialog$1.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/LoginDialog$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/LoginDialog$2.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/LoginDialog$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/LoginDialog$3.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/LoginDialog$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/LoginDialog.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/LoginDialog.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/MainView$1.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/MainView$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/MainView$2.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/MainView$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/MainView$3.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/MainView$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/MainView.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/MainView.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/NewApptDialog$1.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/NewApptDialog$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/NewApptDialog$2.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/NewApptDialog$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/NewApptDialog$3.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/NewApptDialog$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/NewApptDialog$4.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/NewApptDialog$4.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/NewApptDialog$5.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/NewApptDialog$5.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/NewApptDialog.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/NewApptDialog.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/UI/LoginDialog.java" afterPath="$PROJECT_DIR$/src/UI/LoginDialog.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/UI/MainView.java" afterPath="$PROJECT_DIR$/src/UI/MainView.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/UI/NewApptDialog.java" afterPath="$PROJECT_DIR$/src/UI/NewApptDialog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Utils/MySqlUtils.java" afterPath="$PROJECT_DIR$/src/Utils/MySqlUtils.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -76,8 +50,8 @@
       <file leaf-file-name="MySqlUtils.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Utils/MySqlUtils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="502">
-              <caret line="53" column="20" lean-forward="true" selection-start-line="53" selection-start-column="20" selection-end-line="53" selection-end-column="20" />
+            <state relative-caret-position="418">
+              <caret line="19" column="8" lean-forward="true" selection-start-line="19" selection-start-column="8" selection-end-line="19" selection-end-column="8" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -1037,8 +1011,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Utils/MySqlUtils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="502">
-          <caret line="53" column="20" lean-forward="true" selection-start-line="53" selection-start-column="20" selection-end-line="53" selection-end-column="20" />
+        <state relative-caret-position="418">
+          <caret line="19" column="8" lean-forward="true" selection-start-line="19" selection-start-column="8" selection-end-line="19" selection-end-column="8" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

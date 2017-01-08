@@ -48,7 +48,8 @@ public class MySqlUtils {
         }
         if (role == null){
             JOptionPane.showMessageDialog(new JFrame(),"User's role not found. Assuming user is not admin." +
-                    "Verify that user has been added correctly.", "Role Warning", JOptionPane.WARNING_MESSAGE);
+                    "Verify that user has been added to database correctly.",
+                    "Role Warning", JOptionPane.WARNING_MESSAGE);
             role = UserRole.USER;
         }
         return role;
