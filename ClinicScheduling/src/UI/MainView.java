@@ -31,7 +31,7 @@ public class MainView extends JFrame {
     private JPanel leftPanel;
     private boolean weeklyView;
 
-    public MainView() {
+    public MainView(String role) {
         // call onCancel() when cross is clicked
         addWindowListener(new WindowAdapter() {
             @Override

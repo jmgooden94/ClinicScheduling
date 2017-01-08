@@ -1,8 +1,10 @@
 package UI;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
+import java.sql.Connection;
+
+import Utils.*;
 
 public class LoginDialog extends JDialog {
     private JPanel contentPane;
@@ -44,9 +46,15 @@ public class LoginDialog extends JDialog {
     }
 
     private void onOK() {
-        //TODO: Actually put in some login logic
-        dispose();
-        new MainView();
+        String un = usernameBox.getText().trim();
+        char[] plain = passwordBox.getPassword();
+        String plainString = new String(plain);
+        Connection connection = MySqlUtils.openConnection(un, plainString);
+        if(connection != null){
+            dispose();
+
+            new MainView("Admin");
+        }
     }
 
     private void onCancel() {

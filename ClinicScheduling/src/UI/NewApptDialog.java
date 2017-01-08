@@ -8,6 +8,7 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.MaskFormatter;
 import java.awt.event.*;
 import java.text.*;
@@ -37,6 +38,9 @@ public class NewApptDialog extends JDialog {
     private JSpinner providerTypeSpinner;
     private JDatePickerImpl jDatePicker;
 
+    /**
+     * Constructor for NewApptDialog
+     */
     public NewApptDialog() {
         createComponents();
         setContentPane(contentPane);
@@ -107,6 +111,9 @@ public class NewApptDialog extends JDialog {
         }
     }
 
+    /**
+     * Event handler for cancel button
+     */
     private void onCancel() {
         // add your code here if necessary
         dispose();
@@ -116,11 +123,30 @@ public class NewApptDialog extends JDialog {
      * Setup formatters and other custom component settings
      */
     private void createComponents() {
+        // Creates the JDatePicker panel
         createDatePickerPanel();
 
+        // Sets document filters to limit length of inputs
+        AbstractDocument fnDoc = (AbstractDocument) firstNameBox.getDocument();
+        fnDoc.setDocumentFilter(new Utils.DocumentSizeFilter(100));
+
+        AbstractDocument lnDoc = (AbstractDocument) lastNameBox.getDocument();
+        lnDoc.setDocumentFilter(new Utils.DocumentSizeFilter(100));
+
+        AbstractDocument stDoc = (AbstractDocument) streetBox.getDocument();
+        stDoc.setDocumentFilter(new Utils.DocumentSizeFilter(100));
+
+        AbstractDocument ciDoc = (AbstractDocument) cityBox.getDocument();
+        ciDoc.setDocumentFilter(new Utils.DocumentSizeFilter(100));
+
+        AbstractDocument reDoc = (AbstractDocument) reasonBox.getDocument();
+        reDoc.setDocumentFilter(new Utils.DocumentSizeFilter(500));
+
+        // Populates the state spinner
         SpinnerListModel stateList = new SpinnerListModel(State.getNames());
         stateSpinner.setModel(stateList);
 
+        // Sets the limits on the time spinners
         SpinnerNumberModel startHours = new SpinnerNumberModel(1, 1, 12, 1);
         startHourBox.setModel(startHours);
         SpinnerNumberModel endHours = new SpinnerNumberModel(1, 1, 12, 1);
@@ -139,6 +165,7 @@ public class NewApptDialog extends JDialog {
         startPMBox.setModel(startPm);
         endPMBox.setModel(endPm);
 
+        // Populates the provider types spinner
         SpinnerListModel provTypes = new SpinnerListModel(Models.Provider.ProviderType.getNames());
         providerTypeSpinner.setModel(provTypes);
     }
@@ -194,6 +221,10 @@ public class NewApptDialog extends JDialog {
         }
     }
 
+    /**
+     * Validates the new appointment dialog form
+     * @return true if input is valid; else false
+     */
     private boolean validateForm(){
         if(firstNameBox.getText() == "" || lastNameBox.getText() == "" || streetBox.getText() == "" ||
                 cityBox.getText() == "" || zipBox.getValue() == null || phoneBox.getValue() == null
