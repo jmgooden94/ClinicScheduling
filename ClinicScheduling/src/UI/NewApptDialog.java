@@ -1,7 +1,7 @@
 package UI;
 
 import Models.Appointment.Appointment;
-import Models.Patient.Patient;
+import Models.Patient.*;
 import Models.State;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -79,9 +79,10 @@ public class NewApptDialog extends JDialog {
      */
     private void onOK() {
         if (validateForm()){
+            Address patientAddress = new Address(streetBox.getText(), cityBox.getText(),
+                    State.fromName((String) stateSpinner.getValue()), zipBox.getValue().toString());
             Patient newPatient = new Patient(firstNameBox.getText(), lastNameBox.getText(),
-                    phoneBox.getValue().toString(), streetBox.getText(), cityBox.getText(),
-                    State.fromName((String) stateSpinner.getValue()), Integer.parseInt(zipBox.getValue().toString()));
+                    phoneBox.getValue().toString(), patientAddress);
             int year = jDatePicker.getModel().getYear();
             int month = jDatePicker.getModel().getMonth();
             int day = jDatePicker.getModel().getDay();
