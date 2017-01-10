@@ -1,5 +1,5 @@
 // Some code in this class is copied from or based off code by Marty Strep of The University of Washington
-package UI;
+package UI.Panels;
 
 import Models.Appointment.Appointment;
 import Models.Day;

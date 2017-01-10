@@ -1,8 +1,9 @@
-package UI;
+package UI.Dialogs;
 
 import Models.Appointment.Appointment;
 import Models.Patient.*;
 import Models.State;
+import Utils.MySqlUtils;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -102,7 +103,7 @@ public class NewApptDialog extends JDialog {
             GregorianCalendar end = new GregorianCalendar(year, month, day, endHour, (int) endMinuteBox.getValue());
             //TODO: get provider from list of providers and replace null with provider
             Appointment newAppt = new Appointment(newPatient, null, reasonBox.getText(), start, end);
-            //TODO: store newAppt in DB
+            MySqlUtils.addAppointment(newAppt);
             dispose();
         }
         else{

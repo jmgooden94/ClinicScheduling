@@ -2,6 +2,11 @@
 package UI;
 
 import Models.Day;
+import UI.Dialogs.AddUserDialog;
+import UI.Dialogs.ChangeUserPasswordDialog;
+import UI.Dialogs.DeleteUserDialog;
+import UI.Dialogs.NewApptDialog;
+import UI.Panels.WeekView;
 import Utils.MySqlUtils;
 import Utils.UserRole;
 

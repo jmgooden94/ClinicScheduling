@@ -1,5 +1,7 @@
 package Utils;
 
+import Models.Appointment.Appointment;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -178,5 +180,13 @@ public class MySqlUtils {
 
         userPrivileges.execute();
         connection.commit();
+    }
+
+    /**
+     * Adds the appointment to the database
+     * @param appointment the appointment to add
+     */
+    public static void addAppointment(Appointment appointment){
+        //TODO: this
     }
 }

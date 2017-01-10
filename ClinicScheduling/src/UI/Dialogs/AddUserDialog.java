@@ -1,23 +1,30 @@
-package UI;
+package UI.Dialogs;
 
+import Utils.DocumentSizeFilter;
 import Utils.MySqlUtils;
 import Utils.UserRole;
 
 import javax.swing.*;
-import java.awt.*;
+import javax.swing.text.AbstractDocument;
 import java.awt.event.*;
 import java.sql.SQLException;
 
-public class ChangeUserPasswordDialog extends JDialog {
+public class AddUserDialog extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
+    private JTextField usernameBox;
     private JPasswordField pwBox;
     private JPasswordField confirmPwBox;
-    private JSpinner usernameSpinner;
+    private JSpinner roleSpinner;
 
-    public ChangeUserPasswordDialog() {
+    public AddUserDialog() {
+
+        AbstractDocument unDoc = (AbstractDocument) usernameBox.getDocument();
+        unDoc.setDocumentFilter(new DocumentSizeFilter(30));
+
         SpinnerListModel roles = new SpinnerListModel(UserRole.values());
+        roleSpinner.setModel(roles);
 
         setContentPane(contentPane);
         setModal(true);
@@ -52,37 +59,38 @@ public class ChangeUserPasswordDialog extends JDialog {
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        SpinnerListModel usernames = null;
-        try{
-            usernames = new SpinnerListModel(MySqlUtils.getUsernames());
-        }
-        catch(SQLException ex){
-            showError(ex);
-        }
-        usernameSpinner.setModel(usernames);
-
         setVisible(true);
     }
 
     private void onOK() {
-        String un = usernameSpinner.getValue().toString();
+        String un = usernameBox.getText();
         char[] pwChar = pwBox.getPassword();
         String pwPlain = new String(pwChar);
         char[] verifyPwChar = confirmPwBox.getPassword();
         String verifyPlain = new String(verifyPwChar);
         if (!pwPlain.equals("") && !un.equals("")) {
             if (pwPlain.equals(verifyPlain)) {
+                String roleString = roleSpinner.getValue().toString();
+                UserRole role = UserRole.valueOf(roleString);
                 try {
-                    MySqlUtils.changePassword(un, pwPlain);
-                    JOptionPane.showMessageDialog(contentPane, "Password changed.");
+                    MySqlUtils.addUser(un, pwPlain, role);
+                    JOptionPane.showMessageDialog(contentPane, "User added.\nUsername: " + un + "\nRole: " + role.toString(), "User Added", JOptionPane.PLAIN_MESSAGE);
                     dispose();
                 } catch (SQLException sqle) {
+                    if (sqle.getMessage().contains("Duplicate entry")) {
+                        JOptionPane.showMessageDialog(new JFrame(), "User already exists. Please choose another " +
+                                "username", "Duplicate User", JOptionPane.WARNING_MESSAGE);
+                    } else {
                         showError(sqle);
+                    }
                 }
             }
             else {
                 JOptionPane.showMessageDialog(contentPane, "Passwords don't match. Please verify your password.");
             }
+        }
+        else {
+            JOptionPane.showMessageDialog(contentPane, "All fields are required.", "Missing Fields", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -90,6 +98,7 @@ public class ChangeUserPasswordDialog extends JDialog {
         // add your code here if necessary
         dispose();
     }
+
 
     /**
      * Shows an error dialog with the exception message
