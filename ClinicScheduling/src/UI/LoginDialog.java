@@ -1,8 +1,10 @@
 package UI;
 
 import javax.swing.*;
+import javax.swing.text.StyledDocument;
 import java.awt.event.*;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import Utils.*;
 
@@ -49,11 +51,17 @@ public class LoginDialog extends JDialog {
         String un = usernameBox.getText().trim();
         char[] plain = passwordBox.getPassword();
         String plainString = new String(plain);
-        Connection connection = MySqlUtils.openConnection(un, plainString);
-        if(connection != null){
+        boolean success = MySqlUtils.openConnection(un, plainString);
+        if(success){
+            UserRole role = null;
+            try {
+                role = MySqlUtils.getRole(un);
+            }
+            catch (SQLException sqle){
+                showError(sqle);
+            }
             dispose();
-
-            new MainView("Admin");
+            new MainView(role);
         }
     }
 
@@ -61,6 +69,14 @@ public class LoginDialog extends JDialog {
         // add your code here if necessary
         dispose();
         System.exit(0);
+    }
+
+    /**
+     * Shows an error dialog with the exception message
+     * @param ex the exception to display
+     */
+    private void showError(Exception ex){
+        JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Unexpected Error", JOptionPane.ERROR_MESSAGE);
     }
 
     public static void main(String[] args) {

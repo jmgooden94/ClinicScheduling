@@ -2,6 +2,8 @@
 package UI;
 
 import Models.Day;
+import Utils.MySqlUtils;
+import Utils.UserRole;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -13,13 +15,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.SQLException;
 
 public class MainView extends JFrame {
 
     private JButton leftArrowButton;
     private JButton rightArrowButton;
-    private JButton importButton;
-    private JButton exportButton;
     private JButton newApptButton;
     private JLabel dateLabel;
     private JButton newProvButton;
@@ -29,9 +30,10 @@ public class MainView extends JFrame {
     private JPanel providerPanel;
     private JPanel calendarPanel;
     private JPanel leftPanel;
+    private JPanel adminControlPanel;
     private boolean weeklyView;
 
-    public MainView(String role) {
+    public MainView(UserRole role) {
         // call onCancel() when cross is clicked
         addWindowListener(new WindowAdapter() {
             @Override
@@ -47,6 +49,16 @@ public class MainView extends JFrame {
             }
         });
 
+        newApptButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onNewAppt();
+            }
+        });
+
+        if(role == UserRole.ADMIN){
+            createAdminControls();
+        }
+
         setSize(1024, 768);
         setLocationRelativeTo(null);
         setLayout(null);
@@ -54,12 +66,6 @@ public class MainView extends JFrame {
         setVisible(true);
         createWeekView();
         weeklyView = true;
-
-        newApptButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onNewAppt();
-            }
-        });
     }
 
     private void createWeekView() {
@@ -84,6 +90,12 @@ public class MainView extends JFrame {
 
     private void onCancel() {
         dispose();
+        try{
+            MySqlUtils.closeConnection();
+        }
+        catch (SQLException ex){
+            showError(ex);
+        }
         System.exit(0);
     }
 
@@ -113,5 +125,66 @@ public class MainView extends JFrame {
      */
     private void createMonthView(){
 
+    }
+
+    /**
+     * Creates the admin controls and adds them to the panel
+     */
+    private void createAdminControls(){
+        JButton addUser = new JButton("Add User");
+        addUser.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onNewUser();
+            }
+        });
+        adminControlPanel.add(addUser, BorderLayout.NORTH);
+
+        JButton editUser = new JButton("Edit User");
+        editUser.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onEditUser();
+            }
+        });
+        adminControlPanel.add(editUser, BorderLayout.CENTER);
+
+        JButton deleteUser = new JButton("Delete User");
+        deleteUser.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onDeleteUser();
+            }
+        });
+        adminControlPanel.add(deleteUser, BorderLayout.SOUTH);
+    }
+
+    /**
+     * Shows the add user dialog
+     */
+    private void onNewUser(){
+        new AddUserDialog();
+    }
+
+    /**
+     * Shows the delete user dialog
+     */
+    private void onDeleteUser(){
+        new DeleteUserDialog();
+    }
+
+    /**
+     * Shows the edit user dialog
+     */
+    private void onEditUser(){
+        new ChangeUserPasswordDialog();
+    }
+
+    /**
+     * Shows an error dialog with the exception message
+     * @param ex the exception to display
+     */
+    private void showError(Exception ex){
+        JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Unexpected Error", JOptionPane.ERROR_MESSAGE);
     }
 }
