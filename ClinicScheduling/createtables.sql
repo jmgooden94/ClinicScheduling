@@ -123,7 +123,7 @@ DEFAULT CHARACTER SET = latin1;
 
 CREATE TABLE IF NOT EXISTS `clinic`.`user`(`id` INTEGER(11) NOT NULL AUTO_INCREMENT, `username` varchar(30) NOT NULL UNIQUE, `role` varchar(30) NOT NULL, PRIMARY KEY(`id`));
 
-CREATE USER IF NOT EXISTS `clinic_admin` IDENTIFIED BY `defaultAdminPassword`;
-GRANT ALL ON clinic.* TO `clinic_admin` WITH GRANT OPTION;
-GRANT CREATE USER ON *.* TO `clinic_admin` WITH GRANT OPTION;
+CREATE USER IF NOT EXISTS 'clinic_admin'@'%' IDENTIFIED BY 'defaultAdminPassword';
+GRANT ALL ON clinic.* TO 'clinic_admin' WITH GRANT OPTION;
+GRANT CREATE USER ON *.* TO 'clinic_admin' WITH GRANT OPTION;
 INSERT INTO clinic.user(username, role) VALUES('clinic_admin', 'ADMIN');
