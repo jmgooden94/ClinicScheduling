@@ -5,7 +5,7 @@ import javax.swing.table.AbstractTableModel;
 /**
  * Monthly calendar view panel
  */
-public class MonthView extends AbstractTableModel{
+public class AppointmentView extends AbstractTableModel{
     /**
      * Returns the number of rows in the model. A
      * <code>JTable</code> uses this method to determine how many rows it

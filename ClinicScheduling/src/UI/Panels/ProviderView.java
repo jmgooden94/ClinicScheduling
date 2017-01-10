@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Weekly agenda-style view
  */
-public class WeekView extends AbstractTableModel{
+public class ProviderView extends AbstractTableModel{
     /**
      * The start hour for the table; 30 minutes before first available appointment time
      */
@@ -21,7 +21,7 @@ public class WeekView extends AbstractTableModel{
     /**
      * number of rows in the table
      */
-    private static int ROW_COUNT = 20;
+    private static int ROW_COUNT = 38;
     /**
      * number of columns; 5 days/week + label column
      */
@@ -30,21 +30,25 @@ public class WeekView extends AbstractTableModel{
      * List of appointments
      */
     private List<Appointment> appointments;
+    /**
+     * Start date for week
+     */
+    private GregorianCalendar startDate;
 
     /**
      * Constructs a new weekView and populates it with the appointments in appointments
      * @param appointments a list of appointments to populate the view with
      */
-    public WeekView(List<Appointment> appointments){
+    public ProviderView(List<Appointment> appointments, GregorianCalendar startDate){
         this.appointments = appointments;
     }
 
     /**
-     * Constructs a new WeekView showing the given date
+     * Constructs a new ProviderView showing the given date
      * @param appointments the appointment list
      * @param date the date to include
      */
-    public WeekView(List<Appointment> appointments, GregorianCalendar date){
+    public ProviderView(List<Appointment> appointments, GregorianCalendar date){
         this.appointments = appointments;
         throw new NotImplementedException();
         //TODO
@@ -96,6 +100,7 @@ public class WeekView extends AbstractTableModel{
         }
 
         Day day = Day.toDay(columnIndex);
+        // TODO: this
         return null;
     }
 
@@ -119,8 +124,8 @@ public class WeekView extends AbstractTableModel{
     private static TimeOfDay toTime(int row) {
         // every 2 columns correspond to one row
         row++;
-        int hour = START_HOUR + row / 2;
-        int minute = 30 * (row % 2);
+        int hour = START_HOUR + row / 4;
+        int minute = 15 * (row % 4);
 
         // determine AM vs. PM based on 12-hour clock
         boolean pm = false;

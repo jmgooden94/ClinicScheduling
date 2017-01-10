@@ -6,7 +6,7 @@ import UI.Dialogs.AddUserDialog;
 import UI.Dialogs.ChangeUserPasswordDialog;
 import UI.Dialogs.DeleteUserDialog;
 import UI.Dialogs.NewApptDialog;
-import UI.Panels.WeekView;
+import UI.Panels.ProviderView;
 import Utils.MySqlUtils;
 import Utils.UserRole;
 
@@ -74,7 +74,7 @@ public class MainView extends JFrame {
     }
 
     private void createWeekView() {
-        AbstractTableModel model = new WeekView(null);
+        AbstractTableModel model = new ProviderView(null);
         JTable scheduleTable = new JTable(model);
 
         // set up the table column headings
@@ -114,11 +114,11 @@ public class MainView extends JFrame {
     private void onToggle(){
         calendarPanel.removeAll();
         if (weeklyView){
-            toggleViewButton.setText("Weekly View");
+            toggleViewButton.setText("Provider View");
             createMonthView();
         }
         else {
-            toggleViewButton.setText("Monthly View");
+            toggleViewButton.setText("Appointment View");
             createWeekView();
         }
         calendarPanel.updateUI();
@@ -145,7 +145,7 @@ public class MainView extends JFrame {
         });
         adminControlPanel.add(addUser, BorderLayout.NORTH);
 
-        JButton editUser = new JButton("Edit User");
+        JButton editUser = new JButton("Change User Password");
         editUser.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
