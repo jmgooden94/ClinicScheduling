@@ -1,32 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1d936b40-2669-4a64-a3e9-51b6f0f33a30" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/UI/AddUserDialog.form" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/UI/AddUserDialog.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/UI/ChangeUserPasswordDialog.form" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/UI/ChangeUserPasswordDialog.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/UI/DeleteUserDialog.form" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/UI/DeleteUserDialog.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/LoginDialog$1.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/LoginDialog$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/LoginDialog$2.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/LoginDialog$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/LoginDialog$3.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/LoginDialog$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/LoginDialog.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/LoginDialog.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/MainView$1.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/MainView$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/MainView$2.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/MainView$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/MainView$3.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/MainView$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/MainView.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/UI/MainView.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/Utils/MySqlUtils.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/Utils/MySqlUtils.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/ClinicScheduling/Utils/UserRole.class" afterPath="$PROJECT_DIR$/out/production/ClinicScheduling/Utils/UserRole.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/createtables.sql" afterPath="$PROJECT_DIR$/createtables.sql" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/UI/LoginDialog.java" afterPath="$PROJECT_DIR$/src/UI/LoginDialog.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/UI/MainView.form" afterPath="$PROJECT_DIR$/src/UI/MainView.form" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/UI/MainView.java" afterPath="$PROJECT_DIR$/src/UI/MainView.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Utils/MySqlUtils.java" afterPath="$PROJECT_DIR$/src/Utils/MySqlUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Utils/UserRole.java" afterPath="$PROJECT_DIR$/src/Utils/UserRole.java" />
-    </list>
+    <list default="true" id="1d936b40-2669-4a64-a3e9-51b6f0f33a30" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -46,11 +21,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="MainView.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MainView.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/UI/MainView.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="327">
-              <caret line="143" column="16" lean-forward="false" selection-start-line="143" selection-start-column="16" selection-end-line="143" selection-end-column="16" />
+            <state relative-caret-position="-132">
+              <caret line="152" column="59" lean-forward="true" selection-start-line="152" selection-start-column="59" selection-end-line="152" selection-end-column="59" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1642#1643#0" expanded="true" />
@@ -75,7 +50,7 @@
       <file leaf-file-name="LoginDialog.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/UI/LoginDialog.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="803">
+            <state relative-caret-position="1037">
               <caret line="69" column="18" lean-forward="true" selection-start-line="69" selection-start-column="18" selection-end-line="69" selection-end-column="18" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -84,11 +59,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MySqlUtils.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MySqlUtils.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Utils/MySqlUtils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="359">
-              <caret line="174" column="0" lean-forward="false" selection-start-line="174" selection-start-column="0" selection-end-line="174" selection-end-column="0" />
+            <state relative-caret-position="259">
+              <caret line="92" column="72" lean-forward="false" selection-start-line="92" selection-start-column="25" selection-end-line="92" selection-end-column="72" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -973,16 +948,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/UI/LoginDialog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="803">
-          <caret line="69" column="18" lean-forward="true" selection-start-line="69" selection-start-column="18" selection-end-line="69" selection-end-column="18" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/UI/AddUserDialog.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="429">
@@ -997,16 +962,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
           <caret line="70" column="13" lean-forward="false" selection-start-line="70" selection-start-column="13" selection-end-line="70" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Utils/MySqlUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="359">
-          <caret line="174" column="0" lean-forward="false" selection-start-line="174" selection-start-column="0" selection-end-line="174" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1035,8 +990,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/UI/MainView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="327">
-          <caret line="143" column="16" lean-forward="false" selection-start-line="143" selection-start-column="16" selection-end-line="143" selection-end-column="16" />
+        <state relative-caret-position="-132">
+          <caret line="152" column="59" lean-forward="true" selection-start-line="152" selection-start-column="59" selection-end-line="152" selection-end-column="59" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1642#1643#0" expanded="true" />
@@ -1053,6 +1008,26 @@
             <element signature="e#5075#5076#0" expanded="true" />
             <element signature="e#5157#5158#0" expanded="true" />
             <element signature="e#5203#5204#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/UI/LoginDialog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1037">
+          <caret line="69" column="18" lean-forward="true" selection-start-line="69" selection-start-column="18" selection-end-line="69" selection-end-column="18" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Utils/MySqlUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="259">
+          <caret line="92" column="72" lean-forward="false" selection-start-line="92" selection-start-column="25" selection-end-line="92" selection-end-column="72" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
