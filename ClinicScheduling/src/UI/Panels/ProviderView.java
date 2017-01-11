@@ -36,21 +36,13 @@ public class ProviderView extends AbstractTableModel{
     private GregorianCalendar startDate;
 
     /**
-     * Constructs a new weekView and populates it with the appointments in appointments
-     * @param appointments a list of appointments to populate the view with
-     */
-    public ProviderView(List<Appointment> appointments, GregorianCalendar startDate){
-        this.appointments = appointments;
-    }
-
-    /**
      * Constructs a new ProviderView showing the given date
      * @param appointments the appointment list
      * @param date the date to include
      */
     public ProviderView(List<Appointment> appointments, GregorianCalendar date){
         this.appointments = appointments;
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
         //TODO
     }
 

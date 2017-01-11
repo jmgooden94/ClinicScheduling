@@ -54,7 +54,7 @@ public class LoginDialog extends JDialog {
         //String plainString = new String(plain);
         //boolean success = MySqlUtils.openConnection(un, plainString);
         String un = "clinic_admin";
-        boolean success = MySqlUtils.openConnection(un, "SomethingRobust!");
+        boolean success = MySqlUtils.openConnection(un, "defaultAdminPassword");
         if(success){
             UserRole role = null;
             try {

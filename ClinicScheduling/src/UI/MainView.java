@@ -1,11 +1,13 @@
 // Some code in this class is copied from or based off code by Marty Strep of The University of Washington
 package UI;
 
+import Models.Appointment.Appointment;
 import Models.Day;
 import UI.Dialogs.AddUserDialog;
 import UI.Dialogs.ChangeUserPasswordDialog;
 import UI.Dialogs.DeleteUserDialog;
 import UI.Dialogs.NewApptDialog;
+import UI.Panels.AppointmentView;
 import UI.Panels.ProviderView;
 import Utils.MySqlUtils;
 import Utils.UserRole;
@@ -69,12 +71,12 @@ public class MainView extends JFrame {
         setLayout(null);
         setContentPane(contentPane);
         setVisible(true);
-        createWeekView();
-        weeklyView = true;
+        createAppointmentView();
+        weeklyView = false;
     }
 
     private void createWeekView() {
-        AbstractTableModel model = new ProviderView(null);
+        AbstractTableModel model = new ProviderView(null, null);
         JTable scheduleTable = new JTable(model);
 
         // set up the table column headings
@@ -115,7 +117,7 @@ public class MainView extends JFrame {
         calendarPanel.removeAll();
         if (weeklyView){
             toggleViewButton.setText("Provider View");
-            createMonthView();
+            createAppointmentView();
         }
         else {
             toggleViewButton.setText("Appointment View");
@@ -128,8 +130,10 @@ public class MainView extends JFrame {
     /**
      * Creates a new monthly view and adds it to the calendar panel
      */
-    private void createMonthView(){
-
+    private void createAppointmentView()
+    {
+        AppointmentView model = new AppointmentView();
+        calendarPanel.add(model.getDayView(), BorderLayout.CENTER);
     }
 
     /**
