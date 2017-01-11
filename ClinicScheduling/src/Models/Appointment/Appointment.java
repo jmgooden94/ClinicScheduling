@@ -70,4 +70,9 @@ public class Appointment {
     public GregorianCalendar getApptEnd(){
         return apptEnd;
     }
+
+    public String displayString()
+    {
+        return patient.toString() + " - " + provider.getName();
+    }
 }

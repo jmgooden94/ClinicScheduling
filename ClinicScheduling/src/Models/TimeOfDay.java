@@ -61,4 +61,20 @@ public class TimeOfDay {
         if (pm) return time + "PM";
         else return time + "AM";
     }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (!(other instanceof TimeOfDay))
+        {
+            return false;
+        }
+        TimeOfDay oth = (TimeOfDay) other;
+
+        return (
+                    oth.getHour() == hour
+                    && oth.getMinute() == minute
+                    && oth.getPM() == pm
+                );
+    }
 }

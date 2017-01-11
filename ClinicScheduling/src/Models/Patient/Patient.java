@@ -34,4 +34,10 @@ public class Patient {
         this.phone = phone;
         this.address = address;
     }
+
+    @Override
+    public String toString()
+    {
+        return firstName + " " + lastName;
+    }
 }

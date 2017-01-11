@@ -132,7 +132,7 @@ public class MainView extends JFrame {
      */
     private void createAppointmentView()
     {
-        AppointmentView model = new AppointmentView();
+        AppointmentView model = new AppointmentView(null);
         calendarPanel.add(model.getDayView(), BorderLayout.CENTER);
     }
 

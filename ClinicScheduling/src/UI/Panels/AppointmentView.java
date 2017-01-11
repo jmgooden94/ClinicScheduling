@@ -34,14 +34,20 @@ public class AppointmentView extends AbstractTableModel{
     /**
      * Number of rows, (end - start) * 4, for a row every 15 minutes
      */
-    // TODO: why do you need to add 1 here to make the last appt display?
+    // TODO: why do you need to add 1 here to make the last appt of the day display?
     private final int ROW_COUNT = (int) (((END_TIME - START_TIME) * 4) + 1);
 
     /**
      * List of all appointment times throughout the
      * day
      */
-    private List<TimeOfDay> list;
+    private List<TimeOfDay> timeList;
+
+    /**
+     * Hash map going from time of day objects to
+     * appointment objects
+     */
+    private Map<TimeOfDay, Appointment> timeMap;
 
     /**
      * Starting column count, can be modified if
@@ -50,9 +56,13 @@ public class AppointmentView extends AbstractTableModel{
     private int columnCount = 2;
 
 
-    public AppointmentView()
+    public AppointmentView(List<Appointment> appointments)
     {
-        list = createTimes();
+        timeList = createTimes();
+        if (appointments != null)
+        {
+            timeMap = createTimeMap(appointments);
+        }
     }
 
     /**
@@ -70,7 +80,7 @@ public class AppointmentView extends AbstractTableModel{
      */
     public List<TimeOfDay> getTimeList()
     {
-        return list;
+        return timeList;
     }
 
     /**
@@ -85,8 +95,14 @@ public class AppointmentView extends AbstractTableModel{
         TimeOfDay tod;
         for (double i = START_TIME; i <= END_TIME; i += APPOINTMENT_LENGTH)
         {
+            // Get the integer part of the number
+            // eg 8.75 will yield 8
             int hour = (int) Math.floor(i);
+            // Get the fraction part, eg 8.75 
+            // will yeild 0.75
             double frac = i - hour;
+            
+            // Convert military time to 12 hour time
             boolean pm = false;
             if (hour >= 12) {
                 pm = true;
@@ -94,11 +110,21 @@ public class AppointmentView extends AbstractTableModel{
                     hour -= 12;
                 }
             }
+            
+            // Convert percentage to minutes, eg.
+            // 0.75 will yeild 45 
             int minute = (int) (frac * 60);
+            
+            // make the time of day and add it to the list
             tod = new TimeOfDay(hour, minute, pm);
             list.add(tod);
         }
         return list;
+    }
+
+    private Map<TimeOfDay, Appointment> createTimeMap(List<Appointment> appointments)
+    {
+        return null;
     }
 
     /**
@@ -162,7 +188,7 @@ public class AppointmentView extends AbstractTableModel{
     {
         if (columnIndex == 0)
         {
-            return list.get(rowIndex).toString();
+            return timeList.get(rowIndex).toString();
         }
         else
         {
