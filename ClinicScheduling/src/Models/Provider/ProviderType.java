@@ -59,4 +59,15 @@ public enum ProviderType {
         }
         return names;
     }
+
+    /**
+     * Gets the ProviderType value from its plain text name
+     * @param name the name to get the value of
+     * @return
+     */
+    public static ProviderType fromName(String name){
+        String key = name.toUpperCase();
+        key = key.replace(' ', '_');
+        return valueOf(key);
+    }
 }

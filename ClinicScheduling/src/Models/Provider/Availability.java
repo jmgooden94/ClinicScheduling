@@ -3,6 +3,7 @@ package Models.Provider;
 import Models.Day;
 import Models.TimeOfDay;
 
+import java.sql.Time;
 import java.util.List;
 
 /**
@@ -51,5 +52,21 @@ public class Availability {
         this.days = days;
         this.start = start;
         this.end = end;
+    }
+
+    public Recurrence getRecurrence(){
+        return recurrence;
+    }
+
+    public TimeOfDay getStart(){
+        return start;
+    }
+
+    public TimeOfDay getEnd(){
+        return end;
+    }
+
+    public List<Day> getDays(){
+        return days;
     }
 }

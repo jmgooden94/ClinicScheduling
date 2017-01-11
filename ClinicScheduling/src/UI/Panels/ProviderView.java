@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class ProviderView extends AbstractTableModel{
     /**
-     * The start hour for the table; 30 minutes before first available appointment time
+     * The start hour for the table; 15 minutes before first available appointment time
      */
     private static int START_HOUR = 9;
     /**
@@ -86,7 +86,7 @@ public class ProviderView extends AbstractTableModel{
 
         TimeOfDay time = toTime(rowIndex);
         if (columnIndex == 0) {
-            return time.toString();   // a time label in the leftmost column
+            return time.to12String();   // a time label in the leftmost column
         }
 
         Day day = Day.toDay(columnIndex);
@@ -117,16 +117,7 @@ public class ProviderView extends AbstractTableModel{
         int hour = START_HOUR + row / 4;
         int minute = 15 * (row % 4);
 
-        // determine AM vs. PM based on 12-hour clock
-        boolean pm = false;
-        if (hour >= 12) {
-            pm = true;
-            if (hour > 12) {
-                hour -= 12;
-            }
-        }
-
-        TimeOfDay time = new TimeOfDay(hour, minute, pm);
+        TimeOfDay time = new TimeOfDay(hour, minute);
         return time;
     }
 }

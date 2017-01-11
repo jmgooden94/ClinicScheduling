@@ -5,7 +5,6 @@ import Models.Provider.Availability;
 import Models.Provider.Recurrence;
 import Models.Provider.WeekOfMonthRecurrence;
 import Models.TimeOfDay;
-import sun.security.provider.ConfigFile;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -29,12 +28,13 @@ public class AddAvailabilityDialog extends JDialog {
     private JSpinner endMinuteSpinner;
     private JSpinner endPMSpinner;
     private JSpinner recurrenceSpinner;
+    private Availability result;
 
     public AddAvailabilityDialog() {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        setSize(400,200);
+        setSize(400,300);
         setLocationRelativeTo(null);
 
         buttonOK.addActionListener(new ActionListener() {
@@ -80,7 +80,18 @@ public class AddAvailabilityDialog extends JDialog {
         SpinnerListModel startPm = new SpinnerListModel(Arrays.asList(pmOps));
         SpinnerListModel endPm = new SpinnerListModel(Arrays.asList(pmOps));
         startPMSpinner.setModel(startPm);
+        JComponent startPMeditor = startPMSpinner.getEditor();
+        if(startPMeditor instanceof JSpinner.DefaultEditor){
+            JSpinner.DefaultEditor pmSpinnerEditor = (JSpinner.DefaultEditor)startPMeditor;
+            pmSpinnerEditor.getTextField().setHorizontalAlignment(JTextField.RIGHT);
+        }
         endPMSpinner.setModel(endPm);
+        startPMSpinner.setModel(startPm);
+        JComponent endPMeditor = endPMSpinner.getEditor();
+        if(startPMeditor instanceof JSpinner.DefaultEditor){
+            JSpinner.DefaultEditor pmSpinnerEditor = (JSpinner.DefaultEditor)endPMeditor;
+            pmSpinnerEditor.getTextField().setHorizontalAlignment(JTextField.RIGHT);
+        }
 
         String[] recurOps = {"0 - Every Week", "1 - First Week", "2 - Second Week", "3 - Third Week", "4 - Fourth Week",
                 "5 - Fifth Week"};
@@ -91,7 +102,7 @@ public class AddAvailabilityDialog extends JDialog {
     }
 
     private void onOK() {
-        int recurOption = (int) recurrenceSpinner.getValue().toString().charAt(0);
+        int recurOption = Integer.parseInt(recurrenceSpinner.getValue().toString().substring(0, 1));
         Recurrence r = new WeekOfMonthRecurrence(recurOption);
 
         List<Day> days = new ArrayList<>();
@@ -101,17 +112,58 @@ public class AddAvailabilityDialog extends JDialog {
         if (thursdayCheckBox.isSelected()){days.add(Day.THURSDAY);}
         if (fridayCheckBox.isSelected()){days.add(Day.FRIDAY);}
 
-        TimeOfDay start = new TimeOfDay((int) startHourSpinner.getValue(), (int) startMinuteSpinner.getValue(),
-                (startPMSpinner.getValue().toString().equals("PM")));
-        TimeOfDay end = new TimeOfDay((int) endHourSpinner.getValue(), (int) endMinuteSpinner.getValue(),
-                (endPMSpinner.getValue().toString().equals("PM")));
+        int startHour = (int) startHourSpinner.getValue();
+        boolean startAM = startPMSpinner.getValue().toString().equals("AM");
+        if(startAM && startHour == 12){
+            startHour = 0;
+        }
+        else if (!startAM) startHour += 12;
+        TimeOfDay start = new TimeOfDay(startHour, (int) startMinuteSpinner.getValue());
+        int endHour = (int) endHourSpinner.getValue();
+        boolean endAM = endPMSpinner.getValue().toString().equals("AM");
+        if(endAM && endHour == 12){
+            endHour = 0;
+        }
+        else if(!endAM) endHour += 12;
+        TimeOfDay end = new TimeOfDay(endHour, (int) endMinuteSpinner.getValue());
 
-        Availability availability = new Availability(r, days, start, end);
-        dispose();
+        if(validateForm(start, end)){
+            result = new Availability(r, days, start, end);
+            dispose();
+        }
     }
 
     private void onCancel() {
         // add your code here if necessary
         dispose();
+    }
+
+    /**
+     * Returns the availability created by the form; null if canceled
+     * @return the availability created by the form; null if canceled
+     */
+    public Availability getResult(){
+        return result;
+    }
+
+    /**
+     * Verifies the form information is valid
+     * @param start the start time from the form
+     * @param end the end time from the form
+     * @return true if valid; else false
+     */
+    private boolean validateForm(TimeOfDay start, TimeOfDay end){
+        if (!mondayCheckBox.isSelected() && !tuesdayCheckBox.isSelected() && !wednesdayCheckBox.isSelected() &&
+                !thursdayCheckBox.isSelected() && !fridayCheckBox.isSelected()){
+            JOptionPane.showMessageDialog(contentPane, "Must select at least one day.", "Missing Day",
+                    JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (end.beforeOrEqual(start)){
+            JOptionPane.showMessageDialog(contentPane, "End time is before or equal to start time.",
+                    "Invalid Times", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
     }
 }

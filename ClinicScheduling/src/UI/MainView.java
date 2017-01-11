@@ -2,10 +2,7 @@
 package UI;
 
 import Models.Day;
-import UI.Dialogs.AddUserDialog;
-import UI.Dialogs.ChangeUserPasswordDialog;
-import UI.Dialogs.DeleteUserDialog;
-import UI.Dialogs.NewApptDialog;
+import UI.Dialogs.*;
 import UI.Panels.ProviderView;
 import Utils.MySqlUtils;
 import Utils.UserRole;
@@ -60,6 +57,13 @@ public class MainView extends JFrame {
         newApptButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onNewAppt();
+            }
+        });
+
+        newProvButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AddProviderDialog();
             }
         });
 

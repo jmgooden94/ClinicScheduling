@@ -75,7 +75,7 @@ public enum State {
 
     public static State fromName(String name){
         String key = name.toUpperCase();
-        key.replace(' ', '_');
+        key = key.replace(' ', '_');
         return valueOf(key);
     }
 }
