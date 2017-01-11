@@ -21,6 +21,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class MainView extends JFrame {
 
@@ -69,12 +72,21 @@ public class MainView extends JFrame {
         setLayout(null);
         setContentPane(contentPane);
         setVisible(true);
-        createWeekView();
-        weeklyView = true;
+        createMonthView();
+        weeklyView = false;
     }
 
-    private void createWeekView() {
-        AbstractTableModel model = new ProviderView(null);
+    private void createProviderView(GregorianCalendar date) {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+
+        date.set(Calendar.DAY_OF_WEEK, 2);
+
+        GregorianCalendar endDate = new GregorianCalendar();
+        endDate.setTime(date.getTime());
+        endDate.set(Calendar.DAY_OF_WEEK, 6);
+        dateLabel.setText(dateFormatter.format(date.getTime()) + " - " + dateFormatter.format(endDate.getTime()));
+
+        AbstractTableModel model = new ProviderView(null, date);
         JTable scheduleTable = new JTable(model);
 
         // set up the table column headings
@@ -109,7 +121,7 @@ public class MainView extends JFrame {
     }
 
     /**
-     * Toggles between weekly and monthly views
+     * Toggles between provider and monthly views
      */
     private void onToggle(){
         calendarPanel.removeAll();
@@ -119,7 +131,7 @@ public class MainView extends JFrame {
         }
         else {
             toggleViewButton.setText("Appointment View");
-            createWeekView();
+            createProviderView(new GregorianCalendar());
         }
         calendarPanel.updateUI();
         weeklyView = !weeklyView;

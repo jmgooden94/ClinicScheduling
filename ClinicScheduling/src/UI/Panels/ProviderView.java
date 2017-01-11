@@ -4,7 +4,6 @@ package UI.Panels;
 import Models.Appointment.Appointment;
 import Models.Day;
 import Models.TimeOfDay;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.GregorianCalendar;
@@ -36,22 +35,13 @@ public class ProviderView extends AbstractTableModel{
     private GregorianCalendar startDate;
 
     /**
-     * Constructs a new weekView and populates it with the appointments in appointments
-     * @param appointments a list of appointments to populate the view with
+     * Constructs a new ProviderView showing the given date
+     * @param appointments the appointment list
+     * @param startDate the date to include
      */
     public ProviderView(List<Appointment> appointments, GregorianCalendar startDate){
         this.appointments = appointments;
-    }
-
-    /**
-     * Constructs a new ProviderView showing the given date
-     * @param appointments the appointment list
-     * @param date the date to include
-     */
-    public ProviderView(List<Appointment> appointments, GregorianCalendar date){
-        this.appointments = appointments;
-        throw new NotImplementedException();
-        //TODO
+        this.startDate = startDate;
     }
 
     /**
