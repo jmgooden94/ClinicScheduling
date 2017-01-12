@@ -40,10 +40,9 @@ public class ProviderView extends AbstractTableModel{
      * @param appointments the appointment list
      * @param date the date to include
      */
-    public ProviderView(List<Appointment> appointments, GregorianCalendar date){
+    public ProviderView(List<Appointment> appointments, GregorianCalendar startDate){
         this.appointments = appointments;
-        //throw new NotImplementedException();
-        //TODO
+        this.startDate = startDate;
     }
 
     /**

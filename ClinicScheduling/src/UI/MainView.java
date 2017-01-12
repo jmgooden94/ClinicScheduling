@@ -3,10 +3,7 @@ package UI;
 
 import Models.Appointment.Appointment;
 import Models.Day;
-import UI.Dialogs.AddUserDialog;
-import UI.Dialogs.ChangeUserPasswordDialog;
-import UI.Dialogs.DeleteUserDialog;
-import UI.Dialogs.NewApptDialog;
+import UI.Dialogs.*;
 import UI.Panels.AppointmentView;
 import UI.Panels.ProviderView;
 import Utils.MySqlUtils;
