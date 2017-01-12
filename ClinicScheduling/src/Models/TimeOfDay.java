@@ -87,11 +87,11 @@ public class TimeOfDay {
      * @return true if this time is before given time t; else false
      */
     public boolean before(TimeOfDay t){
-        if(this.hour < t.hour){
+        if(this.hour < t.getHour()){
             return true;
         }
-        else if (this.hour == t.hour){
-            if(this.minute < t.minute){
+        else if (this.hour == t.getHour()){
+            if(this.minute < t.getMinute()){
                 return true;
             }
         }
@@ -104,16 +104,54 @@ public class TimeOfDay {
      * @return true if this time is before given time t; else false
      */
     public boolean beforeOrEqual(TimeOfDay t){
-        if(this.hour < t.hour){
+        if(this.hour < t.getHour()){
             return true;
         }
-        else if (this.hour == t.hour){
-            if(this.minute <= t.minute){
+        else if (this.hour == t.getHour()){
+            if(this.minute <= t.getMinute()){
                 return true;
             }
         }
         return false;
     }
+
+    /**
+     * Check if this time is after the given time
+     * @param t the time to compare
+     * @return true if this time is after the given time; else false
+     */
+    public boolean after(TimeOfDay t)
+    {
+        if (this.hour > t.getHour())
+        {
+            return true;
+        }
+        else if (this.hour == t.getHour())
+        {
+            if (this.minute > t.getMinute())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean afterOrEqual(TimeOfDay t)
+    {
+        if (this.hour > t.getHour())
+        {
+            return true;
+        }
+        else if (this.hour == t.getHour())
+        {
+            if (this.minute >= t.getMinute())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     @Override
     public boolean equals(Object other)

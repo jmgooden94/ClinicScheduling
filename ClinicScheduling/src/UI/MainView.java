@@ -161,18 +161,22 @@ public class MainView extends JFrame {
         Appointment a = new Appointment(null, null, "Fuck you",
                 new GregorianCalendar(2016, 1, 11, 10, 30),
                 new GregorianCalendar(2016, 1, 11, 11, 0));
+        a.setTest(1);
         list.add(a);
         Appointment b = new Appointment(null, null, "Double fuck you",
                 new GregorianCalendar(2016, 1, 11, 9, 30),
-                new GregorianCalendar(2016, 1, 11, 10, 0));
+                new GregorianCalendar(2016, 1, 11, 9, 45));
+        b.setTest(2);
         list.add(b);
         Appointment c = new Appointment(null, null, "Triple fuck you",
                 new GregorianCalendar(2016, 1, 11, 9, 30),
                 new GregorianCalendar(2016, 1, 11, 9, 45));
+        c.setTest(3);
         list.add(c);
         Appointment d = new Appointment(null, null, "Triple fuck you",
                 new GregorianCalendar(2016, 1, 11, 9, 45),
                 new GregorianCalendar(2016, 1, 11, 10, 30));
+        d.setTest(4);
         list.add(d);
         return list;
     }

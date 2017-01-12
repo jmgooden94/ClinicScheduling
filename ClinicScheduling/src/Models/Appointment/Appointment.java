@@ -6,6 +6,9 @@ import Models.TimeOfDay;
 
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
+import java.util.Calendar;
+import java.util.concurrent.ThreadLocalRandom;
+
 
 /**
  * Stores an appointment
@@ -36,9 +39,17 @@ public class Appointment {
      */
     private GregorianCalendar apptEnd;
 
-    private TimeOfDay startTime;
+    /**
+     * Start of appointment, but only time, not a date too
+     */
+    private final TimeOfDay startTime;
 
-    private TimeOfDay endTime;
+    /**
+     * End of appointment, but only time, not a date too
+     */
+    private final TimeOfDay endTime;
+
+    public int test = -1;
 
     /**
      * Constructs a new appointment
@@ -56,6 +67,11 @@ public class Appointment {
         this.reason = reason;
         this.apptStart = apptStart;
         this.apptEnd = apptEnd;
+
+        this.startTime = new TimeOfDay(this.apptStart.get(Calendar.HOUR_OF_DAY),
+                                        this.apptStart.get(Calendar.MINUTE));
+        this.endTime = new TimeOfDay(this.apptEnd.get(Calendar.HOUR_OF_DAY),
+                                        this.apptEnd.get(Calendar.MINUTE));
     }
 
     public Patient getPatient(){
@@ -78,6 +94,26 @@ public class Appointment {
         return apptEnd;
     }
 
+    public TimeOfDay getStartTime()
+    {
+        return startTime;
+    }
+
+    public TimeOfDay getEndTime()
+    {
+        return endTime;
+    }
+
+    public void setTest(int i)
+    {
+        this.test = i;
+    }
+
+    public boolean during(TimeOfDay t)
+    {
+        return this.startTime.beforeOrEqual(t) && this.endTime.after(t);
+    }
+
     public String testMethod()
     {
         SimpleDateFormat f = new SimpleDateFormat("MM-dd-yyyy HH:mm");
@@ -89,5 +125,10 @@ public class Appointment {
     public String displayString()
     {
         return patient.toString() + " - " + provider.getName();
+    }
+
+    public String testDisplay()
+    {
+        return "Test " + this.test + " - Dr. Test";
     }
 }

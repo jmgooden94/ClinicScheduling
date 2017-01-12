@@ -49,6 +49,8 @@ public class AppointmentView extends AbstractTableModel{
      */
     private List<ArrayList<Appointment>> appointments;
 
+    private Object[][] objArray;
+
     /**
      * Starting column count, can be modified if
      * appointments overlap
@@ -73,16 +75,18 @@ public class AppointmentView extends AbstractTableModel{
 //            }
 
             organizeAppointments();
-//
-//            System.out.println("ORGANIZED\n");
-//            for (int i = 0; i < this.appointments.size(); i++)
-//            {
-//                for (int j = 0; j < this.appointments.get(i).size(); j++)
-//                {
-//                    System.out.println(this.appointments.get(i).get(j).testMethod());
-//                }
-//                System.out.println("=-=-=-=-=-");
-//            }
+            this.objArray = buildTableObject();
+            System.out.println(this.objArray == null);
+
+            System.out.println("ORGANIZED\n");
+            for (int i = 0; i < this.appointments.size(); i++)
+            {
+                for (int j = 0; j < this.appointments.get(i).size(); j++)
+                {
+                    System.out.println(this.appointments.get(i).get(j).testMethod() + " " + this.appointments.get(i).get(j).test);
+                }
+                System.out.println("=-=-=-=-=-");
+            }
         }
     }
 
@@ -204,7 +208,7 @@ public class AppointmentView extends AbstractTableModel{
                 // If the end time of the first appointment is
                 // earlier than the start time of the next appointment,
                 // then they overlap
-                if (b.getApptStart().compareTo(a.getApptEnd()) <= 0)
+                if (b.getApptStart().compareTo(a.getApptEnd()) < 0)
                 {
                     // Remove b from the array list and catch it
                     b = this.appointments.get(outer).remove(i + 1);
@@ -239,9 +243,29 @@ public class AppointmentView extends AbstractTableModel{
 
     private Object[][] buildTableObject()
     {
+        int x = 1;
         Object[][] obj = new Object[this.columnCount][this.ROW_COUNT];
+        int apt_size = this.appointments.size();
+        int time_size = this.timeList.size();
+        for (int col = 0; col < apt_size; col++)
+        {
+            int col_size = this.appointments.get(col).size();
+            TimeOfDay t;
+            for (int i = 0; i < time_size; i++)
+            {
+                t = this.timeList.get(i);
+                for (int j = 0; j < col_size; j++)
+                {
+                    Appointment a = this.appointments.get(col).get(j);
 
-        return null;
+                    if (a.during(t))
+                    {
+                        obj[col + 1][i] = a.testDisplay();
+                    }
+                }
+            }
+        }
+        return obj;
     }
 
     /**
@@ -285,11 +309,11 @@ public class AppointmentView extends AbstractTableModel{
     {
         if (columnIndex == 0)
         {
-            return timeList.get(rowIndex).toString();
+            return timeList.get(rowIndex).to12String();
         }
         else
         {
-            return null;
+            return this.objArray[columnIndex][rowIndex];
         }
     }
 }
