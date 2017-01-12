@@ -93,6 +93,7 @@ CREATE TABLE IF NOT EXISTS `clinic`.`Availability` (
   `start_time` TIME NOT NULL,
   `end_time` TIME NOT NULL,
   `provider_fk` INT(11) NOT NULL,
+  `day_list_stringify TEXT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `provider_fk_idx` (`provider_fk` ASC),
   CONSTRAINT `provider_fk`

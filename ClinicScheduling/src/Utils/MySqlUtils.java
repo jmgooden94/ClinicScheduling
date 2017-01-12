@@ -1,12 +1,18 @@
 package Utils;
 
 import Models.Appointment.Appointment;
+import Models.Provider.Availability;
+import Models.Provider.Provider;
+import Models.Provider.Recurrence;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.simple.*;
+
 import javax.swing.*;
+import javax.xml.transform.Result;
 
 public class MySqlUtils {
 
@@ -61,7 +67,7 @@ public class MySqlUtils {
         if (role == null){
             JOptionPane.showMessageDialog(new JFrame(),"User's role not found. Assuming user is not admin." +
                     "Verify that user has been added to database correctly.",
-                    "Role Warning", JOptionPane.WARNING_MESSAGE);
+                    "Role Not Found", JOptionPane.WARNING_MESSAGE);
             role = UserRole.USER;
         }
         return role;
@@ -190,5 +196,74 @@ public class MySqlUtils {
      */
     public static void addAppointment(Appointment appointment){
         //TODO: this
+    }
+
+    /**
+     * Adds the provider to the database
+     * @param provider the provider to add
+     * @throws SQLException
+     */
+    public static void addProvider(Provider provider) throws SQLException{
+        PreparedStatement ps;
+
+        // Insert provider and get id to be used as key for availability
+        String sql = "INSERT INTO clinic.provider(first_name, last_name, provider_type) values (?, ?, ?)";
+        ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+        ps.setString(1, provider.getFirstName());
+        ps.setString(2, provider.getLastName());
+        ps.setString(3, provider.getProviderType().toString());
+        int rows = ps.executeUpdate();
+        if (rows == 0){
+            throw new SQLException("Failed inserting provider.");
+        }
+        int provider_id;
+        ResultSet rs = ps.getGeneratedKeys();
+        if(rs.next()){
+            provider_id = rs.getInt(1);
+        }
+        else {
+            throw new SQLException("Failed getting key after inserting provider.");
+        }
+
+        // For each availability, insert it, get its key to be used for recurrence, then insert its recurrence
+        List<Availability> availabilityList = provider.getAvailability();
+        Recurrence r;
+        String sql2 = "INSERT INTO clinic.availability(start_time, end_time, day_list_stringify, provider_fk) values(?, ?, ?, ?)";
+        String sql3 = "INSERT INTO clinic.recurrence(stringify, availability_fk) values(?,?)";
+        String jsonString;
+        for (Availability availability : availabilityList){
+
+            // Insert availability and get key
+            ps = connection.prepareStatement(sql2, PreparedStatement.RETURN_GENERATED_KEYS);
+            ps.setTime(1, availability.getStart().toSqlTime());
+            ps.setTime(2, availability.getEnd().toSqlTime());
+            jsonString = JSONValue.toJSONString(availability.getDays());
+            ps.setString(3, jsonString);
+            ps.setInt(4, provider_id);
+            rows = ps.executeUpdate();
+            if (rows == 0){
+                throw new SQLException("Failed inserting availability.");
+            }
+            rs = ps.getGeneratedKeys();
+            int availability_id = -1;
+            if(rs.next()){
+                availability_id = rs.getInt(1);
+            }
+            else {
+                throw new SQLException("Failed getting key after inserting availability.");
+            }
+            // Insert recurrence
+            r = availability.getRecurrence();
+            ps = connection.prepareStatement(sql3, PreparedStatement.RETURN_GENERATED_KEYS);
+            jsonString = JSONValue.toJSONString(r);
+            ps.setString(1, jsonString);
+            rs = ps.getGeneratedKeys();
+            ps.setInt(2, availability_id);
+            rows = ps.executeUpdate();
+            if (rows == 0){
+                throw new SQLException("Failed inserting recurrence.");
+            }
+            connection.commit();
+        }
     }
 }

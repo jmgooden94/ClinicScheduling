@@ -93,10 +93,10 @@ public class NewApptDialog extends JDialog {
             int day = jDatePicker.getModel().getDay();
             int startHour = (int) startHourBox.getValue();
             int endHour = (int) endHourBox.getValue();
-            if (startPMBox.getValue() == "PM") {
+            if (startPMBox.getValue().toString().equals("PM")) {
                 startHour += 11;
             }
-            if (endPMBox.getValue() == "PM") {
+            if (endPMBox.getValue().toString().equals("PM")) {
                 endHour += 11;
             }
             GregorianCalendar start = new GregorianCalendar(year, month, day, startHour, (int) startMinuteBox.getValue());
@@ -153,10 +153,10 @@ public class NewApptDialog extends JDialog {
         SpinnerNumberModel endHours = new SpinnerNumberModel(1, 1, 12, 1);
         endHourBox.setModel(endHours);
 
-        SpinnerNumberModel startMinutes = new SpinnerNumberModel(0, 0, 59, 5);
+        SpinnerNumberModel startMinutes = new SpinnerNumberModel(0, 0, 59, 15);
         startMinuteBox.setModel(startMinutes);
         startMinuteBox.setEditor(new JSpinner.NumberEditor(startMinuteBox, "00"));
-        SpinnerNumberModel endMinutes = new SpinnerNumberModel(0, 0, 59, 5);
+        SpinnerNumberModel endMinutes = new SpinnerNumberModel(0, 0, 59, 15);
         endMinuteBox.setModel(endMinutes);
         endMinuteBox.setEditor(new JSpinner.NumberEditor(endMinuteBox, "00"));
 
@@ -183,7 +183,7 @@ public class NewApptDialog extends JDialog {
         JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
         jDatePicker = new JDatePickerImpl(datePanel, new JFormattedTextField.AbstractFormatter() {
 
-            private SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
 
             @Override
             public Object stringToValue(String text) throws ParseException {

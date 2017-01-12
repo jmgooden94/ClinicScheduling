@@ -1,5 +1,8 @@
 package Models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by jmgoo on 12/28/2016.
  */
@@ -74,5 +77,29 @@ public enum Day {
         } else {
             return Day.values()[index];
         }
+    }
+
+    /**
+     * Returns a list containing the names of all days
+     * @return the list
+     */
+    public static List<String> getDays(){
+        List<String> days = new ArrayList<>();
+        for (Day d : Day.values()){
+            days.add(d.getName());
+        }
+        return days;
+    }
+
+    /**
+     * Returns a list containing the names of all weekdays
+     * @return the list
+     */
+    public static List<String> getWeekdays(){
+        List<String> days = new ArrayList<>();
+        for (int i = 1; i < 6; i++){
+            days.add(Day.values()[i].getName());
+        }
+        return days;
     }
 }

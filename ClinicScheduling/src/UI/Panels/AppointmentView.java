@@ -67,13 +67,13 @@ public class AppointmentView extends AbstractTableModel{
 
             this.appointments.get(0).sort(Comparator.comparing(Appointment::getApptStart));
 
-            for (int i = 0; i < this.appointments.get(0).size(); i++)
-            {
-                System.out.println(this.appointments.get(0).get(i).testMethod());
-            }
+//            for (int i = 0; i < this.appointments.get(0).size(); i++)
+//            {
+//                System.out.println(this.appointments.get(0).get(i).testMethod());
+//            }
 
             organizeAppointments();
-
+//
 //            System.out.println("ORGANIZED\n");
 //            for (int i = 0; i < this.appointments.size(); i++)
 //            {
@@ -123,21 +123,12 @@ public class AppointmentView extends AbstractTableModel{
             // will yeild 0.75
             double frac = i - hour;
             
-            // Convert military time to 12 hour time
-            boolean pm = false;
-            if (hour >= 12) {
-                pm = true;
-                if (hour > 12) {
-                    hour -= 12;
-                }
-            }
-            
             // Convert percentage to minutes, eg.
             // 0.75 will yeild 45 
             int minute = (int) (frac * 60);
             
             // make the time of day and add it to the list
-            tod = new TimeOfDay(hour, minute, pm);
+            tod = new TimeOfDay(hour, minute);
             list.add(tod);
         }
         return list;
