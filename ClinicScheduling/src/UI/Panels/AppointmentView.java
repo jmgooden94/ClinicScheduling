@@ -6,7 +6,6 @@ import Models.Appointment.Appointment;
 import Models.TimeOfDay;
 
 import java.awt.*;
-import java.sql.Time;
 import java.util.*;
 import java.util.List;
 
@@ -38,16 +37,17 @@ public class AppointmentView extends AbstractTableModel{
     private final int ROW_COUNT = (int) (((END_TIME - START_TIME) * 4) + 1);
 
     /**
-     * List of all appointment times throughout the
+     * List of all possible appointment times throughout the
      * day
      */
     private List<TimeOfDay> timeList;
 
     /**
-     * Hash map going from time of day objects to
-     * appointment objects
+     * A list of lists representing all appointments organized
+     * in their proper columns. Each top level list is a column
+     * with no overlapping appointments.
      */
-    private Map<TimeOfDay, Appointment> timeMap;
+    private List<ArrayList<Appointment>> appointments;
 
     /**
      * Starting column count, can be modified if
@@ -61,7 +61,28 @@ public class AppointmentView extends AbstractTableModel{
         timeList = createTimes();
         if (appointments != null)
         {
-            timeMap = createTimeMap(appointments);
+            this.appointments = new ArrayList<ArrayList<Appointment>>();
+            this.appointments.add(new ArrayList<Appointment>());
+            this.appointments.get(0).addAll(appointments);
+
+            this.appointments.get(0).sort(Comparator.comparing(Appointment::getApptStart));
+
+            for (int i = 0; i < this.appointments.get(0).size(); i++)
+            {
+                System.out.println(this.appointments.get(0).get(i).testMethod());
+            }
+
+            organizeAppointments();
+
+//            System.out.println("ORGANIZED\n");
+//            for (int i = 0; i < this.appointments.size(); i++)
+//            {
+//                for (int j = 0; j < this.appointments.get(i).size(); j++)
+//                {
+//                    System.out.println(this.appointments.get(i).get(j).testMethod());
+//                }
+//                System.out.println("=-=-=-=-=-");
+//            }
         }
     }
 
@@ -122,11 +143,6 @@ public class AppointmentView extends AbstractTableModel{
         return list;
     }
 
-    private Map<TimeOfDay, Appointment> createTimeMap(List<Appointment> appointments)
-    {
-        return null;
-    }
-
     /**
      * Creates the JTable for rendering in the MainView,
      * so the main method is super clean
@@ -145,6 +161,96 @@ public class AppointmentView extends AbstractTableModel{
         table.getColumnModel().getColumn(0).setMaxWidth(75);
 
         return table;
+    }
+
+    /**
+     * Orangizes the appointments in the list so that overlapping
+     * appointments get moved to the next column.
+     *
+     * If the list when
+     *      A
+     *      B
+     *      C
+     * And A and B overlapped in time, then after this method it would be
+     *      A   C
+     *      B
+     * Where C is now in it's own list.
+     *
+     * It also sets the number of columns that are going to be
+     * needed in the table
+     */
+    private void organizeAppointments()
+    {
+        int outer = 0;
+
+        // Loop through the top level lists, which
+        // correspond to columns
+        while (outer < this.appointments.size())
+        {
+            // If there's only 1 thing in this list then we're
+            // done here
+            if (this.appointments.get(outer).size() <= 1)
+            {
+                break;
+            }
+
+            Appointment a;
+            Appointment b;
+
+            int i = 0;
+
+            // Loop through the items in the column, moving them to the next column
+            // as necessary
+            while (i < this.appointments.get(outer).size() - 1)
+            {
+                a = this.appointments.get(outer).get(i);
+                b = this.appointments.get(outer).get(i + 1);
+
+                // A flag to make sure that if two appointments after both
+                // overlap a, then they both get moved.
+                boolean moved = false;
+
+                // If the end time of the first appointment is
+                // earlier than the start time of the next appointment,
+                // then they overlap
+                if (b.getApptStart().compareTo(a.getApptEnd()) <= 0)
+                {
+                    // Remove b from the array list and catch it
+                    b = this.appointments.get(outer).remove(i + 1);
+
+                    // If there isn't a list after this to put b in
+                    // create one
+                    if (outer == this.appointments.size() - 1)
+                    {
+                        this.appointments.add(new ArrayList<Appointment>());
+                    }
+                    // Add b to the end of the list
+                    this.appointments.get(outer + 1).add(b);
+
+                    moved = true;
+                }
+                // Only increment if nothing moved.
+                if (!moved)
+                {
+                    i++;
+                }
+            }
+
+            outer++;
+        }
+
+        // After you're done looping, you now know how many
+        // columns the table will need, set it now.
+        //
+        // Adding 1 is for the time column
+        this.columnCount = this.appointments.size() + 1;
+    }
+
+    private Object[][] buildTableObject()
+    {
+        Object[][] obj = new Object[this.columnCount][this.ROW_COUNT];
+
+        return null;
     }
 
     /**

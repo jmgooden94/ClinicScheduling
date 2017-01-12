@@ -23,6 +23,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 public class MainView extends JFrame {
 
@@ -132,8 +135,31 @@ public class MainView extends JFrame {
      */
     private void createAppointmentView()
     {
-        AppointmentView model = new AppointmentView(null);
+        List<Appointment> l = createBullshitAppointments();
+        AppointmentView model = new AppointmentView(l);
         calendarPanel.add(model.getDayView(), BorderLayout.CENTER);
+    }
+
+    private List<Appointment> createBullshitAppointments()
+    {
+        List<Appointment> list = new ArrayList<>();
+        Appointment a = new Appointment(null, null, "Fuck you",
+                new GregorianCalendar(2016, 1, 11, 10, 30),
+                new GregorianCalendar(2016, 1, 11, 11, 0));
+        list.add(a);
+        Appointment b = new Appointment(null, null, "Double fuck you",
+                new GregorianCalendar(2016, 1, 11, 9, 30),
+                new GregorianCalendar(2016, 1, 11, 10, 0));
+        list.add(b);
+        Appointment c = new Appointment(null, null, "Triple fuck you",
+                new GregorianCalendar(2016, 1, 11, 9, 30),
+                new GregorianCalendar(2016, 1, 11, 9, 45));
+        list.add(c);
+        Appointment d = new Appointment(null, null, "Triple fuck you",
+                new GregorianCalendar(2016, 1, 11, 9, 45),
+                new GregorianCalendar(2016, 1, 11, 10, 30));
+        list.add(d);
+        return list;
     }
 
     /**

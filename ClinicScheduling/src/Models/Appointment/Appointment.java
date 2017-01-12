@@ -2,6 +2,9 @@ package Models.Appointment;
 
 import Models.Patient.Patient;
 import Models.Provider.Provider;
+import Models.TimeOfDay;
+
+import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 
 /**
@@ -32,6 +35,10 @@ public class Appointment {
      * The end of the appointment
      */
     private GregorianCalendar apptEnd;
+
+    private TimeOfDay startTime;
+
+    private TimeOfDay endTime;
 
     /**
      * Constructs a new appointment
@@ -69,6 +76,14 @@ public class Appointment {
 
     public GregorianCalendar getApptEnd(){
         return apptEnd;
+    }
+
+    public String testMethod()
+    {
+        SimpleDateFormat f = new SimpleDateFormat("MM-dd-yyyy HH:mm");
+        String s = f.format(this.apptStart.getTime());
+        String e = f.format(this.apptEnd.getTime());
+        return s + " - " + e;
     }
 
     public String displayString()
