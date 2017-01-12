@@ -49,12 +49,10 @@ public class LoginDialog extends JDialog {
 
     private void onOK() {
         //TODO: uncomment this to not bypass login
-        //String un = usernameBox.getText().trim();
-        //char[] plain = passwordBox.getPassword();
-        //String plainString = new String(plain);
-        //boolean success = MySqlUtils.openConnection(un, plainString);
-        String un = "clinic_admin";
-        boolean success = MySqlUtils.openConnection(un, "SomethingRobust!");
+        String un = usernameBox.getText().trim();
+        char[] plain = passwordBox.getPassword();
+        String plainString = new String(plain);
+        boolean success = MySqlUtils.openConnection(un, plainString);
         if(success){
             UserRole role = null;
             try {

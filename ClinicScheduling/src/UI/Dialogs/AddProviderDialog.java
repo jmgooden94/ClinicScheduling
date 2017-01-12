@@ -4,8 +4,6 @@ import Models.Provider.Availability;
 import Models.Provider.Provider;
 import Models.Provider.ProviderType;
 import Utils.MySqlUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
@@ -90,7 +88,7 @@ public class AddProviderDialog extends JDialog {
             try{
                 MySqlUtils.addProvider(p);
             }
-            catch (SQLException | JsonProcessingException ex){
+            catch (SQLException ex){
                 showError(ex);
             }
             dispose();
