@@ -1,19 +1,18 @@
 package Utils;
 
 import Models.Appointment.Appointment;
+import Models.Day;
 import Models.Provider.Availability;
 import Models.Provider.Provider;
 import Models.Provider.Recurrence;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.json.simple.*;
-
 import javax.swing.*;
-import javax.xml.transform.Result;
-
 public class MySqlUtils {
 
     private static final String URL = "jdbc:mysql://localhost/clinic";
@@ -203,7 +202,7 @@ public class MySqlUtils {
      * @param provider the provider to add
      * @throws SQLException
      */
-    public static void addProvider(Provider provider) throws SQLException{
+    public static void addProvider(Provider provider) throws SQLException {
         PreparedStatement ps;
 
         // Insert provider and get id to be used as key for availability
@@ -230,15 +229,24 @@ public class MySqlUtils {
         Recurrence r;
         String sql2 = "INSERT INTO clinic.availability(start_time, end_time, day_list_stringify, provider_fk) values(?, ?, ?, ?)";
         String sql3 = "INSERT INTO clinic.recurrence(stringify, availability_fk) values(?,?)";
-        String jsonString;
+        JSONObject jsonObject;
+        JSONArray jsonArray;
         for (Availability availability : availabilityList){
 
             // Insert availability and get key
             ps = connection.prepareStatement(sql2, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setTime(1, availability.getStart().toSqlTime());
             ps.setTime(2, availability.getEnd().toSqlTime());
-            jsonString = JSONValue.toJSONString(availability.getDays());
-            ps.setString(3, jsonString);
+
+            // Serialize days from availability
+            JSONObject jsObj = new JSONObject();
+            JSONArray days = new JSONArray();
+            for (Day d : availability.getDays()){
+                days.add(days.toString());
+            }
+            jsObj.put("days", days);
+
+            ps.setString(3, jsObj.toJSONString());
             ps.setInt(4, provider_id);
             rows = ps.executeUpdate();
             if (rows == 0){
@@ -254,10 +262,9 @@ public class MySqlUtils {
             }
             // Insert recurrence
             r = availability.getRecurrence();
-            ps = connection.prepareStatement(sql3, PreparedStatement.RETURN_GENERATED_KEYS);
-            jsonString = JSONValue.toJSONString(r);
-            ps.setString(1, jsonString);
-            rs = ps.getGeneratedKeys();
+            ps = connection.prepareStatement(sql3);
+
+            ps.setString(1, r.toJSONString());
             ps.setInt(2, availability_id);
             rows = ps.executeUpdate();
             if (rows == 0){
@@ -265,5 +272,25 @@ public class MySqlUtils {
             }
             connection.commit();
         }
+    }
+
+    /**
+     * Gets the list of providers and their availabilities from the database
+     * @return the list of providers
+     */
+    public static List<Provider> getProviders() throws SQLException, IOException{
+        List<Provider> providersList = new ArrayList<>();
+
+        Statement statement = connection.createStatement();
+        ResultSet recurrences = statement.executeQuery("SELECT * FROM clinic.recurrence");
+        ResultSet availabilities = statement.executeQuery("SELECT * FROM clinic.availability");
+        ResultSet providers = statement.executeQuery("SELECT * FROM clinic.provider");
+
+        while(recurrences.next()){
+            // TODO: finish mapping recurrences to availabilities and availabilities to providers
+            String json = recurrences.getString(1);
+            Recurrence rec = Recurrence.fromJSONString(json);
+        }
+        return providersList;
     }
 }

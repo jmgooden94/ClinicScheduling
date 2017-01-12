@@ -3,6 +3,7 @@ package UI.Dialogs;
 import Models.Appointment.Appointment;
 import Models.Patient.*;
 import Models.State;
+import Models.TimeOfDay;
 import Utils.MySqlUtils;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -36,7 +37,7 @@ public class NewApptDialog extends JDialog {
     private JSpinner endMinuteBox;
     private JSpinner endPMBox;
     private JSpinner providerSpinner;
-    private JSpinner providerTypeSpinner;
+    private JSpinner apptTypeSpinner;
     private JDatePickerImpl jDatePicker;
 
     /**
@@ -83,7 +84,23 @@ public class NewApptDialog extends JDialog {
      * Event handler for OK; records data in form and stores
      */
     private void onOK() {
-        if (validateForm()){
+
+        int startHour = (int) startHourBox.getValue();
+        boolean startAM = startPMBox.getValue().toString().equals("AM");
+        if(startAM && startHour == 12){
+            startHour = 0;
+        }
+        else if (!startAM) startHour += 12;
+        TimeOfDay startTime = new TimeOfDay(startHour, (int) startMinuteBox.getValue());
+        int endHour = (int) endHourBox.getValue();
+        boolean endAM = endPMBox.getValue().toString().equals("AM");
+        if(endAM && endHour == 12){
+            endHour = 0;
+        }
+        else if(!endAM) endHour += 12;
+        TimeOfDay endTime = new TimeOfDay(endHour, (int) endMinuteBox.getValue());
+
+        if (validateForm(startTime, endTime)){
             Address patientAddress = new Address(streetBox.getText(), cityBox.getText(),
                     State.fromName((String) stateSpinner.getValue()), zipBox.getValue().toString());
             Patient newPatient = new Patient(firstNameBox.getText(), lastNameBox.getText(),
@@ -91,24 +108,13 @@ public class NewApptDialog extends JDialog {
             int year = jDatePicker.getModel().getYear();
             int month = jDatePicker.getModel().getMonth();
             int day = jDatePicker.getModel().getDay();
-            int startHour = (int) startHourBox.getValue();
-            int endHour = (int) endHourBox.getValue();
-            if (startPMBox.getValue().toString().equals("PM")) {
-                startHour += 11;
-            }
-            if (endPMBox.getValue().toString().equals("PM")) {
-                endHour += 11;
-            }
+
             GregorianCalendar start = new GregorianCalendar(year, month, day, startHour, (int) startMinuteBox.getValue());
             GregorianCalendar end = new GregorianCalendar(year, month, day, endHour, (int) endMinuteBox.getValue());
             //TODO: get provider from list of providers and replace null with provider
             Appointment newAppt = new Appointment(newPatient, null, reasonBox.getText(), start, end);
             MySqlUtils.addAppointment(newAppt);
             dispose();
-        }
-        else{
-            JOptionPane.showMessageDialog(contentPane, "Missing or incorrect form information. " +
-                    "Please verify all fields are filled completely.");
         }
     }
 
@@ -168,7 +174,7 @@ public class NewApptDialog extends JDialog {
 
         // Populates the provider types spinner
         SpinnerListModel provTypes = new SpinnerListModel(Models.Provider.ProviderType.getNames());
-        providerTypeSpinner.setModel(provTypes);
+        apptTypeSpinner.setModel(provTypes);
     }
 
     /**
@@ -224,12 +230,22 @@ public class NewApptDialog extends JDialog {
 
     /**
      * Validates the new appointment dialog form
+     * @param start the start time of the appt
+     * @param end the end time of the appt
      * @return true if input is valid; else false
      */
-    private boolean validateForm(){
+    private boolean validateForm(TimeOfDay start, TimeOfDay end){
         if(firstNameBox.getText() == "" || lastNameBox.getText() == "" || streetBox.getText() == "" ||
                 cityBox.getText() == "" || zipBox.getValue() == null || phoneBox.getValue() == null
                 ){
+                JOptionPane.showMessageDialog(contentPane, "Missing or incorrect form information. " +
+                        "Please verify all fields are filled completely.", "Missing Fields",
+                        JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if(end.beforeOrEqual(start)){
+            JOptionPane.showMessageDialog(contentPane, "End time is before or equal to start time.",
+                    "Invalid Times", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         return true;
