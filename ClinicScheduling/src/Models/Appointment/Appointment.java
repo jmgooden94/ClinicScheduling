@@ -3,7 +3,9 @@ package Models.Appointment;
 import Models.Patient.Patient;
 import Models.Provider.Provider;
 import Models.TimeOfDay;
+import UI.Panels.AppointmentView;
 
+import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Calendar;
@@ -48,6 +50,12 @@ public class Appointment {
      * End of appointment, but only time, not a date too
      */
     private final TimeOfDay endTime;
+
+    /**
+     * The color the cells corresponding to this appointment
+     * are to be rendered.
+     */
+    private Color color = AppointmentView.DEFAULT_COLOR;
 
     public int test = -1;
 
@@ -103,6 +111,10 @@ public class Appointment {
     {
         return endTime;
     }
+
+    public Color getColor() { return this.color; }
+
+    public void setColor(Color c) { this.color = c; }
 
     public void setTest(int i)
     {

@@ -178,6 +178,11 @@ public class MainView extends JFrame {
                 new GregorianCalendar(2016, 1, 11, 10, 30));
         d.setTest(4);
         list.add(d);
+        Appointment e = new Appointment(null, null, "Triple fuck you",
+                new GregorianCalendar(2016, 1, 11, 10, 30),
+                new GregorianCalendar(2016, 1, 11, 11, 00));
+        e.setTest(5);
+        list.add(e);
         return list;
     }
 

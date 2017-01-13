@@ -4,10 +4,12 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import Models.Appointment.Appointment;
 import Models.TimeOfDay;
+import Utils.AppointmentCell;
+import Utils.AppointmentCellRenderer;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.awt.Color;
 
 /**
  * View for a single day of appointments
@@ -49,13 +51,30 @@ public class AppointmentView extends AbstractTableModel{
      */
     private List<ArrayList<Appointment>> appointments;
 
-    private Object[][] objArray;
+    /**
+     * 2D array of cell contents, used for rendering
+     */
+    private AppointmentCell[][] objArray;
 
     /**
      * Starting column count, can be modified if
      * appointments overlap
      */
     private int columnCount = 2;
+
+    /**
+     * Default color for a non-appointment
+     * cell
+     */
+    public static final Color DEFAULT_COLOR = Color.white;
+
+    /**
+     * Finalized array of possible colors
+     */
+    private final Color [][] apptColors = {
+            {Color.blue, Color.red},
+            {Color.green, Color.yellow}
+    };
 
 
     public AppointmentView(List<Appointment> appointments)
@@ -75,7 +94,9 @@ public class AppointmentView extends AbstractTableModel{
 //            }
 
             organizeAppointments();
+            assignColors();
             this.objArray = buildTableObject();
+
             System.out.println(this.objArray == null);
 
             System.out.println("ORGANIZED\n");
@@ -154,6 +175,11 @@ public class AppointmentView extends AbstractTableModel{
 
         // So the time column isn't equal sized as the rest.
         table.getColumnModel().getColumn(0).setMaxWidth(75);
+
+        for (int i = 1; i < this.columnCount; i++)
+        {
+            table.getColumnModel().getColumn(i).setCellRenderer(new AppointmentCellRenderer());
+        }
 
         return table;
     }
@@ -241,10 +267,15 @@ public class AppointmentView extends AbstractTableModel{
         this.columnCount = this.appointments.size() + 1;
     }
 
-    private Object[][] buildTableObject()
+    /**
+     * Builds a 2D array of AppointmentCell objects which
+     * have the data to be displayed as well as info about
+     * the color which should be rendered.
+     * @return 2D array of AppointmentCell
+     */
+    private AppointmentCell[][] buildTableObject()
     {
-        int x = 1;
-        Object[][] obj = new Object[this.columnCount][this.ROW_COUNT];
+        AppointmentCell[][] obj = new AppointmentCell[this.columnCount][this.ROW_COUNT];
         int apt_size = this.appointments.size();
         int time_size = this.timeList.size();
         for (int col = 0; col < apt_size; col++)
@@ -260,12 +291,64 @@ public class AppointmentView extends AbstractTableModel{
 
                     if (a.during(t))
                     {
-                        obj[col + 1][i] = a.testDisplay();
+                        obj[col + 1][i] = new AppointmentCell(a.testDisplay(), a.getColor());
                     }
                 }
             }
         }
         return obj;
+    }
+
+    private void assignColors()
+    {
+        int appt_size = this.appointments.size();
+        int column = 0;
+        for (int i = 0; i < appt_size; i++)
+        {
+            int apt = 0;
+            int col_size = this.appointments.get(i).size();
+            for (int j = 0; j < col_size; j++)
+            {
+                this.appointments.get(i).get(j).setColor(this.apptColors[column][apt]);
+
+                if (apt == 0)
+                {
+                    apt = 1;
+                }
+                else
+                {
+                    apt = 0;
+                }
+            }
+
+            if (column == 0)
+            {
+                column = 1;
+            }
+            else
+            {
+                column = 0;
+            }
+        }
+    }
+
+    public Color getCellColor(int row, int col)
+    {
+        if (col == 0)
+        {
+            return AppointmentView.DEFAULT_COLOR;
+        }
+        else
+        {
+            if (this.objArray[col][row] != null)
+            {
+                return this.objArray[col][row].getColor();
+            }
+            else
+            {
+                return AppointmentView.DEFAULT_COLOR;
+            }
+        }
     }
 
     /**
@@ -313,7 +396,14 @@ public class AppointmentView extends AbstractTableModel{
         }
         else
         {
-            return this.objArray[columnIndex][rowIndex];
+            if (this.objArray[columnIndex][rowIndex] != null)
+            {
+                return this.objArray[columnIndex][rowIndex].getData();
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
