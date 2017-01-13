@@ -299,6 +299,13 @@ public class AppointmentView extends AbstractTableModel{
         return obj;
     }
 
+    /**
+     * Assigns colors to appointments, alternating between two colors in one column,
+     * and then two different colors in the next column, that way
+     * no two appointments next to each other will ever have the same color
+     *
+     * Hopefully....
+     */
     private void assignColors()
     {
         int appt_size = this.appointments.size();
@@ -311,32 +318,23 @@ public class AppointmentView extends AbstractTableModel{
             {
                 this.appointments.get(i).get(j).setColor(this.apptColors[column][apt]);
 
-                if (apt == 0)
-                {
-                    apt = 1;
-                }
-                else
-                {
-                    apt = 0;
-                }
+                apt = apt == 0 ? 1 : 0;
             }
-
-            if (column == 0)
-            {
-                column = 1;
-            }
-            else
-            {
-                column = 0;
-            }
+            column = column == 0 ? 1 : 0;
         }
     }
 
+    /**
+     * Gets the color that each cell should be rendered
+     * @param row The row the cell is in
+     * @param col The column the cell is in
+     * @return The color of the cell
+     */
     public Color getCellColor(int row, int col)
     {
         if (col == 0)
         {
-            return AppointmentView.DEFAULT_COLOR;
+            return this.DEFAULT_COLOR;
         }
         else
         {
@@ -346,7 +344,7 @@ public class AppointmentView extends AbstractTableModel{
             }
             else
             {
-                return AppointmentView.DEFAULT_COLOR;
+                return this.DEFAULT_COLOR;
             }
         }
     }
