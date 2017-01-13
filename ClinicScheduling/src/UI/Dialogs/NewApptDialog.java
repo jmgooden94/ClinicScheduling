@@ -171,10 +171,6 @@ public class NewApptDialog extends JDialog {
         SpinnerListModel endPm = new SpinnerListModel(Arrays.asList(pmOps));
         startPMBox.setModel(startPm);
         endPMBox.setModel(endPm);
-
-        // Populates the provider types spinner
-        SpinnerListModel provTypes = new SpinnerListModel(Models.Provider.ProviderType.getNames());
-        apptTypeSpinner.setModel(provTypes);
     }
 
     /**
