@@ -1,10 +1,12 @@
 package UI.Dialogs;
 
 import Models.Appointment.Appointment;
+import Models.Appointment.SpecialType;
 import Models.Patient.*;
 import Models.State;
 import Models.TimeOfDay;
 import Utils.MySqlUtils;
+import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -33,12 +35,19 @@ public class NewApptDialog extends JDialog {
     private JPanel datePickerPanel;
     private JSpinner endHourBox;
     private JTextPane reasonBox;
-    private JSpinner stateSpinner;
     private JSpinner endMinuteBox;
     private JSpinner endPMBox;
-    private JSpinner providerSpinner;
+    private JComboBox specialTypesCombo;
+    private JComboBox providerCombo;
+    private JComboBox stateCombo;
+    private JCheckBox smokerCheckBox;
     private JSpinner apptTypeSpinner;
     private JDatePickerImpl jDatePicker;
+
+    /**
+     * The index of the default state in the dropdown box
+     */
+    private static final int DEFAULT_STATE_INDEX = State.KANSAS.ordinal();
 
     /**
      * Constructor for NewApptDialog
@@ -102,17 +111,21 @@ public class NewApptDialog extends JDialog {
 
         if (validateForm(startTime, endTime)){
             Address patientAddress = new Address(streetBox.getText(), cityBox.getText(),
-                    State.fromName((String) stateSpinner.getValue()), zipBox.getValue().toString());
+                    State.fromName(stateCombo.getSelectedItem().toString()), zipBox.getValue().toString());
             Patient newPatient = new Patient(firstNameBox.getText(), lastNameBox.getText(),
-                    phoneBox.getValue().toString(), patientAddress);
+                    phoneBox.getValue().toString(), patientAddress, smokerCheckBox.isSelected());
             int year = jDatePicker.getModel().getYear();
             int month = jDatePicker.getModel().getMonth();
             int day = jDatePicker.getModel().getDay();
 
             GregorianCalendar start = new GregorianCalendar(year, month, day, startHour, (int) startMinuteBox.getValue());
             GregorianCalendar end = new GregorianCalendar(year, month, day, endHour, (int) endMinuteBox.getValue());
+            SpecialType st = null;
+            if (specialTypesCombo.getSelectedItem() != null){
+                st = SpecialType.fromName(specialTypesCombo.getSelectedItem().toString());
+            }
             //TODO: get provider from list of providers and replace null with provider
-            Appointment newAppt = new Appointment(newPatient, null, reasonBox.getText(), start, end);
+            Appointment newAppt = new Appointment(newPatient, null, reasonBox.getText(), start, end, st);
             MySqlUtils.addAppointment(newAppt);
             dispose();
         }
@@ -149,9 +162,16 @@ public class NewApptDialog extends JDialog {
         AbstractDocument reDoc = (AbstractDocument) reasonBox.getDocument();
         reDoc.setDocumentFilter(new Utils.DocumentSizeFilter(500));
 
-        // Populates the state spinner
-        SpinnerListModel stateList = new SpinnerListModel(State.getNames());
-        stateSpinner.setModel(stateList);
+        // Populates the state dropdown
+        DefaultComboBoxModel<String> stateModel = new DefaultComboBoxModel<>(State.getNames());
+        stateCombo.setModel(stateModel);
+        stateCombo.setSelectedIndex(DEFAULT_STATE_INDEX);
+
+        // Populates the special type combo box
+        DefaultComboBoxModel<String> specialTypeModel = new DefaultComboBoxModel<>(SpecialType.getNames());
+        specialTypeModel.addElement(null);
+        specialTypesCombo.setModel(specialTypeModel);
+        specialTypesCombo.setSelectedIndex(specialTypeModel.getIndexOf(null));
 
         // Sets the limits on the time spinners
         SpinnerNumberModel startHours = new SpinnerNumberModel(1, 1, 12, 1);
@@ -166,7 +186,7 @@ public class NewApptDialog extends JDialog {
         endMinuteBox.setModel(endMinutes);
         endMinuteBox.setEditor(new JSpinner.NumberEditor(endMinuteBox, "00"));
 
-        String[] pmOps = {"AM", "PM"};
+        final String[] pmOps = {"AM", "PM"};
         SpinnerListModel startPm = new SpinnerListModel(Arrays.asList(pmOps));
         SpinnerListModel endPm = new SpinnerListModel(Arrays.asList(pmOps));
         startPMBox.setModel(startPm);

@@ -286,6 +286,11 @@ public class MySqlUtils {
         ResultSet availabilities = statement.executeQuery("SELECT * FROM clinic.availability");
         ResultSet providers = statement.executeQuery("SELECT * FROM clinic.provider");
 
+        // If there are no providers in the db, return an empty list
+        if (!providers.next()){
+            return providersList;
+        }
+
         while(recurrences.next()){
             // TODO: finish mapping recurrences to availabilities and availabilities to providers
             String json = recurrences.getString(1);

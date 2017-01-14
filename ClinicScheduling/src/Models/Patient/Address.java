@@ -10,6 +10,9 @@ public class Address {
     private String zip;
 
     public Address(String street, String city, Models.State state, String zip){
+        if (street == null || city == null || state == null || zip == null){
+            throw new IllegalArgumentException();
+        }
         this.street = street;
         this.city = city;
         this.state = state;

@@ -32,6 +32,10 @@ public class Appointment {
      * The end of the appointment
      */
     private GregorianCalendar apptEnd;
+    /**
+     * The special type of this appointment; this field can be null
+     */
+    private SpecialType specialType;
 
     /**
      * Constructs a new appointment
@@ -40,15 +44,18 @@ public class Appointment {
      * @param reason The reason for the appointment
      * @param apptStart The start of the appointment
      * @param apptEnd The end of the appointment
+     * @param specialType The special type of this appointment, or null
      */
-    public Appointment(Patient patient, Provider provider, String reason, GregorianCalendar apptStart, GregorianCalendar apptEnd) {
+    public Appointment(Patient patient, Provider provider, String reason, GregorianCalendar apptStart, GregorianCalendar apptEnd, SpecialType specialType) {
+        if (patient == null || provider == null || apptStart == null || apptEnd == null){
+            throw new IllegalArgumentException();
+        }
         this.patient = patient;
         this.provider = provider;
-        //TODO: uncomment this once we get providers figured out
-        //this.apptType = provider.getProviderType().toString();
         this.reason = reason;
         this.apptStart = apptStart;
         this.apptEnd = apptEnd;
+        this.specialType = specialType;
     }
 
     public Patient getPatient(){

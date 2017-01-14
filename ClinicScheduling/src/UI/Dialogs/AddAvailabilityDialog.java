@@ -27,7 +27,7 @@ public class AddAvailabilityDialog extends JDialog {
     private JSpinner endHourSpinner;
     private JSpinner endMinuteSpinner;
     private JSpinner endPMSpinner;
-    private JSpinner recurrenceSpinner;
+    private JComboBox recurrenceCombo;
     private Availability result;
 
     public AddAvailabilityDialog() {
@@ -93,16 +93,16 @@ public class AddAvailabilityDialog extends JDialog {
             pmSpinnerEditor.getTextField().setHorizontalAlignment(JTextField.RIGHT);
         }
 
-        String[] recurOps = {"0 - Every Week", "1 - First Week", "2 - Second Week", "3 - Third Week", "4 - Fourth Week",
-                "5 - Fifth Week"};
-        SpinnerListModel recurModel = new SpinnerListModel(recurOps);
-        recurrenceSpinner.setModel(recurModel);
+        final String[] recurOps = {"Every Week", "First Week", "Second Week", "Third Week", "Fourth Week",
+                "Fifth Week"};
+        DefaultComboBoxModel<String> recurModel = new DefaultComboBoxModel<>(recurOps);
+        recurrenceCombo.setModel(recurModel);
 
         setVisible(true);
     }
 
     private void onOK() {
-        int recurOption = Integer.parseInt(recurrenceSpinner.getValue().toString().substring(0, 1));
+        int recurOption = recurrenceCombo.getSelectedIndex();
         Recurrence r = new WeekOfMonthRecurrence(recurOption);
 
         List<Day> days = new ArrayList<>();
