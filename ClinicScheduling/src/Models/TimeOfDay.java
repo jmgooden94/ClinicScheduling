@@ -77,8 +77,22 @@ public class TimeOfDay {
         GregorianCalendar c = new GregorianCalendar();
         c.set(Calendar.HOUR_OF_DAY, hour);
         c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.SECOND, 0);
         Date d = c.getTime();
         return new Time(d.getTime());
+    }
+
+    /**
+     * Converts the given sql time object into a TimeOfDay
+     * @param t the sql time
+     * @return the TimeOfDay built from the sql time
+     */
+    public static TimeOfDay fromSqlTime(Time t){
+        if (t == null){throw new IllegalArgumentException("Time t cannot be null");}
+        Date d = new Date(t.getTime());
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(d);
+        return new TimeOfDay(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
     }
 
     /**

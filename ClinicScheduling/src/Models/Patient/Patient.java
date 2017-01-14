@@ -35,7 +35,7 @@ public class Patient {
      */
     public Patient(String firstName, String lastName, String phone, Address address, boolean smoker) {
         if (firstName == null || lastName == null || phone == null || address == null){
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("firstName, lastName, phone, and address cannot be null");
         }
         this.firstName = firstName;
         this.lastName = lastName;

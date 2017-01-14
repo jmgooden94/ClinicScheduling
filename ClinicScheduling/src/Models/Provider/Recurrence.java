@@ -27,7 +27,7 @@ public interface Recurrence {
             if (obj instanceof Recurrence){
                 return ((Recurrence) obj).getImplementation(parsed);
             }
-            else throw new IllegalArgumentException();
+            else throw new IllegalArgumentException("Given JSON object is not an instance of Recurrence");
         }
         catch (ParseException | ClassNotFoundException | NoSuchMethodException | InstantiationException |
                 IllegalAccessException | InvocationTargetException ex){

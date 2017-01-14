@@ -60,11 +60,12 @@ public class WeekOfMonthRecurrence implements Recurrence {
      */
     @Override
     public Recurrence getImplementation(JSONObject jsonObject) {
+        this.weeks = new boolean[5];
         JSONArray weeksFromJSON = (JSONArray) jsonObject.get("weeks");
-        Iterator<String> iterator = weeksFromJSON.iterator();
+        Iterator<Boolean> iterator = weeksFromJSON.iterator();
         int i = 0;
         while (iterator.hasNext()){
-            this.weeks[i] = Boolean.parseBoolean(iterator.next());
+            this.weeks[i] = iterator.next();
             i++;
         }
         return this;

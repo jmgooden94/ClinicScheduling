@@ -1,11 +1,12 @@
-// Some code in this class is copied from or based off code by Marty Strep of The University of Washington
 package UI;
 
 import Models.Day;
+import Models.Provider.Provider;
 import UI.Dialogs.*;
 import UI.Panels.ProviderView;
 import Utils.MySqlUtils;
 import Utils.UserRole;
+import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -21,6 +22,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 
 public class MainView extends JFrame {
 
@@ -37,8 +39,16 @@ public class MainView extends JFrame {
     private JPanel leftPanel;
     private JPanel adminControlPanel;
     private boolean weeklyView;
+    private HashMap<Integer, Provider> providerMap;
 
     public MainView(UserRole role) {
+        try {
+            providerMap = MySqlUtils.getProviders();
+        }
+        catch (SQLException | ParseException ex){
+            showError(ex);
+        }
+
         // call onCancel() when cross is clicked
         addWindowListener(new WindowAdapter() {
             @Override
@@ -80,6 +90,19 @@ public class MainView extends JFrame {
         weeklyView = false;
     }
 
+    public HashMap<Integer, Provider> getProviderMap(){
+        return providerMap;
+    }
+
+    /**
+     * Used to update the provider map; should be called whenever a provider is added
+     * @param hm the new provider map - should be populated by MySqlUtils.getProviders();
+     */
+    public void setProviderMap(HashMap<Integer, Provider> hm){
+        this.providerMap = hm;
+    }
+
+    // Some code in this method is copied from or based off code by Marty Strep of The University of Washington
     private void createProviderView(GregorianCalendar date) {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
 

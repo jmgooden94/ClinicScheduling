@@ -3,7 +3,9 @@ package UI.Dialogs;
 import Models.Provider.Availability;
 import Models.Provider.Provider;
 import Models.Provider.ProviderType;
+import UI.MainView;
 import Utils.MySqlUtils;
+import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
@@ -81,14 +83,16 @@ public class AddProviderDialog extends JDialog {
         if (validateForm()){
             String fn = firstNameField.getText();
             fn = fn.substring(0,1).toUpperCase() + fn.substring(1);
-            String ln = firstNameField.getText();
+            String ln = lastNameField.getText();
             ln = ln.substring(0,1).toUpperCase() + ln.substring(1);
             ProviderType pt = ProviderType.fromName(typeSpinner.getValue().toString());
             Provider p = new Provider(pt, fn, ln, availabilities);
             try{
                 MySqlUtils.addProvider(p);
+                MainView parent = (MainView) getParent().getParent();
+                parent.setProviderMap(MySqlUtils.getProviders());
             }
-            catch (SQLException ex){
+            catch (SQLException | ParseException ex){
                 showError(ex);
             }
             dispose();

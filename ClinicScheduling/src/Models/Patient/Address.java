@@ -11,7 +11,7 @@ public class Address {
 
     public Address(String street, String city, Models.State state, String zip){
         if (street == null || city == null || state == null || zip == null){
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("street, city, state, and zip, cannot be null");
         }
         this.street = street;
         this.city = city;

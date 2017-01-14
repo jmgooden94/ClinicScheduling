@@ -48,7 +48,7 @@ public class Appointment {
      */
     public Appointment(Patient patient, Provider provider, String reason, GregorianCalendar apptStart, GregorianCalendar apptEnd, SpecialType specialType) {
         if (patient == null || provider == null || apptStart == null || apptEnd == null){
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("patient, provider, apptStart, and apptEnd cannot be null");
         }
         this.patient = patient;
         this.provider = provider;
