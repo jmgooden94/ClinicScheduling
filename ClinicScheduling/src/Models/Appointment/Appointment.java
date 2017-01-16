@@ -21,7 +21,7 @@ public class Appointment {
      */
     private String apptType;
     /**
-     * The getReason for the appointment
+     * The reason for the appointment
      */
     private String reason;
     /**
@@ -41,7 +41,7 @@ public class Appointment {
      * Constructs a new appointment
      * @param patient The patient this appointment is for
      * @param provider The provider serving this appointment
-     * @param reason The getReason for the appointment
+     * @param reason The reason for the appointment
      * @param apptStart The start of the appointment
      * @param apptEnd The end of the appointment
      * @param specialType The special type of this appointment, or null
@@ -66,7 +66,7 @@ public class Appointment {
         return provider;
     }
 
-    public String getReason(){
+    public String reason(){
         return reason;
     }
 
@@ -77,6 +77,4 @@ public class Appointment {
     public GregorianCalendar getApptEnd(){
         return apptEnd;
     }
-
-    public SpecialType getSpecialType(){ return specialType; }
 }

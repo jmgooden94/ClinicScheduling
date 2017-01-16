@@ -43,6 +43,20 @@ public enum Day {
         this.charAbbrev = charAbbrev;
         this.dayOfWeek = dayOfWeek;
     }
+    @Override
+    public String toString(){
+        return name;
+    }
+
+    /**
+     * Returns the enum value as a String
+     * @return
+     */
+    public String toValueString() {return name.toUpperCase();}
+
+    public String getName(){
+        return name;
+    }
 
     public String getAbbr(){
         return abbr;
@@ -78,7 +92,7 @@ public enum Day {
     public static List<String> getDays(){
         List<String> days = new ArrayList<>();
         for (Day d : Day.values()){
-            days.add(d.name);
+            days.add(d.getName());
         }
         return days;
     }
@@ -90,7 +104,7 @@ public enum Day {
     public static List<String> getWeekdays(){
         List<String> days = new ArrayList<>();
         for (int i = 1; i < 6; i++){
-            days.add(Day.values()[i].name);
+            days.add(Day.values()[i].getName());
         }
         return days;
     }

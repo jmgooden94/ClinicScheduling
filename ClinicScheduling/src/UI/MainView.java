@@ -94,6 +94,10 @@ public class MainView extends JFrame {
         weeklyView = false;
     }
 
+    public HashMap<Integer, Provider> getProviderMap(){
+        return providerMap;
+    }
+
     // Some code in this method is copied from or based off code by Marty Strep of The University of Washington
     private void createProviderView(GregorianCalendar date) {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
@@ -136,7 +140,7 @@ public class MainView extends JFrame {
     }
 
     private void onNewAppt() {
-        if(new NewApptDialog(providerMap).showDialog() == JOptionPane.OK_OPTION){
+        if(new NewApptDialog().showDialog() == JOptionPane.OK_OPTION){
             //TODO: add the appointment
         }
     }
@@ -251,7 +255,7 @@ public class MainView extends JFrame {
         providerPanel.removeAll();
         for(Provider p : providerMap.values()){
             JButton pButton = new JButton();
-            pButton.setText(p.toString());
+            pButton.setText(p.getName() + ", " + p.getProviderType().getAbbreviation() + "\n");
             providerPanel.add(pButton);
         }
         // TODO: figure out how to make a scroll bar appear if the buttons don't fit in the panel

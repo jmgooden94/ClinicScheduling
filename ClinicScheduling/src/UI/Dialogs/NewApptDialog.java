@@ -3,10 +3,10 @@ package UI.Dialogs;
 import Models.Appointment.Appointment;
 import Models.Appointment.SpecialType;
 import Models.Patient.*;
-import Models.Provider.Provider;
 import Models.State;
 import Models.TimeOfDay;
 import Utils.MySqlUtils;
+import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -15,7 +15,6 @@ import javax.swing.*;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.MaskFormatter;
 import java.awt.event.*;
-import java.sql.SQLException;
 import java.text.*;
 import java.util.*;
 
@@ -42,9 +41,9 @@ public class NewApptDialog extends JDialog {
     private JComboBox providerCombo;
     private JComboBox stateCombo;
     private JCheckBox smokerCheckBox;
+    private JSpinner apptTypeSpinner;
     private JDatePickerImpl jDatePicker;
     private int dialogResult = -1;
-    private HashMap<Integer, Provider> providerMap;
 
     /**
      * The index of the default state in the dropdown box
@@ -54,8 +53,7 @@ public class NewApptDialog extends JDialog {
     /**
      * Constructor for NewApptDialog
      */
-    public NewApptDialog(HashMap<Integer, Provider> providerMap) {
-        this.providerMap = providerMap;
+    public NewApptDialog() {
         createComponents();
         setContentPane(contentPane);
         setModal(true);
@@ -130,20 +128,9 @@ public class NewApptDialog extends JDialog {
             if (specialTypesCombo.getSelectedItem() != null){
                 st = SpecialType.fromName(specialTypesCombo.getSelectedItem().toString());
             }
-            int provider_id = -1;
-            Provider p = (Provider) providerCombo.getSelectedItem();
-            for (Map.Entry<Integer, Provider> e : providerMap.entrySet()){
-                if (Objects.equals(e.getValue(), p)){
-                    provider_id = e.getKey();
-                }
-            }
-            Appointment newAppt = new Appointment(newPatient, p, reasonBox.getText(), start, end, st);
-            try {
-                MySqlUtils.addAppointment(newAppt, provider_id);
-            }
-            catch (SQLException ex){
-                showError(ex);
-            }
+            //TODO: get provider from list of providers and replace null with provider
+            Appointment newAppt = new Appointment(newPatient, null, reasonBox.getText(), start, end, st);
+            MySqlUtils.addAppointment(newAppt);
             dialogResult = JOptionPane.OK_OPTION;
             dispose();
         }
@@ -179,13 +166,6 @@ public class NewApptDialog extends JDialog {
 
         AbstractDocument reDoc = (AbstractDocument) reasonBox.getDocument();
         reDoc.setDocumentFilter(new Utils.DocumentSizeFilter(500));
-
-        // Populates the provider dropdown
-        DefaultComboBoxModel<Object> providerModel = new DefaultComboBoxModel<>();
-        for (Provider p : providerMap.values()){
-            providerModel.addElement(p);
-        }
-        providerCombo.setModel(providerModel);
 
         // Populates the state dropdown
         DefaultComboBoxModel<String> stateModel = new DefaultComboBoxModel<>(State.getNames());
@@ -277,7 +257,8 @@ public class NewApptDialog extends JDialog {
      */
     private boolean validateForm(TimeOfDay start, TimeOfDay end){
         if(firstNameBox.getText() == "" || lastNameBox.getText() == "" || streetBox.getText() == "" ||
-                cityBox.getText() == "" || zipBox.getValue() == null || phoneBox.getValue() == null){
+                cityBox.getText() == "" || zipBox.getValue() == null || phoneBox.getValue() == null
+                ){
                 JOptionPane.showMessageDialog(contentPane, "Missing or incorrect form information. " +
                         "Please verify all fields are filled completely.", "Missing Fields",
                         JOptionPane.WARNING_MESSAGE);
@@ -289,13 +270,5 @@ public class NewApptDialog extends JDialog {
             return false;
         }
         return true;
-    }
-
-    /**
-     * Shows an error dialog with the exception message
-     * @param ex the exception to display
-     */
-    private void showError(Exception ex){
-        JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Unexpected Error", JOptionPane.ERROR_MESSAGE);
     }
 }
