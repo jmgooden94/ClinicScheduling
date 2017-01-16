@@ -73,18 +73,23 @@
               <text value="Providers"/>
             </properties>
           </component>
-          <grid id="4f389" binding="providerPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+          <scrollpane id="f2fc1" binding="providerScrollPane">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <verticalScrollBarPolicy value="20"/>
+            </properties>
             <border type="none"/>
             <children>
-              <vspacer id="ba75f">
-                <constraints border-constraint="Center"/>
-              </vspacer>
+              <grid id="4f389" binding="providerPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+                <constraints/>
+                <properties/>
+                <border type="none"/>
+                <children/>
+              </grid>
             </children>
-          </grid>
+          </scrollpane>
         </children>
       </grid>
       <grid id="f49bf" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

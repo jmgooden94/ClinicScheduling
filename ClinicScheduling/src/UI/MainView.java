@@ -1,11 +1,12 @@
-// Some code in this class is copied from or based off code by Marty Strep of The University of Washington
 package UI;
 
 import Models.Day;
+import Models.Provider.Provider;
 import UI.Dialogs.*;
 import UI.Panels.ProviderView;
 import Utils.MySqlUtils;
 import Utils.UserRole;
+import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -21,6 +22,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 
 public class MainView extends JFrame {
 
@@ -36,9 +38,23 @@ public class MainView extends JFrame {
     private JPanel calendarPanel;
     private JPanel leftPanel;
     private JPanel adminControlPanel;
+    private JScrollPane providerScrollPane;
     private boolean weeklyView;
+    private HashMap<Integer, Provider> providerMap;
 
     public MainView(UserRole role) {
+        try {
+            providerMap = MySqlUtils.getProviders();
+        }
+        catch (SQLException ex){
+            showError(ex);
+        }
+        providerPanel.setPreferredSize(new Dimension(180, 10));
+        providerScrollPane.setViewportView(providerPanel);
+        updateProviderPanel();
+
+        this.setTitle("Clinic Scheduler");
+
         // call onCancel() when cross is clicked
         addWindowListener(new WindowAdapter() {
             @Override
@@ -62,9 +78,7 @@ public class MainView extends JFrame {
 
         newProvButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                new AddProviderDialog();
-            }
+            public void actionPerformed(ActionEvent e){onAddProvider(); }
         });
 
         if(role == UserRole.ADMIN){
@@ -80,6 +94,11 @@ public class MainView extends JFrame {
         weeklyView = false;
     }
 
+    public HashMap<Integer, Provider> getProviderMap(){
+        return providerMap;
+    }
+
+    // Some code in this method is copied from or based off code by Marty Strep of The University of Washington
     private void createProviderView(GregorianCalendar date) {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
 
@@ -121,7 +140,9 @@ public class MainView extends JFrame {
     }
 
     private void onNewAppt() {
-        new NewApptDialog();
+        if(new NewApptDialog().showDialog() == JOptionPane.OK_OPTION){
+            //TODO: add the appointment
+        }
     }
 
     /**
@@ -149,9 +170,27 @@ public class MainView extends JFrame {
     }
 
     /**
+     * Creates a new AddProviderDialog and updates the provider map
+     */
+    private void onAddProvider(){
+        if (new AddProviderDialog().showDialog() == JOptionPane.OK_OPTION){
+            try {
+                providerMap = MySqlUtils.getProviders();
+                updateProviderPanel();
+            }
+            catch (SQLException ex) {
+                showError(ex);
+            }
+        }
+    }
+
+    /**
      * Creates the admin controls and adds them to the panel
      */
     private void createAdminControls(){
+        GridLayout g = new GridLayout(0, 1, 5, 5);
+        adminControlPanel.setLayout(g);
+
         JButton addUser = new JButton("Add User");
         addUser.addActionListener(new ActionListener() {
             @Override
@@ -159,7 +198,7 @@ public class MainView extends JFrame {
                 onNewUser();
             }
         });
-        adminControlPanel.add(addUser, BorderLayout.NORTH);
+        adminControlPanel.add(addUser);
 
         JButton editUser = new JButton("Change User Password");
         editUser.addActionListener(new ActionListener() {
@@ -168,7 +207,7 @@ public class MainView extends JFrame {
                 onEditUser();
             }
         });
-        adminControlPanel.add(editUser, BorderLayout.CENTER);
+        adminControlPanel.add(editUser);
 
         JButton deleteUser = new JButton("Delete User");
         deleteUser.addActionListener(new ActionListener() {
@@ -177,28 +216,28 @@ public class MainView extends JFrame {
                 onDeleteUser();
             }
         });
-        adminControlPanel.add(deleteUser, BorderLayout.SOUTH);
+        adminControlPanel.add(deleteUser);
     }
 
     /**
      * Shows the add user dialog
      */
     private void onNewUser(){
-        new AddUserDialog();
+        new AddUserDialog().showDialog();
     }
 
     /**
      * Shows the delete user dialog
      */
     private void onDeleteUser(){
-        new DeleteUserDialog();
+        new DeleteUserDialog().showDialog();
     }
 
     /**
      * Shows the edit user dialog
      */
     private void onEditUser(){
-        new ChangeUserPasswordDialog();
+        new ChangeUserPasswordDialog().showDialog();
     }
 
     /**
@@ -207,5 +246,17 @@ public class MainView extends JFrame {
      */
     private void showError(Exception ex){
         JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Unexpected Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Updates the provider panel to show the list of providers
+     */
+    private void updateProviderPanel(){
+        for(Provider p : providerMap.values()){
+            JButton pButton = new JButton();
+            pButton.setText(p.getName() + ", " + p.getProviderType().getAbbreviation() + "\n");
+            providerPanel.add(pButton);
+        }
+        // TODO: figure out how to make a scroll bar appear if the buttons don't fit in the panel
     }
 }

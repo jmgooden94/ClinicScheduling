@@ -4,13 +4,20 @@ import Models.Appointment.Appointment;
 import Models.Day;
 import Models.Provider.Availability;
 import Models.Provider.Provider;
+import Models.Provider.ProviderType;
 import Models.Provider.Recurrence;
+import Models.TimeOfDay;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import javax.swing.*;
 public class MySqlUtils {
@@ -229,8 +236,6 @@ public class MySqlUtils {
         Recurrence r;
         String sql2 = "INSERT INTO clinic.availability(start_time, end_time, day_list_stringify, provider_fk) values(?, ?, ?, ?)";
         String sql3 = "INSERT INTO clinic.recurrence(stringify, availability_fk) values(?,?)";
-        JSONObject jsonObject;
-        JSONArray jsonArray;
         for (Availability availability : availabilityList){
 
             // Insert availability and get key
@@ -242,11 +247,11 @@ public class MySqlUtils {
             JSONObject jsObj = new JSONObject();
             JSONArray days = new JSONArray();
             for (Day d : availability.getDays()){
-                days.add(days.toString());
+                days.add(d.toValueString());
             }
             jsObj.put("days", days);
 
-            ps.setString(3, jsObj.toJSONString());
+            ps.setString(3, days.toJSONString());
             ps.setInt(4, provider_id);
             rows = ps.executeUpdate();
             if (rows == 0){
@@ -275,27 +280,104 @@ public class MySqlUtils {
     }
 
     /**
-     * Gets the list of providers and their availabilities from the database
-     * @return the list of providers
+     * Gets the list of providers and their availabilities from the database, mapped to their id from the database
+     * @return the map of providers
+     * @throws SQLException
+     * @throws ParseException if a JSON field from the database is unable to be parsed
      */
-    public static List<Provider> getProviders() throws SQLException, IOException{
-        List<Provider> providersList = new ArrayList<>();
+    public static HashMap<Integer, Provider> getProviders() throws SQLException{
+        HashMap<Integer, Provider> providersList = new HashMap<>();
 
         Statement statement = connection.createStatement();
-        ResultSet recurrences = statement.executeQuery("SELECT * FROM clinic.recurrence");
-        ResultSet availabilities = statement.executeQuery("SELECT * FROM clinic.availability");
         ResultSet providers = statement.executeQuery("SELECT * FROM clinic.provider");
+        HashMap<Integer, List<Availability>> availabilityHashMap = getAvailabilityMap();
 
-        // If there are no providers in the db, return an empty list
-        if (!providers.next()){
+        // If there are no providers in the database, return an empty list
+        if (!providers.isBeforeFirst()){
             return providersList;
         }
 
-        while(recurrences.next()){
-            // TODO: finish mapping recurrences to availabilities and availabilities to providers
-            String json = recurrences.getString(1);
-            Recurrence rec = Recurrence.fromJSONString(json);
+        // For each Result in the ResultSet providers, get their availability from the map, then build the provider
+        // object and put it in the map
+        while (providers.next()){
+            int id = providers.getInt(1);
+            List<Availability> availabilityList = availabilityHashMap.get(id);
+            String fn = providers.getString(2);
+            String ln = providers.getString(3);
+            String ptString = providers.getString(4);
+            ProviderType pt = ProviderType.fromName(ptString);
+            Provider p = new Provider(pt, fn, ln, availabilityList);
+            providersList.put(id, p);
         }
+
         return providersList;
+    }
+
+    /**
+     * Builds the availability hashmap used to construct providers' availabilities
+     * @return the constructed hashmap
+     * @throws SQLException
+     * @throws ParseException if a JSON field from the database is unable to be parsed
+     */
+    private static HashMap<Integer, List<Availability>> getAvailabilityMap() throws SQLException {
+        Statement statement = connection.createStatement();
+        JSONParser parser = new JSONParser();
+
+        ResultSet availabilities = statement.executeQuery("SELECT clinic.recurrence.stringify, " +
+                "clinic.availability.start_time, clinic.availability.end_time, clinic.availability.day_list_stringify, " +
+                "clinic.availability.provider_fk FROM clinic.recurrence INNER JOIN " +
+                "clinic.availability ON clinic.recurrence.availability_fk=clinic.availability.id");
+
+        // If there are no availabilities in the db, return null
+        if (!availabilities.isBeforeFirst()){
+            return null;
+        }
+
+        // For each Result in the availabilities ResultSet, construct a Java Availability and map it to its provider_id
+        HashMap<Integer, List<Availability>> availabilityHashMap = new HashMap<>();
+        String recJSON;
+        String daysJSON;
+        while(availabilities.next()) {
+            recJSON = availabilities.getString(1);
+            Recurrence rec;
+            try {
+                rec = Recurrence.fromJSONString(recJSON);
+            } catch (ParseException ex){
+                throw new IllegalArgumentException("Failed parsing Recurrence JSON object.", ex);
+            } catch (NoSuchMethodException ex){
+                throw new RuntimeException("Implementation of Recurrence interface is missing no-op constructor.", ex);
+            }
+            Time start_time = availabilities.getTime(2);
+            TimeOfDay startTime = TimeOfDay.fromSqlTime(start_time);
+            Time end_time = availabilities.getTime(3);
+            TimeOfDay endTime = TimeOfDay.fromSqlTime(end_time);
+
+            daysJSON = availabilities.getString(4);
+            List<String> daysNames = new ArrayList<>();
+            JSONArray daysArr;
+            try {
+                daysArr = (JSONArray) parser.parse(daysJSON);
+            } catch (ParseException ex){
+                throw new IllegalArgumentException("Failed parsing days array from database.", ex);
+            }
+            Iterator<String> it = daysArr.iterator();
+            while (it.hasNext()) {
+                daysNames.add(it.next());
+            }
+            List<Day> days = new ArrayList<>();
+            for (String s : daysNames) {
+                days.add(Day.valueOf(s));
+            }
+            Availability a = new Availability(rec, days, startTime, endTime);
+            Integer providerKey = availabilities.getInt(5);
+            if (availabilityHashMap.containsKey(providerKey)) {
+                availabilityHashMap.get(providerKey).add(a);
+            } else {
+                List<Availability> aList = new ArrayList<>();
+                aList.add(a);
+                availabilityHashMap.put(providerKey, aList);
+            }
+        }
+        return availabilityHashMap;
     }
 }
