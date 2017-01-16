@@ -252,6 +252,7 @@ public class MainView extends JFrame {
      * Updates the provider panel to show the list of providers
      */
     private void updateProviderPanel(){
+        providerPanel.removeAll();
         for(Provider p : providerMap.values()){
             JButton pButton = new JButton();
             pButton.setText(p.getName() + ", " + p.getProviderType().getAbbreviation() + "\n");
