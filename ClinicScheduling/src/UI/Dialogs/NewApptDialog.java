@@ -130,6 +130,8 @@ public class NewApptDialog extends JDialog {
             if (specialTypesCombo.getSelectedItem() != null){
                 st = SpecialType.fromName(specialTypesCombo.getSelectedItem().toString());
             }
+
+            // TODO: figure out why adding the appointment doesn't work
             int provider_id = -1;
             Provider p = (Provider) providerCombo.getSelectedItem();
             for (Map.Entry<Integer, Provider> e : providerMap.entrySet()){
@@ -144,6 +146,7 @@ public class NewApptDialog extends JDialog {
             catch (SQLException ex){
                 showError(ex);
             }
+
             dialogResult = JOptionPane.OK_OPTION;
             dispose();
         }
