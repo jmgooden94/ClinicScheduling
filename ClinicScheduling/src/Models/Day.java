@@ -48,6 +48,12 @@ public enum Day {
         return name;
     }
 
+    /**
+     * Returns the enum value as a String
+     * @return
+     */
+    public String toValueString() {return name.toUpperCase();}
+
     public String getName(){
         return name;
     }

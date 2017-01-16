@@ -25,7 +25,7 @@ public class TimeOfDay {
      */
     public TimeOfDay(int hour, int minute){
         if (hour < 0 || hour > 23 || minute < 0 || minute > 59){
-            throw new IllegalArgumentException("Hour must be between 1 and 12, minute must be between 0 and 59");
+            throw new IllegalArgumentException("Hour must be between 0 and 23, minute must be between 0 and 59");
         }
         this.hour = hour;
         this.minute = minute;

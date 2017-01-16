@@ -43,6 +43,7 @@ public class NewApptDialog extends JDialog {
     private JCheckBox smokerCheckBox;
     private JSpinner apptTypeSpinner;
     private JDatePickerImpl jDatePicker;
+    private int dialogResult = -1;
 
     /**
      * The index of the default state in the dropdown box
@@ -85,8 +86,11 @@ public class NewApptDialog extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    }
 
+    public int showDialog(){
         setVisible(true);
+        return dialogResult;
     }
 
     /**
@@ -127,6 +131,7 @@ public class NewApptDialog extends JDialog {
             //TODO: get provider from list of providers and replace null with provider
             Appointment newAppt = new Appointment(newPatient, null, reasonBox.getText(), start, end, st);
             MySqlUtils.addAppointment(newAppt);
+            dialogResult = JOptionPane.OK_OPTION;
             dispose();
         }
     }
@@ -135,7 +140,7 @@ public class NewApptDialog extends JDialog {
      * Event handler for cancel button
      */
     private void onCancel() {
-        // add your code here if necessary
+        dialogResult = JOptionPane.CANCEL_OPTION;
         dispose();
     }
 

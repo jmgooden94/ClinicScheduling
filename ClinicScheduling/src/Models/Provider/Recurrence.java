@@ -16,7 +16,7 @@ public interface Recurrence {
      * @param json the JSON string
      * @return the recurrence
      */
-    static Recurrence fromJSONString(String json){
+    static Recurrence fromJSONString(String json) throws ParseException, NoSuchMethodException{
         try {
             JSONParser parser = new JSONParser();
             JSONObject parsed = (JSONObject) parser.parse(json);
@@ -29,8 +29,7 @@ public interface Recurrence {
             }
             else throw new IllegalArgumentException("Given JSON object is not an instance of Recurrence");
         }
-        catch (ParseException | ClassNotFoundException | NoSuchMethodException | InstantiationException |
-                IllegalAccessException | InvocationTargetException ex){
+        catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException ex){
             throw new IllegalArgumentException("Given JSON String does not contain a valid implementation" +
                     " of the Recurrence interface.");
         }

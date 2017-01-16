@@ -236,8 +236,6 @@ public class MySqlUtils {
         Recurrence r;
         String sql2 = "INSERT INTO clinic.availability(start_time, end_time, day_list_stringify, provider_fk) values(?, ?, ?, ?)";
         String sql3 = "INSERT INTO clinic.recurrence(stringify, availability_fk) values(?,?)";
-        JSONObject jsonObject;
-        JSONArray jsonArray;
         for (Availability availability : availabilityList){
 
             // Insert availability and get key
@@ -249,11 +247,11 @@ public class MySqlUtils {
             JSONObject jsObj = new JSONObject();
             JSONArray days = new JSONArray();
             for (Day d : availability.getDays()){
-                days.add(d);
+                days.add(d.toValueString());
             }
             jsObj.put("days", days);
 
-            ps.setString(3, jsObj.toJSONString());
+            ps.setString(3, days.toJSONString());
             ps.setInt(4, provider_id);
             rows = ps.executeUpdate();
             if (rows == 0){
@@ -287,7 +285,7 @@ public class MySqlUtils {
      * @throws SQLException
      * @throws ParseException if a JSON field from the database is unable to be parsed
      */
-    public static HashMap<Integer, Provider> getProviders() throws SQLException, ParseException{
+    public static HashMap<Integer, Provider> getProviders() throws SQLException{
         HashMap<Integer, Provider> providersList = new HashMap<>();
 
         Statement statement = connection.createStatement();
@@ -321,7 +319,7 @@ public class MySqlUtils {
      * @throws SQLException
      * @throws ParseException if a JSON field from the database is unable to be parsed
      */
-    private static HashMap<Integer, List<Availability>> getAvailabilityMap() throws SQLException, ParseException{
+    private static HashMap<Integer, List<Availability>> getAvailabilityMap() throws SQLException {
         Statement statement = connection.createStatement();
         JSONParser parser = new JSONParser();
 
@@ -341,16 +339,27 @@ public class MySqlUtils {
         String daysJSON;
         while(availabilities.next()) {
             recJSON = availabilities.getString(1);
-            Recurrence rec = Recurrence.fromJSONString(recJSON);
+            Recurrence rec;
+            try {
+                rec = Recurrence.fromJSONString(recJSON);
+            } catch (ParseException ex){
+                throw new IllegalArgumentException("Failed parsing Recurrence JSON object.", ex);
+            } catch (NoSuchMethodException ex){
+                throw new RuntimeException("Implementation of Recurrence interface is missing no-op constructor.", ex);
+            }
             Time start_time = availabilities.getTime(2);
             TimeOfDay startTime = TimeOfDay.fromSqlTime(start_time);
             Time end_time = availabilities.getTime(3);
             TimeOfDay endTime = TimeOfDay.fromSqlTime(end_time);
-            daysJSON = availabilities.getString(4);
 
+            daysJSON = availabilities.getString(4);
             List<String> daysNames = new ArrayList<>();
-            JSONObject daysObj = (JSONObject) parser.parse(daysJSON);
-            JSONArray daysArr = (JSONArray) daysObj.get("days");
+            JSONArray daysArr;
+            try {
+                daysArr = (JSONArray) parser.parse(daysJSON);
+            } catch (ParseException ex){
+                throw new IllegalArgumentException("Failed parsing days array from database.", ex);
+            }
             Iterator<String> it = daysArr.iterator();
             while (it.hasNext()) {
                 daysNames.add(it.next());
