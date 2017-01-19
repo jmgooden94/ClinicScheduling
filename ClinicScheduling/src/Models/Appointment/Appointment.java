@@ -3,13 +3,12 @@ package Models.Appointment;
 import Models.Patient.Patient;
 import Models.Provider.Provider;
 import Models.TimeOfDay;
-import UI.Panels.AppointmentView;
+import UI.Panels.MultiColumnView;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Calendar;
-import java.util.concurrent.ThreadLocalRandom;
 
 
 /**
@@ -55,7 +54,7 @@ public class Appointment {
      * The color the cells corresponding to this appointment
      * are to be rendered.
      */
-    private Color color = AppointmentView.DEFAULT_COLOR;
+    private Color color = MultiColumnView.DEFAULT_COLOR;
 
     public int test = -1;
 

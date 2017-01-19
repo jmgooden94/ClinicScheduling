@@ -3,13 +3,13 @@ package Models.Provider;
 import Models.Day;
 import Models.TimeOfDay;
 
-import java.sql.Time;
 import java.util.List;
 
 /**
  * Stores the availability of a provider
  */
 public class Availability {
+
     /**
      * When this availability recurs
      */

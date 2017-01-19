@@ -3,7 +3,11 @@ package UI;
 
 import Models.Appointment.Appointment;
 import Models.Day;
+import Models.Provider.Provider;
+import Models.Provider.ProviderType;
+import Models.TimeOfDay;
 import UI.Dialogs.*;
+import UI.Panels.AllProviderView;
 import UI.Panels.AppointmentView;
 import UI.Panels.ProviderView;
 import Utils.MySqlUtils;
@@ -85,32 +89,57 @@ public class MainView extends JFrame {
     }
 
     private void createProviderView(GregorianCalendar date) {
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+//        SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+//
+//        date.set(Calendar.DAY_OF_WEEK, 2);
+//
+//        GregorianCalendar endDate = new GregorianCalendar();
+//        endDate.setTime(date.getTime());
+//        endDate.set(Calendar.DAY_OF_WEEK, 6);
+//        dateLabel.setText(dateFormatter.format(date.getTime()) + " - " + dateFormatter.format(endDate.getTime()));
+//
+//        AbstractTableModel model = new ProviderView(null, date);
+//        JTable scheduleTable = new JTable(model);
+//
+//        // set up the table column headings
+//        JTableHeader header = scheduleTable.getTableHeader();
+//        header.setReorderingAllowed(false);
+//        TableColumnModel columnModel = scheduleTable.getColumnModel();
+//        columnModel.getColumn(0).setHeaderValue(null);
+//        for (int c = 1; c < model.getColumnCount(); c++) {
+//            TableColumn column = columnModel.getColumn(c);
+//            Day day = Day.toDay(c);
+//            column.setHeaderValue(day == null ? "" : String.valueOf(day.toString()));
+//        }
+//        ListSelectionModel selectionModel = scheduleTable.getSelectionModel();
+//        selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//        calendarPanel.add(header, BorderLayout.NORTH);
+//        calendarPanel.add(scheduleTable, BorderLayout.CENTER);
+        List<Provider> l = this.createBullshitProviders();
+        AllProviderView ap = new AllProviderView(l);
+        calendarPanel.add(ap.getView(), BorderLayout.CENTER);
+    }
 
-        date.set(Calendar.DAY_OF_WEEK, 2);
+    private List<Provider> createBullshitProviders()
+    {
+        List<Provider> l = new ArrayList<>();
 
-        GregorianCalendar endDate = new GregorianCalendar();
-        endDate.setTime(date.getTime());
-        endDate.set(Calendar.DAY_OF_WEEK, 6);
-        dateLabel.setText(dateFormatter.format(date.getTime()) + " - " + dateFormatter.format(endDate.getTime()));
+        Provider a = new Provider(ProviderType.LAB, "John", "Doe",null);
+        a.start = new TimeOfDay(9, 30);
+        a.end = new TimeOfDay(12, 30);
+        l.add(a);
 
-        AbstractTableModel model = new ProviderView(null, date);
-        JTable scheduleTable = new JTable(model);
+        Provider b = new Provider(ProviderType.LAB, "Jane", "Doe", null);
+        b.start = new TimeOfDay(12, 45);
+        b.end = new TimeOfDay(15, 0);
+        l.add(b);
 
-        // set up the table column headings
-        JTableHeader header = scheduleTable.getTableHeader();
-        header.setReorderingAllowed(false);
-        TableColumnModel columnModel = scheduleTable.getColumnModel();
-        columnModel.getColumn(0).setHeaderValue(null);
-        for (int c = 1; c < model.getColumnCount(); c++) {
-            TableColumn column = columnModel.getColumn(c);
-            Day day = Day.toDay(c);
-            column.setHeaderValue(day == null ? "" : String.valueOf(day.toString()));
-        }
-        ListSelectionModel selectionModel = scheduleTable.getSelectionModel();
-        selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        calendarPanel.add(header, BorderLayout.NORTH);
-        calendarPanel.add(scheduleTable, BorderLayout.CENTER);
+        Provider c = new Provider(ProviderType.LAB, "Jim", "Bob", null);
+        c.start = new TimeOfDay(11, 30);
+        c.end = new TimeOfDay(13, 45);
+        l.add(c);
+
+        return l;
     }
 
     private void onCancel() {
@@ -150,11 +179,13 @@ public class MainView extends JFrame {
      */
     private void createAppointmentView()
     {
+        // TODO: remove, need to hit DB here.
         List<Appointment> l = createBullshitAppointments();
         AppointmentView model = new AppointmentView(l);
-        calendarPanel.add(model.getDayView(), BorderLayout.CENTER);
+        calendarPanel.add(model.getView(), BorderLayout.CENTER);
     }
 
+    // TODO: remove, only for testing
     private List<Appointment> createBullshitAppointments()
     {
         List<Appointment> list = new ArrayList<>();
