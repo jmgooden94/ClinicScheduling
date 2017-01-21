@@ -60,7 +60,10 @@ public class Patient {
         return address;
     }
 
-    public boolean getSmoker(){
-        return smoker;
+    public boolean getSmoker(){ return smoker; }
+    @Override
+    public String toString()
+    {
+        return firstName + " " + lastName;
     }
 }

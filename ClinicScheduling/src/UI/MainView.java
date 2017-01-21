@@ -1,8 +1,10 @@
 package UI;
 
+import Models.Appointment.Appointment;
 import Models.Day;
 import Models.Provider.Provider;
 import UI.Dialogs.*;
+import UI.Panels.AppointmentView;
 import UI.Panels.ProviderView;
 import Utils.MySqlUtils;
 import Utils.UserRole;
@@ -19,6 +21,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -90,7 +95,7 @@ public class MainView extends JFrame {
         setLayout(null);
         setContentPane(contentPane);
         setVisible(true);
-        createMonthView();
+        createAppointmentView();
         weeklyView = false;
     }
 
@@ -148,7 +153,7 @@ public class MainView extends JFrame {
         calendarPanel.removeAll();
         if (weeklyView){
             toggleViewButton.setText("Provider View");
-            createMonthView();
+            createAppointmentView();
         }
         else {
             toggleViewButton.setText("Appointment View");
@@ -161,9 +166,46 @@ public class MainView extends JFrame {
     /**
      * Creates a new monthly view and adds it to the calendar panel
      */
-    private void createMonthView(){
-
+    private void createAppointmentView()
+    {
+        //List<Appointment> l = createBullshitAppointments();
+        //AppointmentView model = new AppointmentView(l);
+        //calendarPanel.add(model.getDayView(), BorderLayout.CENTER);
     }
+
+    // TODO: Remove this
+    /*
+    private List<Appointment> createBullshitAppointments()
+    {
+        List<Appointment> list = new ArrayList<>();
+        Appointment a = new Appointment(null, null, "Fuck you",
+                new GregorianCalendar(2016, 1, 11, 10, 30),
+                new GregorianCalendar(2016, 1, 11, 11, 0));
+        a.setTest(1);
+        list.add(a);
+        Appointment b = new Appointment(null, null, "Double fuck you",
+                new GregorianCalendar(2016, 1, 11, 9, 30),
+                new GregorianCalendar(2016, 1, 11, 9, 45));
+        b.setTest(2);
+        list.add(b);
+        Appointment c = new Appointment(null, null, "Triple fuck you",
+                new GregorianCalendar(2016, 1, 11, 9, 30),
+                new GregorianCalendar(2016, 1, 11, 9, 45));
+        c.setTest(3);
+        list.add(c);
+        Appointment d = new Appointment(null, null, "Triple fuck you",
+                new GregorianCalendar(2016, 1, 11, 9, 45),
+                new GregorianCalendar(2016, 1, 11, 10, 30));
+        d.setTest(4);
+        list.add(d);
+        Appointment e = new Appointment(null, null, "Triple fuck you",
+                new GregorianCalendar(2016, 1, 11, 10, 30),
+                new GregorianCalendar(2016, 1, 11, 11, 00));
+        e.setTest(5);
+        list.add(e);
+        return list;
+    }
+    */
 
     /**
      * Creates a new AddProviderDialog and updates the provider map
