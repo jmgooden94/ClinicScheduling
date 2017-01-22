@@ -557,7 +557,12 @@ public class MySqlUtils {
             sc.setTimeInMillis(s.getTime());
             Timestamp e = rs.getTimestamp(4);
             ec.setTimeInMillis(e.getTime());
-            Appointment appt = new Appointment(p, providerMap.get(rs.getInt(5)), rs.getString(2) , sc, ec, SpecialType.valueOf(rs.getString(5)));
+            String typeString = rs.getString(7);
+            SpecialType st = null;
+            if (typeString != null){
+                st = SpecialType.valueOf(typeString);
+            }
+            Appointment appt = new Appointment(p, providerMap.get(rs.getInt(5)), rs.getString(2) , sc, ec, st);
             appointments.add(appt);
         }
         return appointments;

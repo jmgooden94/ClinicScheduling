@@ -7,6 +7,7 @@ import Models.Provider.Provider;
 import Models.State;
 import Models.TimeOfDay;
 import Utils.MySqlUtils;
+import javafx.util.Pair;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -45,7 +46,10 @@ public class NewApptDialog extends JDialog {
     private JDatePickerImpl jDatePicker;
     private int dialogResult = -1;
     private HashMap<Integer, Provider> providerMap;
-
+    /**
+     * The results of the appointment dialog; a new appointment, and the id of the provider servicing it
+     */
+    private Pair<Appointment, Integer>  result;
     /**
      * The index of the default state in the dropdown box
      */
@@ -131,7 +135,6 @@ public class NewApptDialog extends JDialog {
                 st = SpecialType.fromName(specialTypesCombo.getSelectedItem().toString());
             }
 
-            // TODO: figure out why adding the appointment doesn't work
             int provider_id = -1;
             Provider p = (Provider) providerCombo.getSelectedItem();
             for (Map.Entry<Integer, Provider> e : providerMap.entrySet()){
@@ -139,17 +142,18 @@ public class NewApptDialog extends JDialog {
                     provider_id = e.getKey();
                 }
             }
-            Appointment newAppt = new Appointment(newPatient, p, reasonBox.getText(), start, end, st);
-            try {
-                MySqlUtils.addAppointment(newAppt, provider_id);
-            }
-            catch (SQLException ex){
-                showError(ex);
-            }
-
+            result = new Pair<>(new Appointment(newPatient, p, reasonBox.getText(), start, end, st), provider_id);
             dialogResult = JOptionPane.OK_OPTION;
             dispose();
         }
+    }
+
+    /**
+     * Gets the appointment created by the dialog; null if cancelled or invalid form
+     * @return the appointment
+     */
+    public Pair<Appointment, Integer> getResult(){
+        return result;
     }
 
     /**

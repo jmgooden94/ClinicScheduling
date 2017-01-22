@@ -8,6 +8,7 @@ import UI.Panels.AppointmentView;
 import UI.Panels.ProviderView;
 import Utils.MySqlUtils;
 import Utils.UserRole;
+import javafx.util.Pair;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -42,11 +43,14 @@ public class MainView extends JFrame {
     private JPanel leftPanel;
     private JPanel adminControlPanel;
     private JScrollPane providerScrollPane;
-    private boolean weeklyView;
+    private boolean apptView;
     private HashMap<Integer, Provider> providerMap;
     private GregorianCalendar displayedDate = new GregorianCalendar();
 
     public MainView(UserRole role) {
+        displayedDate.set(Calendar.HOUR, 0);
+        displayedDate.set(Calendar.MINUTE, 0);
+        displayedDate.set(Calendar.SECOND, 0);
         try {
             providerMap = MySqlUtils.getProviders();
         }
@@ -95,7 +99,7 @@ public class MainView extends JFrame {
         setContentPane(contentPane);
         setVisible(true);
         createAppointmentView(displayedDate);
-        weeklyView = false;
+        apptView = true;
     }
 
     // Some code in this method is copied from or based off code by Marty Strep of The University of Washington
@@ -140,8 +144,18 @@ public class MainView extends JFrame {
     }
 
     private void onNewAppt() {
-        if(new NewApptDialog(providerMap).showDialog() == JOptionPane.OK_OPTION){
-            //TODO: add the appointment
+        NewApptDialog d = new NewApptDialog(providerMap);
+        if(d.showDialog() == JOptionPane.OK_OPTION){
+            Pair<Appointment, Integer> apptData = d.getResult();
+            try {
+                MySqlUtils.addAppointment(apptData.getKey(), apptData.getValue());
+                if (apptView && (apptData.getKey().getApptStart().after(displayedDate) || apptData.getKey().getApptEnd().before(displayedDate))){
+                    updateApptView();
+                }
+            }
+            catch (SQLException ex){
+                showError(ex);
+            }
         }
     }
 
@@ -150,7 +164,7 @@ public class MainView extends JFrame {
      */
     private void onToggle(){
         calendarPanel.removeAll();
-        if (weeklyView){
+        if (apptView){
             toggleViewButton.setText("Provider View");
             createAppointmentView(displayedDate);
         }
@@ -159,7 +173,7 @@ public class MainView extends JFrame {
             createProviderView(displayedDate);
         }
         calendarPanel.updateUI();
-        weeklyView = !weeklyView;
+        apptView = !apptView;
     }
 
     /**
@@ -168,6 +182,8 @@ public class MainView extends JFrame {
      */
     private void createAppointmentView(GregorianCalendar date)
     {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+        dateLabel.setText(dateFormatter.format(date.getTime()));
         List<Appointment> appts = new ArrayList<>();
         date.set(Calendar.HOUR_OF_DAY, 0);
         date.set(Calendar.MINUTE, 0);
@@ -182,40 +198,6 @@ public class MainView extends JFrame {
         AppointmentView model = new AppointmentView(appts);
         calendarPanel.add(model.getDayView(), BorderLayout.CENTER);
     }
-
-    // TODO: Remove this
-    /*
-    private List<Appointment> createBullshitAppointments()
-    {
-        List<Appointment> list = new ArrayList<>();
-        Appointment a = new Appointment(null, null, "Fuck you",
-                new GregorianCalendar(2016, 1, 11, 10, 30),
-                new GregorianCalendar(2016, 1, 11, 11, 0));
-        a.setTest(1);
-        list.add(a);
-        Appointment b = new Appointment(null, null, "Double fuck you",
-                new GregorianCalendar(2016, 1, 11, 9, 30),
-                new GregorianCalendar(2016, 1, 11, 9, 45));
-        b.setTest(2);
-        list.add(b);
-        Appointment c = new Appointment(null, null, "Triple fuck you",
-                new GregorianCalendar(2016, 1, 11, 9, 30),
-                new GregorianCalendar(2016, 1, 11, 9, 45));
-        c.setTest(3);
-        list.add(c);
-        Appointment d = new Appointment(null, null, "Triple fuck you",
-                new GregorianCalendar(2016, 1, 11, 9, 45),
-                new GregorianCalendar(2016, 1, 11, 10, 30));
-        d.setTest(4);
-        list.add(d);
-        Appointment e = new Appointment(null, null, "Triple fuck you",
-                new GregorianCalendar(2016, 1, 11, 10, 30),
-                new GregorianCalendar(2016, 1, 11, 11, 00));
-        e.setTest(5);
-        list.add(e);
-        return list;
-    }
-    */
 
     /**
      * Creates a new AddProviderDialog and updates the provider map
@@ -310,6 +292,7 @@ public class MainView extends JFrame {
     }
 
     private void updateApptView(){
-
+        calendarPanel.removeAll();
+        createAppointmentView(displayedDate);
     }
 }

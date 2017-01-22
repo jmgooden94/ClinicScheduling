@@ -9,8 +9,6 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Calendar;
-import java.util.concurrent.ThreadLocalRandom;
-
 
 /**
  * Stores an appointment
