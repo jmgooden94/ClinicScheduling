@@ -44,6 +44,23 @@ public class Patient {
         this.smoker = smoker;
     }
 
+    public String getFirstName(){
+        return firstName;
+    }
+
+    public String getLastName(){
+        return lastName;
+    }
+
+    public String getPhone(){
+        return phone;
+    }
+
+    public Address getAddress(){
+        return address;
+    }
+
+    public boolean getSmoker(){ return smoker; }
     @Override
     public String toString()
     {

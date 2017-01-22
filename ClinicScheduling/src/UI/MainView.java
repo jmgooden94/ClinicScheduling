@@ -8,7 +8,6 @@ import UI.Panels.AppointmentView;
 import UI.Panels.ProviderView;
 import Utils.MySqlUtils;
 import Utils.UserRole;
-import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -26,7 +25,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 public class MainView extends JFrame {
@@ -46,6 +44,7 @@ public class MainView extends JFrame {
     private JScrollPane providerScrollPane;
     private boolean weeklyView;
     private HashMap<Integer, Provider> providerMap;
+    private GregorianCalendar displayedDate = new GregorianCalendar();
 
     public MainView(UserRole role) {
         try {
@@ -95,12 +94,8 @@ public class MainView extends JFrame {
         setLayout(null);
         setContentPane(contentPane);
         setVisible(true);
-        createAppointmentView();
+        createAppointmentView(displayedDate);
         weeklyView = false;
-    }
-
-    public HashMap<Integer, Provider> getProviderMap(){
-        return providerMap;
     }
 
     // Some code in this method is copied from or based off code by Marty Strep of The University of Washington
@@ -145,7 +140,7 @@ public class MainView extends JFrame {
     }
 
     private void onNewAppt() {
-        if(new NewApptDialog().showDialog() == JOptionPane.OK_OPTION){
+        if(new NewApptDialog(providerMap).showDialog() == JOptionPane.OK_OPTION){
             //TODO: add the appointment
         }
     }
@@ -157,24 +152,35 @@ public class MainView extends JFrame {
         calendarPanel.removeAll();
         if (weeklyView){
             toggleViewButton.setText("Provider View");
-            createAppointmentView();
+            createAppointmentView(displayedDate);
         }
         else {
             toggleViewButton.setText("Appointment View");
-            createProviderView(new GregorianCalendar());
+            createProviderView(displayedDate);
         }
         calendarPanel.updateUI();
         weeklyView = !weeklyView;
     }
 
     /**
-     * Creates a new monthly view and adds it to the calendar panel
+     * Creates a new appointment view and adds it to the calendar panel
+     * @param date the date to create the appointment view for; ignores time
      */
-    private void createAppointmentView()
+    private void createAppointmentView(GregorianCalendar date)
     {
-        //List<Appointment> l = createBullshitAppointments();
-        //AppointmentView model = new AppointmentView(l);
-        //calendarPanel.add(model.getDayView(), BorderLayout.CENTER);
+        List<Appointment> appts = new ArrayList<>();
+        date.set(Calendar.HOUR_OF_DAY, 0);
+        date.set(Calendar.MINUTE, 0);
+        date.set(Calendar.SECOND, 0);
+        GregorianCalendar end = new GregorianCalendar(date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+        try {
+            appts = MySqlUtils.getAppointments(date, end, providerMap);
+        }
+        catch (SQLException ex){
+            showError(ex);
+        }
+        AppointmentView model = new AppointmentView(appts);
+        calendarPanel.add(model.getDayView(), BorderLayout.CENTER);
     }
 
     // TODO: Remove this
@@ -297,9 +303,13 @@ public class MainView extends JFrame {
         providerPanel.removeAll();
         for(Provider p : providerMap.values()){
             JButton pButton = new JButton();
-            pButton.setText(p.getName() + ", " + p.getProviderType().getAbbreviation() + "\n");
+            pButton.setText(p.toString());
             providerPanel.add(pButton);
         }
         // TODO: figure out how to make a scroll bar appear if the buttons don't fit in the panel
+    }
+
+    private void updateApptView(){
+
     }
 }
