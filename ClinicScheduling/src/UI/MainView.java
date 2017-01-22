@@ -48,7 +48,7 @@ public class MainView extends JFrame {
     private GregorianCalendar displayedDate = new GregorianCalendar();
 
     public MainView(UserRole role) {
-        displayedDate.set(Calendar.HOUR, 0);
+        displayedDate.set(Calendar.HOUR_OF_DAY, 0);
         displayedDate.set(Calendar.MINUTE, 0);
         displayedDate.set(Calendar.SECOND, 0);
         try {
@@ -87,6 +87,20 @@ public class MainView extends JFrame {
         newProvButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){onAddProvider(); }
+        });
+
+        leftArrowButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onLeftArrow();
+            }
+        });
+
+        rightArrowButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onRightArrow();
+            }
         });
 
         if(role == UserRole.ADMIN){
@@ -185,9 +199,6 @@ public class MainView extends JFrame {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
         dateLabel.setText(dateFormatter.format(date.getTime()));
         List<Appointment> appts = new ArrayList<>();
-        date.set(Calendar.HOUR_OF_DAY, 0);
-        date.set(Calendar.MINUTE, 0);
-        date.set(Calendar.SECOND, 0);
         GregorianCalendar end = new GregorianCalendar(date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
         try {
             appts = MySqlUtils.getAppointments(date, end, providerMap);
@@ -291,8 +302,38 @@ public class MainView extends JFrame {
         // TODO: figure out how to make a scroll bar appear if the buttons don't fit in the panel
     }
 
+    /**
+     * Updates the appointment view
+     */
     private void updateApptView(){
+        // TODO: Verify this gets called when an appointment is added during the displayed date
         calendarPanel.removeAll();
         createAppointmentView(displayedDate);
+    }
+
+    /**
+     * Decreases the displayed date
+     */
+    private void onLeftArrow(){
+        displayedDate.add(Calendar.DAY_OF_MONTH, -1);
+        if(apptView){
+            updateApptView();
+        }
+        else{
+            // TODO: update provider view
+        }
+    }
+
+    /**
+     * Decreases the displayed date
+     */
+    private void onRightArrow(){
+        displayedDate.add(Calendar.DAY_OF_MONTH, 1);
+        if(apptView){
+            updateApptView();
+        }
+        else{
+            // TODO: update provider view
+        }
     }
 }
