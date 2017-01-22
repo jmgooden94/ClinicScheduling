@@ -1,6 +1,7 @@
 package Utils;
 
 import Models.Appointment.Appointment;
+import Models.Appointment.SpecialType;
 import Models.Day;
 import Models.Patient.Address;
 import Models.Patient.Patient;
@@ -8,6 +9,7 @@ import Models.Provider.Availability;
 import Models.Provider.Provider;
 import Models.Provider.ProviderType;
 import Models.Provider.Recurrence;
+import Models.State;
 import Models.TimeOfDay;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -15,10 +17,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.sql.Date;
+import java.util.*;
 import javax.swing.*;
 public class MySqlUtils {
 
@@ -425,7 +425,7 @@ public class MySqlUtils {
         ps.setString(3, a.getState().name());
         ps.setString(4, a.getZip());
         ResultSet rs = ps.executeQuery();
-        if(rs.isBeforeFirst()){
+        if(rs.next()){
             return rs.getInt(1);
         }
         else {
@@ -481,14 +481,13 @@ public class MySqlUtils {
         ps.setString(3, p.getPhone());
         ps.setInt(4, address_fk);
         ResultSet rs = ps.executeQuery();
-        if(rs.isBeforeFirst()){
+        if(rs.next()){
             return rs.getInt(1);
         }
         else {
             return addPatient(p);
         }
     }
-
 
     /**
      * Adds the appointment to the database
@@ -498,13 +497,71 @@ public class MySqlUtils {
     public static void addAppointment(Appointment appointment, int provider_id) throws SQLException{
         int address_id = addAddressIfNotExists(appointment.getPatient().getAddress());
         int patient_id = addPatientIfNotExists(appointment.getPatient(), address_id);
-        String sql = "INSERT INTO clinic.appointment(getReason, start_time, end_time, provider_fk, patient_fk, appt_type) values(?,?,?,?,?,?)";
+        String sql = "INSERT INTO clinic.appointment(reason, start_time, end_time, provider_fk, patient_fk, appt_type) values(?,?,?,?,?,?)";
         PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setString(1, appointment.getReason());
-        ps.setDate(2, new Date(appointment.getApptStart().getTimeInMillis()));
-        ps.setDate(3, new Date(appointment.getApptEnd().getTimeInMillis()));
+        String reason = appointment.getReason();
+        ps.setString(1, reason);
+        Timestamp apptStart = new Timestamp(appointment.getApptStart().getTimeInMillis());
+        ps.setTimestamp(2, apptStart);
+        Timestamp apptEnd = new Timestamp(appointment.getApptEnd().getTimeInMillis());
+        ps.setTimestamp(3, apptEnd);
         ps.setInt(4, provider_id);
         ps.setInt(5, patient_id);
-        ps.setString(6, appointment.getSpecialType().name());
+        SpecialType s = appointment.getSpecialType();
+        if (s != null){
+            ps.setString(6, appointment.getSpecialType().name());
+        }
+        else {
+            ps.setNull(6, Types.VARCHAR);
+        }
+        ps.execute();
+        connection.commit();
     }
+
+    /**
+     * Builds a list containing all appointments in the given date range
+     * @param start the beginning of the date range
+     * @param end the end of the date range
+     * @param providerMap the map of providers updated by the getProviders method
+     * @return
+     */
+    public static List<Appointment> getAppointments(GregorianCalendar start, GregorianCalendar end,
+                                                       Map<Integer, Provider> providerMap) throws SQLException{
+        String sql = "select * from clinic.appointment JOIN clinic.patient ON " +
+                "clinic.appointment.patient_fk=clinic.patient.id JOIN clinic.address ON " +
+                "clinic.patient.address_fk=clinic.address.id WHERE start_time BETWEEN ? AND ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        Timestamp begin = new Timestamp(start.getTimeInMillis());
+        Timestamp stop = new Timestamp(end.getTimeInMillis());
+        ps.setTimestamp(1, begin);
+        ps.setTimestamp(2, stop);
+        ResultSet rs = ps.executeQuery();
+        return constructApptsFromResultSet(rs, providerMap);
+    }
+
+    /**
+     * Constructs a list of appointments from the resultset in getAppointments; this method should ONLY be called
+     * using that result set as the parameter
+     * @param rs the result set created by getAppointments
+     * @param providerMap the map of providers to their ids, should be passed through by getAppointments
+     * @return a list of appointments constructed from that result set
+     */
+    private static List<Appointment> constructApptsFromResultSet(ResultSet rs, Map<Integer, Provider> providerMap) throws SQLException{
+        List<Appointment> appointments = new ArrayList<>();
+        GregorianCalendar sc = new GregorianCalendar();
+        GregorianCalendar ec = new GregorianCalendar();
+        while(rs.next()){
+            Address a = new Address(rs.getString(15), rs.getString(16), State.valueOf(rs.getString(17)), rs.getString(18));
+            Patient p = new Patient(rs.getString(9), rs.getString(10), rs.getString(11), a, rs.getBoolean(12));
+            Timestamp s = rs.getTimestamp(3);
+            sc.setTimeInMillis(s.getTime());
+            Timestamp e = rs.getTimestamp(4);
+            ec.setTimeInMillis(e.getTime());
+            Appointment appt = new Appointment(p, providerMap.get(rs.getInt(5)), rs.getString(2) , sc, ec, SpecialType.valueOf(rs.getString(5)));
+            appointments.add(appt);
+        }
+        return appointments;
+    }
+
+
 }
