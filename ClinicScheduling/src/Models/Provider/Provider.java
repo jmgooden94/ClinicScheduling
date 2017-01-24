@@ -40,11 +40,6 @@ public class Provider {
         this.availability = availability;
     }
 
-    @Override
-    public String toString() {
-        return firstName + " " + lastName + ", " + providerType.getAbbreviation();
-    }
-
     public ProviderType getProviderType(){
         return providerType;
     }

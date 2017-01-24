@@ -1,14 +1,12 @@
 package UI;
 
-import Models.Appointment.Appointment;
 import Models.Day;
 import Models.Provider.Provider;
 import UI.Dialogs.*;
-import UI.Panels.AppointmentView;
 import UI.Panels.ProviderView;
 import Utils.MySqlUtils;
 import Utils.UserRole;
-import javafx.util.Pair;
+import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -21,11 +19,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 public class MainView extends JFrame {
@@ -43,14 +39,10 @@ public class MainView extends JFrame {
     private JPanel leftPanel;
     private JPanel adminControlPanel;
     private JScrollPane providerScrollPane;
-    private boolean apptView;
+    private boolean weeklyView;
     private HashMap<Integer, Provider> providerMap;
-    private GregorianCalendar displayedDate = new GregorianCalendar();
 
     public MainView(UserRole role) {
-        displayedDate.set(Calendar.HOUR_OF_DAY, 0);
-        displayedDate.set(Calendar.MINUTE, 0);
-        displayedDate.set(Calendar.SECOND, 0);
         try {
             providerMap = MySqlUtils.getProviders();
         }
@@ -89,20 +81,6 @@ public class MainView extends JFrame {
             public void actionPerformed(ActionEvent e){onAddProvider(); }
         });
 
-        leftArrowButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                onLeftArrow();
-            }
-        });
-
-        rightArrowButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                onRightArrow();
-            }
-        });
-
         if(role == UserRole.ADMIN){
             createAdminControls();
         }
@@ -112,8 +90,12 @@ public class MainView extends JFrame {
         setLayout(null);
         setContentPane(contentPane);
         setVisible(true);
-        createAppointmentView(displayedDate);
-        apptView = true;
+        createMonthView();
+        weeklyView = false;
+    }
+
+    public HashMap<Integer, Provider> getProviderMap(){
+        return providerMap;
     }
 
     // Some code in this method is copied from or based off code by Marty Strep of The University of Washington
@@ -158,18 +140,8 @@ public class MainView extends JFrame {
     }
 
     private void onNewAppt() {
-        NewApptDialog d = new NewApptDialog(providerMap);
-        if(d.showDialog() == JOptionPane.OK_OPTION){
-            Pair<Appointment, Integer> apptData = d.getResult();
-            try {
-                MySqlUtils.addAppointment(apptData.getKey(), apptData.getValue());
-                if (apptView && (apptData.getKey().getApptStart().after(displayedDate) || apptData.getKey().getApptEnd().before(displayedDate))){
-                    updateApptView();
-                }
-            }
-            catch (SQLException ex){
-                showError(ex);
-            }
+        if(new NewApptDialog().showDialog() == JOptionPane.OK_OPTION){
+            //TODO: add the appointment
         }
     }
 
@@ -178,36 +150,23 @@ public class MainView extends JFrame {
      */
     private void onToggle(){
         calendarPanel.removeAll();
-        if (apptView){
+        if (weeklyView){
             toggleViewButton.setText("Provider View");
-            createAppointmentView(displayedDate);
+            createMonthView();
         }
         else {
             toggleViewButton.setText("Appointment View");
-            createProviderView(displayedDate);
+            createProviderView(new GregorianCalendar());
         }
         calendarPanel.updateUI();
-        apptView = !apptView;
+        weeklyView = !weeklyView;
     }
 
     /**
-     * Creates a new appointment view and adds it to the calendar panel
-     * @param date the date to create the appointment view for; ignores time
+     * Creates a new monthly view and adds it to the calendar panel
      */
-    private void createAppointmentView(GregorianCalendar date)
-    {
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
-        dateLabel.setText(dateFormatter.format(date.getTime()));
-        List<Appointment> appts = new ArrayList<>();
-        GregorianCalendar end = new GregorianCalendar(date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
-        try {
-            appts = MySqlUtils.getAppointments(date, end, providerMap);
-        }
-        catch (SQLException ex){
-            showError(ex);
-        }
-        AppointmentView model = new AppointmentView(appts);
-        calendarPanel.add(model.getDayView(), BorderLayout.CENTER);
+    private void createMonthView(){
+
     }
 
     /**
@@ -296,44 +255,9 @@ public class MainView extends JFrame {
         providerPanel.removeAll();
         for(Provider p : providerMap.values()){
             JButton pButton = new JButton();
-            pButton.setText(p.toString());
+            pButton.setText(p.getName() + ", " + p.getProviderType().getAbbreviation() + "\n");
             providerPanel.add(pButton);
         }
         // TODO: figure out how to make a scroll bar appear if the buttons don't fit in the panel
-    }
-
-    /**
-     * Updates the appointment view
-     */
-    private void updateApptView(){
-        // TODO: Verify this gets called when an appointment is added during the displayed date
-        calendarPanel.removeAll();
-        createAppointmentView(displayedDate);
-    }
-
-    /**
-     * Decreases the displayed date
-     */
-    private void onLeftArrow(){
-        displayedDate.add(Calendar.DAY_OF_MONTH, -1);
-        if(apptView){
-            updateApptView();
-        }
-        else{
-            // TODO: update provider view
-        }
-    }
-
-    /**
-     * Decreases the displayed date
-     */
-    private void onRightArrow(){
-        displayedDate.add(Calendar.DAY_OF_MONTH, 1);
-        if(apptView){
-            updateApptView();
-        }
-        else{
-            // TODO: update provider view
-        }
     }
 }

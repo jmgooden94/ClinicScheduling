@@ -115,9 +115,8 @@ public class AddProviderDialog extends JDialog {
     }
 
     private void onAddAvailability(){
-        AddAvailabilityDialog d = new AddAvailabilityDialog();
-        if(d.showDialog() == JOptionPane.OK_OPTION){
-            Availability fromDialog = d.getResult();
+        if(new AddAvailabilityDialog().showDialog() == JOptionPane.OK_OPTION){
+            Availability fromDialog = new AddAvailabilityDialog().getResult();
             availabilities.add(fromDialog);
         }
     }

@@ -13,8 +13,7 @@ public enum SpecialType {
     INTAKE ("Intake"),
     CHIROPRACTOR ("Chiropractor"),
     HIGH_BLOOD_PRESSURE ("High Blood Pressure"),
-    DIABETES ("Diabetes"),
-    PROVIDER_UNAVAILABLE ("Provider Unavailable");
+    DIABETES ("Diabetes");
 
     private String name;
 
