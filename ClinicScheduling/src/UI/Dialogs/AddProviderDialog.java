@@ -3,10 +3,13 @@ package UI.Dialogs;
 import Models.Provider.Availability;
 import Models.Provider.Provider;
 import Models.Provider.ProviderType;
+import UI.MainView;
 import Utils.MySqlUtils;
+import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
+import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,8 +25,14 @@ public class AddProviderDialog extends JDialog {
     private JButton addAvailabilityButton;
     private JPanel availabilityPanel;
     private List<Availability> availabilities = new ArrayList<>();
+    private MainView mainView;
+    private int dialogResult = -1;
 
+    /**
+     * Constructor for add provider dialog
+     */
     public AddProviderDialog() {
+        this.mainView = mainView;
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -73,15 +82,18 @@ public class AddProviderDialog extends JDialog {
 
         SpinnerListModel types = new SpinnerListModel(ProviderType.getNames());
         typeSpinner.setModel(types);
+    }
 
+    public int showDialog(){
         setVisible(true);
+        return dialogResult;
     }
 
     private void onOK() {
         if (validateForm()){
             String fn = firstNameField.getText();
             fn = fn.substring(0,1).toUpperCase() + fn.substring(1);
-            String ln = firstNameField.getText();
+            String ln = lastNameField.getText();
             ln = ln.substring(0,1).toUpperCase() + ln.substring(1);
             ProviderType pt = ProviderType.fromName(typeSpinner.getValue().toString());
             Provider p = new Provider(pt, fn, ln, availabilities);
@@ -91,18 +103,21 @@ public class AddProviderDialog extends JDialog {
             catch (SQLException ex){
                 showError(ex);
             }
+            dialogResult = JOptionPane.OK_OPTION;
             dispose();
         }
     }
 
     private void onCancel() {
         // add your code here if necessary
+        dialogResult = JOptionPane.CANCEL_OPTION;
         dispose();
     }
 
     private void onAddAvailability(){
-        Availability fromDialog = new AddAvailabilityDialog().getResult();
-        if(fromDialog != null){
+        AddAvailabilityDialog d = new AddAvailabilityDialog();
+        if(d.showDialog() == JOptionPane.OK_OPTION){
+            Availability fromDialog = d.getResult();
             availabilities.add(fromDialog);
         }
     }

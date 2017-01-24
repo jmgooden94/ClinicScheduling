@@ -7,6 +7,7 @@ import Models.Provider.WeekOfMonthRecurrence;
 import Models.TimeOfDay;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,8 +28,9 @@ public class AddAvailabilityDialog extends JDialog {
     private JSpinner endHourSpinner;
     private JSpinner endMinuteSpinner;
     private JSpinner endPMSpinner;
-    private JSpinner recurrenceSpinner;
+    private JComboBox recurrenceCombo;
     private Availability result;
+    private int dialogResult = -1;
 
     public AddAvailabilityDialog() {
         setContentPane(contentPane);
@@ -93,16 +95,19 @@ public class AddAvailabilityDialog extends JDialog {
             pmSpinnerEditor.getTextField().setHorizontalAlignment(JTextField.RIGHT);
         }
 
-        String[] recurOps = {"0 - Every Week", "1 - First Week", "2 - Second Week", "3 - Third Week", "4 - Fourth Week",
-                "5 - Fifth Week"};
-        SpinnerListModel recurModel = new SpinnerListModel(recurOps);
-        recurrenceSpinner.setModel(recurModel);
+        final String[] recurOps = {"Every Week", "First Week", "Second Week", "Third Week", "Fourth Week",
+                "Fifth Week"};
+        DefaultComboBoxModel<String> recurModel = new DefaultComboBoxModel<>(recurOps);
+        recurrenceCombo.setModel(recurModel);
+    }
 
+    public int showDialog(){
         setVisible(true);
+        return dialogResult;
     }
 
     private void onOK() {
-        int recurOption = Integer.parseInt(recurrenceSpinner.getValue().toString().substring(0, 1));
+        int recurOption = recurrenceCombo.getSelectedIndex();
         Recurrence r = new WeekOfMonthRecurrence(recurOption);
 
         List<Day> days = new ArrayList<>();
@@ -113,28 +118,30 @@ public class AddAvailabilityDialog extends JDialog {
         if (fridayCheckBox.isSelected()){days.add(Day.FRIDAY);}
 
         int startHour = (int) startHourSpinner.getValue();
-        boolean startAM = startPMSpinner.getValue().toString().equals("AM");
+        boolean startAM = startPMSpinner.getValue().toString().compareTo("AM") == 0;
         if(startAM && startHour == 12){
             startHour = 0;
         }
-        else if (!startAM) startHour += 12;
+        else if (!startAM && startHour != 12) startHour += 12;
         TimeOfDay start = new TimeOfDay(startHour, (int) startMinuteSpinner.getValue());
         int endHour = (int) endHourSpinner.getValue();
         boolean endAM = endPMSpinner.getValue().toString().equals("AM");
         if(endAM && endHour == 12){
             endHour = 0;
         }
-        else if(!endAM) endHour += 12;
+        else if(!endAM && endHour != 12) endHour += 12;
         TimeOfDay end = new TimeOfDay(endHour, (int) endMinuteSpinner.getValue());
 
         if(validateForm(start, end)){
             result = new Availability(r, days, start, end);
             dispose();
         }
+        dialogResult = JOptionPane.OK_OPTION;
     }
 
     private void onCancel() {
         // add your code here if necessary
+        dialogResult = JOptionPane.CANCEL_OPTION;
         dispose();
     }
 

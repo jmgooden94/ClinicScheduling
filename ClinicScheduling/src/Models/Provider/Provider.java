@@ -60,10 +60,18 @@ public class Provider {
      * @param availability A list providing the provider's availability
      */
     public Provider(ProviderType providerType, String firstName, String lastName, List<Availability> availability) {
+        if (providerType == null || lastName == null || availability == null){
+            throw new IllegalArgumentException("No arguments can be null.");
+        }
         this.providerType = providerType;
         this.firstName = firstName;
         this.lastName = lastName;
         this.availability = availability;
+    }
+
+    @Override
+    public String toString() {
+        return firstName + " " + lastName + ", " + providerType.getAbbreviation();
     }
 
     public ProviderType getProviderType(){

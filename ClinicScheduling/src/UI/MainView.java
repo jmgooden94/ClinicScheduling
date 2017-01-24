@@ -1,17 +1,20 @@
-// Some code in this class is copied from or based off code by Marty Strep of The University of Washington
 package UI;
 
 import Models.Appointment.Appointment;
 import Models.Day;
 import Models.Provider.Provider;
+<<<<<<< HEAD
 import Models.Provider.ProviderType;
 import Models.TimeOfDay;
+=======
+>>>>>>> master
 import UI.Dialogs.*;
 import UI.Panels.AllProviderView;
 import UI.Panels.AppointmentView;
 import UI.Panels.ProviderView;
 import Utils.MySqlUtils;
 import Utils.UserRole;
+import javafx.util.Pair;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -29,6 +32,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class MainView extends JFrame {
 
@@ -44,9 +48,27 @@ public class MainView extends JFrame {
     private JPanel calendarPanel;
     private JPanel leftPanel;
     private JPanel adminControlPanel;
-    private boolean weeklyView;
+    private JScrollPane providerScrollPane;
+    private boolean apptView;
+    private HashMap<Integer, Provider> providerMap;
+    private GregorianCalendar displayedDate = new GregorianCalendar();
 
     public MainView(UserRole role) {
+        displayedDate.set(Calendar.HOUR_OF_DAY, 0);
+        displayedDate.set(Calendar.MINUTE, 0);
+        displayedDate.set(Calendar.SECOND, 0);
+        try {
+            providerMap = MySqlUtils.getProviders();
+        }
+        catch (SQLException ex){
+            showError(ex);
+        }
+        providerPanel.setPreferredSize(new Dimension(180, 10));
+        providerScrollPane.setViewportView(providerPanel);
+        updateProviderPanel();
+
+        this.setTitle("Clinic Scheduler");
+
         // call onCancel() when cross is clicked
         addWindowListener(new WindowAdapter() {
             @Override
@@ -70,8 +92,20 @@ public class MainView extends JFrame {
 
         newProvButton.addActionListener(new ActionListener() {
             @Override
+            public void actionPerformed(ActionEvent e){onAddProvider(); }
+        });
+
+        leftArrowButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                new AddProviderDialog();
+                onLeftArrow();
+            }
+        });
+
+        rightArrowButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onRightArrow();
             }
         });
 
@@ -84,10 +118,11 @@ public class MainView extends JFrame {
         setLayout(null);
         setContentPane(contentPane);
         setVisible(true);
-        createAppointmentView();
-        weeklyView = false;
+        createAppointmentView(displayedDate);
+        apptView = true;
     }
 
+    // Some code in this method is copied from or based off code by Marty Strep of The University of Washington
     private void createProviderView(GregorianCalendar date) {
 //        SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
 //
@@ -154,7 +189,19 @@ public class MainView extends JFrame {
     }
 
     private void onNewAppt() {
-        new NewApptDialog();
+        NewApptDialog d = new NewApptDialog(providerMap);
+        if(d.showDialog() == JOptionPane.OK_OPTION){
+            Pair<Appointment, Integer> apptData = d.getResult();
+            try {
+                MySqlUtils.addAppointment(apptData.getKey(), apptData.getValue());
+                if (apptView && (apptData.getKey().getApptStart().after(displayedDate) || apptData.getKey().getApptEnd().before(displayedDate))){
+                    updateApptView();
+                }
+            }
+            catch (SQLException ex){
+                showError(ex);
+            }
+        }
     }
 
     /**
@@ -162,23 +209,25 @@ public class MainView extends JFrame {
      */
     private void onToggle(){
         calendarPanel.removeAll();
-        if (weeklyView){
+        if (apptView){
             toggleViewButton.setText("Provider View");
-            createAppointmentView();
+            createAppointmentView(displayedDate);
         }
         else {
             toggleViewButton.setText("Appointment View");
-            createProviderView(new GregorianCalendar());
+            createProviderView(displayedDate);
         }
         calendarPanel.updateUI();
-        weeklyView = !weeklyView;
+        apptView = !apptView;
     }
 
     /**
-     * Creates a new monthly view and adds it to the calendar panel
+     * Creates a new appointment view and adds it to the calendar panel
+     * @param date the date to create the appointment view for; ignores time
      */
-    private void createAppointmentView()
+    private void createAppointmentView(GregorianCalendar date)
     {
+<<<<<<< HEAD
         // TODO: remove, need to hit DB here.
         List<Appointment> l = createBullshitAppointments();
         AppointmentView model = new AppointmentView(l);
@@ -215,12 +264,44 @@ public class MainView extends JFrame {
         e.setTest(5);
         list.add(e);
         return list;
+=======
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+        dateLabel.setText(dateFormatter.format(date.getTime()));
+        List<Appointment> appts = new ArrayList<>();
+        GregorianCalendar end = new GregorianCalendar(date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+        try {
+            appts = MySqlUtils.getAppointments(date, end, providerMap);
+        }
+        catch (SQLException ex){
+            showError(ex);
+        }
+        AppointmentView model = new AppointmentView(appts);
+        calendarPanel.add(model.getDayView(), BorderLayout.CENTER);
+    }
+
+    /**
+     * Creates a new AddProviderDialog and updates the provider map
+     */
+    private void onAddProvider(){
+        if (new AddProviderDialog().showDialog() == JOptionPane.OK_OPTION){
+            try {
+                providerMap = MySqlUtils.getProviders();
+                updateProviderPanel();
+            }
+            catch (SQLException ex) {
+                showError(ex);
+            }
+        }
+>>>>>>> master
     }
 
     /**
      * Creates the admin controls and adds them to the panel
      */
     private void createAdminControls(){
+        GridLayout g = new GridLayout(0, 1, 5, 5);
+        adminControlPanel.setLayout(g);
+
         JButton addUser = new JButton("Add User");
         addUser.addActionListener(new ActionListener() {
             @Override
@@ -228,7 +309,7 @@ public class MainView extends JFrame {
                 onNewUser();
             }
         });
-        adminControlPanel.add(addUser, BorderLayout.NORTH);
+        adminControlPanel.add(addUser);
 
         JButton editUser = new JButton("Change User Password");
         editUser.addActionListener(new ActionListener() {
@@ -237,7 +318,7 @@ public class MainView extends JFrame {
                 onEditUser();
             }
         });
-        adminControlPanel.add(editUser, BorderLayout.CENTER);
+        adminControlPanel.add(editUser);
 
         JButton deleteUser = new JButton("Delete User");
         deleteUser.addActionListener(new ActionListener() {
@@ -246,28 +327,28 @@ public class MainView extends JFrame {
                 onDeleteUser();
             }
         });
-        adminControlPanel.add(deleteUser, BorderLayout.SOUTH);
+        adminControlPanel.add(deleteUser);
     }
 
     /**
      * Shows the add user dialog
      */
     private void onNewUser(){
-        new AddUserDialog();
+        new AddUserDialog().showDialog();
     }
 
     /**
      * Shows the delete user dialog
      */
     private void onDeleteUser(){
-        new DeleteUserDialog();
+        new DeleteUserDialog().showDialog();
     }
 
     /**
      * Shows the edit user dialog
      */
     private void onEditUser(){
-        new ChangeUserPasswordDialog();
+        new ChangeUserPasswordDialog().showDialog();
     }
 
     /**
@@ -276,5 +357,53 @@ public class MainView extends JFrame {
      */
     private void showError(Exception ex){
         JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Unexpected Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Updates the provider panel to show the list of providers
+     */
+    private void updateProviderPanel(){
+        providerPanel.removeAll();
+        for(Provider p : providerMap.values()){
+            JButton pButton = new JButton();
+            pButton.setText(p.toString());
+            providerPanel.add(pButton);
+        }
+        // TODO: figure out how to make a scroll bar appear if the buttons don't fit in the panel
+    }
+
+    /**
+     * Updates the appointment view
+     */
+    private void updateApptView(){
+        // TODO: Verify this gets called when an appointment is added during the displayed date
+        calendarPanel.removeAll();
+        createAppointmentView(displayedDate);
+    }
+
+    /**
+     * Decreases the displayed date
+     */
+    private void onLeftArrow(){
+        displayedDate.add(Calendar.DAY_OF_MONTH, -1);
+        if(apptView){
+            updateApptView();
+        }
+        else{
+            // TODO: update provider view
+        }
+    }
+
+    /**
+     * Decreases the displayed date
+     */
+    private void onRightArrow(){
+        displayedDate.add(Calendar.DAY_OF_MONTH, 1);
+        if(apptView){
+            updateApptView();
+        }
+        else{
+            // TODO: update provider view
+        }
     }
 }
