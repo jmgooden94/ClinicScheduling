@@ -1,9 +1,5 @@
 package Models.Provider;
 
-import Models.TimeOfDay;
-import UI.Panels.MultiColumnView;
-
-import java.awt.*;
 import java.util.List;
 
 /**
@@ -26,31 +22,6 @@ public class Provider {
      * The provider's availability
      */
     private List<Availability> availability;
-
-    /**
-     * The color the cells corresponding to this provider
-     * are to be rendered.
-     */
-    private Color color = MultiColumnView.DEFAULT_COLOR;
-
-    // TODO: remove, it's a hack
-    public TimeOfDay start;
-
-    // TODO: remove, it's a hack
-    public TimeOfDay end;
-
-    // TODO: remove, it's a hack
-    public TimeOfDay getStart() { return start; }
-
-    // TODO: remove, it's a hack
-    public TimeOfDay getEnd() { return end; }
-
-    // TODO: remove, it's a hack
-    public boolean during(TimeOfDay t)
-    {
-        return this.start.beforeOrEqual(t) && this.end.after(t);
-    }
-
 
     /**
      * Constructs a new provider
@@ -89,12 +60,6 @@ public class Provider {
     public String getName(){
         return firstName + " " + lastName;
     }
-
-    public Color getColor() { return this.color; }
-
-    public void setColor(Color c) { this.color = c; }
-
-
 
     public List<Availability> getAvailability(){
         return availability;

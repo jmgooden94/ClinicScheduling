@@ -1,7 +1,7 @@
 package Utils;
 
+import Models.Appointment.Appointment;
 import UI.Panels.AppointmentView;
-import UI.Panels.MultiColumnView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -26,7 +26,7 @@ public class AppointmentCellRenderer extends DefaultTableCellRenderer
         }
         else
         {
-            l.setBackground(MultiColumnView.DEFAULT_COLOR);
+            l.setBackground(AppointmentView.DEFAULT_COLOR);
         }
         Color bg = l.getBackground();
         if (bg == Color.blue || bg == Color.red)

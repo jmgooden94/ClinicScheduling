@@ -3,7 +3,7 @@ package Models.Appointment;
 import Models.Patient.Patient;
 import Models.Provider.Provider;
 import Models.TimeOfDay;
-import UI.Panels.MultiColumnView;
+import UI.Panels.AppointmentView;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
@@ -57,7 +57,7 @@ public class Appointment {
      * The color the cells corresponding to this appointment
      * are to be rendered.
      */
-    private Color color = MultiColumnView.DEFAULT_COLOR;
+    private Color color = AppointmentView.DEFAULT_COLOR;
 
     public int test = -1;
 

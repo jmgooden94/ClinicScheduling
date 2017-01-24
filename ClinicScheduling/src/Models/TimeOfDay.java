@@ -8,7 +8,7 @@ import java.util.GregorianCalendar;
 /**
  * Simple class representing the type of day in hours and minutes
  */
-public class TimeOfDay implements Comparable {
+public class TimeOfDay {
     /**
      * The hour of the day, from 0 to 23
      */
@@ -177,38 +177,5 @@ public class TimeOfDay implements Comparable {
         TimeOfDay oth = (TimeOfDay) other;
 
         return (oth.getHour() == hour && oth.getMinute() == minute );
-    }
-
-
-    public int compareTo(Object oth)
-    {
-        if (!(oth instanceof TimeOfDay))
-        {
-            throw new IllegalArgumentException("Arguement must be of type TimeOfDay");
-        }
-        TimeOfDay other = (TimeOfDay) oth;
-        if (this.hour < other.getHour())
-        {
-            return -1;
-        }
-        else if (this.hour == other.getHour())
-        {
-            if (this.minute < other.getMinute())
-            {
-                return -1;
-            }
-            else if (this.minute == other.getMinute())
-            {
-                return 0;
-            }
-            else
-            {
-                return 1;
-            }
-        }
-        else
-        {
-            return 1;
-        }
     }
 }
