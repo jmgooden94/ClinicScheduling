@@ -2,7 +2,7 @@ package Utils;
 
 import java.awt.Color;
 
-public class AppointmentCell
+public class ColoredDataCell
 {
     /**
      * The background color of the cell
@@ -14,7 +14,7 @@ public class AppointmentCell
      */
     private String data;
 
-    public AppointmentCell(String data, Color color)
+    public ColoredDataCell(String data, Color color)
     {
         this.data = data;
         this.color = color;
