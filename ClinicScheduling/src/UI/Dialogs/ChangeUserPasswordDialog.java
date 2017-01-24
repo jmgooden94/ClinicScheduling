@@ -15,7 +15,6 @@ public class ChangeUserPasswordDialog extends JDialog {
     private JPasswordField pwBox;
     private JPasswordField confirmPwBox;
     private JSpinner usernameSpinner;
-    private int dialogResult = -1;
 
     public ChangeUserPasswordDialog() {
         SpinnerListModel roles = new SpinnerListModel(UserRole.values());
@@ -61,6 +60,8 @@ public class ChangeUserPasswordDialog extends JDialog {
             showError(ex);
         }
         usernameSpinner.setModel(usernames);
+
+        setVisible(true);
     }
 
     private void onOK() {
@@ -74,7 +75,6 @@ public class ChangeUserPasswordDialog extends JDialog {
                 try {
                     MySqlUtils.changePassword(un, pwPlain);
                     JOptionPane.showMessageDialog(contentPane, "Password changed.");
-                    dialogResult = JOptionPane.OK_OPTION;
                     dispose();
                 } catch (SQLException sqle) {
                         showError(sqle);
@@ -86,13 +86,8 @@ public class ChangeUserPasswordDialog extends JDialog {
         }
     }
 
-    public int showDialog(){
-        setVisible(true);
-        return dialogResult;
-    }
-
     private void onCancel() {
-        dialogResult = JOptionPane.CANCEL_OPTION;
+        // add your code here if necessary
         dispose();
     }
 

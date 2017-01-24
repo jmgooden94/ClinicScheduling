@@ -3,12 +3,13 @@ package Models.Appointment;
 import Models.Patient.Patient;
 import Models.Provider.Provider;
 import Models.TimeOfDay;
-import UI.Panels.AppointmentView;
+import UI.Panels.MultiColumnView;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Calendar;
+
 
 /**
  * Stores an appointment
@@ -27,7 +28,7 @@ public class Appointment {
      */
     private String apptType;
     /**
-     * The getReason for the appointment
+     * The reason for the appointment
      */
     private String reason;
     /**
@@ -38,10 +39,6 @@ public class Appointment {
      * The end of the appointment
      */
     private GregorianCalendar apptEnd;
-    /**
-     * The special type of this appointment; this field can be null
-     */
-    private SpecialType specialType;
 
     /**
      * Start of appointment, but only time, not a date too
@@ -57,7 +54,7 @@ public class Appointment {
      * The color the cells corresponding to this appointment
      * are to be rendered.
      */
-    private Color color = AppointmentView.DEFAULT_COLOR;
+    private Color color = MultiColumnView.DEFAULT_COLOR;
 
     public int test = -1;
 
@@ -65,21 +62,18 @@ public class Appointment {
      * Constructs a new appointment
      * @param patient The patient this appointment is for
      * @param provider The provider serving this appointment
-     * @param reason The getReason for the appointment
+     * @param reason The reason for the appointment
      * @param apptStart The start of the appointment
      * @param apptEnd The end of the appointment
-     * @param specialType The special type of this appointment, or null
      */
-    public Appointment(Patient patient, Provider provider, String reason, GregorianCalendar apptStart, GregorianCalendar apptEnd, SpecialType specialType) {
-        if (patient == null || provider == null || apptStart == null || apptEnd == null){
-            throw new IllegalArgumentException("patient, provider, apptStart, and apptEnd cannot be null");
-        }
+    public Appointment(Patient patient, Provider provider, String reason, GregorianCalendar apptStart, GregorianCalendar apptEnd) {
         this.patient = patient;
         this.provider = provider;
+        //TODO: uncomment this once we get providers figured out
+        //this.apptType = provider.getProviderType().toString();
         this.reason = reason;
         this.apptStart = apptStart;
         this.apptEnd = apptEnd;
-        this.specialType = specialType;
 
         this.startTime = new TimeOfDay(this.apptStart.get(Calendar.HOUR_OF_DAY),
                                         this.apptStart.get(Calendar.MINUTE));
@@ -95,7 +89,7 @@ public class Appointment {
         return provider;
     }
 
-    public String getReason(){
+    public String reason(){
         return reason;
     }
 
@@ -106,8 +100,6 @@ public class Appointment {
     public GregorianCalendar getApptEnd(){
         return apptEnd;
     }
-
-    public SpecialType getSpecialType(){ return specialType; }
 
     public TimeOfDay getStartTime()
     {

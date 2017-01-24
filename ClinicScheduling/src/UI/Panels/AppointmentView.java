@@ -1,10 +1,9 @@
 package UI.Panels;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 import Models.Appointment.Appointment;
 import Models.TimeOfDay;
-import Utils.AppointmentCell;
+import Utils.ColoredDataCell;
 import Utils.AppointmentCellRenderer;
 
 import java.util.*;
@@ -14,36 +13,8 @@ import java.awt.Color;
 /**
  * View for a single day of appointments
  */
-public class AppointmentView extends AbstractTableModel{
-
-    /**
-     * Time appointments start, corresponds to 9:30am
-     */
-    private final double START_TIME = 9.5;
-
-    /**
-     * Time appointments end, corresponds to 6:15pm
-     */
-    private final double END_TIME = 18.25;
-
-    /**
-     * The length of an appointment, corresponds to
-     * 15 minutes
-     */
-    private final double APPOINTMENT_LENGTH = 0.25;
-
-    /**
-     * Number of rows, (end - start) * 4, for a row every 15 minutes
-     */
-    // TODO: why do you need to add 1 here to make the last appt of the day display?
-    private final int ROW_COUNT = (int) (((END_TIME - START_TIME) * 4) + 1);
-
-    /**
-     * List of all possible appointment times throughout the
-     * day
-     */
-    private List<TimeOfDay> timeList;
-
+public class AppointmentView extends MultiColumnView
+{
     /**
      * A list of lists representing all appointments organized
      * in their proper columns. Each top level list is a column
@@ -51,35 +22,9 @@ public class AppointmentView extends AbstractTableModel{
      */
     private List<ArrayList<Appointment>> appointments;
 
-    /**
-     * 2D array of cell contents, used for rendering
-     */
-    private AppointmentCell[][] objArray;
-
-    /**
-     * Starting column count, can be modified if
-     * appointments overlap
-     */
-    private int columnCount = 2;
-
-    /**
-     * Default color for a non-appointment
-     * cell
-     */
-    public static final Color DEFAULT_COLOR = Color.white;
-
-    /**
-     * Finalized array of possible colors
-     */
-    private final Color [][] apptColors = {
-            {Color.blue, Color.red},
-            {Color.green, Color.yellow}
-    };
-
-
     public AppointmentView(List<Appointment> appointments)
     {
-        timeList = createTimes();
+        timeList = this.createTimes();
         if (appointments != null)
         {
             this.appointments = new ArrayList<ArrayList<Appointment>>();
@@ -93,71 +38,22 @@ public class AppointmentView extends AbstractTableModel{
 //                System.out.println(this.appointments.get(0).get(i).testMethod());
 //            }
 
-            organizeAppointments();
+            organize();
             assignColors();
             this.objArray = buildTableObject();
 
-            System.out.println(this.objArray == null);
-
-            System.out.println("ORGANIZED\n");
-            for (int i = 0; i < this.appointments.size(); i++)
-            {
-                for (int j = 0; j < this.appointments.get(i).size(); j++)
-                {
-                    System.out.println(this.appointments.get(i).get(j).testMethod() + " " + this.appointments.get(i).get(j).test);
-                }
-                System.out.println("=-=-=-=-=-");
-            }
+//            System.out.println("ORGANIZED\n");
+//            for (int i = 0; i < this.appointments.size(); i++)
+//            {
+//                for (int j = 0; j < this.appointments.get(i).size(); j++)
+//                {
+//                    System.out.println(this.appointments.get(i).get(j).testMethod() + " " + this.appointments.get(i).get(j).test);
+//                }
+//                System.out.println("=-=-=-=-=-");
+//            }
         }
     }
 
-    /**
-     * Setter for column count
-     * @param val value
-     */
-    public void setColumnCount(int val)
-    {
-        columnCount = val;
-    }
-
-    /**
-     * Getter for the appointment times
-     * @return ArrayList containing times
-     */
-    public List<TimeOfDay> getTimeList()
-    {
-        return timeList;
-    }
-
-    /**
-     * Create a list of TimeOfDay objects based
-     * on the start and end times of the
-     * day
-     * @return ArrayList with 1 TimeOfDay object every 15 minutes
-     */
-    private List<TimeOfDay> createTimes()
-    {
-        List<TimeOfDay> list = new ArrayList<TimeOfDay>();
-        TimeOfDay tod;
-        for (double i = START_TIME; i <= END_TIME; i += APPOINTMENT_LENGTH)
-        {
-            // Get the integer part of the number
-            // eg 8.75 will yield 8
-            int hour = (int) Math.floor(i);
-            // Get the fraction part, eg 8.75 
-            // will yeild 0.75
-            double frac = i - hour;
-            
-            // Convert percentage to minutes, eg.
-            // 0.75 will yeild 45 
-            int minute = (int) (frac * 60);
-            
-            // make the time of day and add it to the list
-            tod = new TimeOfDay(hour, minute);
-            list.add(tod);
-        }
-        return list;
-    }
 
     /**
      * Creates the JTable for rendering in the MainView,
@@ -165,7 +61,7 @@ public class AppointmentView extends AbstractTableModel{
      *
      * @return A JTable representing this day
      */
-    public JTable getDayView()
+    public JTable getView()
     {
         JTable table = new JTable(this);
 
@@ -200,7 +96,7 @@ public class AppointmentView extends AbstractTableModel{
      * It also sets the number of columns that are going to be
      * needed in the table
      */
-    private void organizeAppointments()
+    protected void organize()
     {
         int outer = 0;
 
@@ -268,14 +164,14 @@ public class AppointmentView extends AbstractTableModel{
     }
 
     /**
-     * Builds a 2D array of AppointmentCell objects which
+     * Builds a 2D array of ColoredDataCell objects which
      * have the data to be displayed as well as info about
      * the color which should be rendered.
-     * @return 2D array of AppointmentCell
+     * @return 2D array of ColoredDataCell
      */
-    private AppointmentCell[][] buildTableObject()
+    protected ColoredDataCell[][] buildTableObject()
     {
-        AppointmentCell[][] obj = new AppointmentCell[this.columnCount][this.ROW_COUNT];
+        ColoredDataCell[][] obj = new ColoredDataCell[this.columnCount][this.ROW_COUNT];
         int apt_size = this.appointments.size();
         int time_size = this.timeList.size();
         for (int col = 0; col < apt_size; col++)
@@ -291,7 +187,7 @@ public class AppointmentView extends AbstractTableModel{
 
                     if (a.during(t))
                     {
-                        obj[col + 1][i] = new AppointmentCell(a.testDisplay(), a.getColor());
+                        obj[col + 1][i] = new ColoredDataCell(a.testDisplay(), a.getColor());
                     }
                 }
             }
@@ -306,7 +202,7 @@ public class AppointmentView extends AbstractTableModel{
      *
      * Hopefully....
      */
-    private void assignColors()
+    protected void assignColors()
     {
         int appt_size = this.appointments.size();
         int column = 0;
@@ -316,7 +212,7 @@ public class AppointmentView extends AbstractTableModel{
             int col_size = this.appointments.get(i).size();
             for (int j = 0; j < col_size; j++)
             {
-                this.appointments.get(i).get(j).setColor(this.apptColors[column][apt]);
+                this.appointments.get(i).get(j).setColor(this.cellColors[column][apt]);
 
                 apt = apt == 0 ? 1 : 0;
             }
@@ -324,84 +220,4 @@ public class AppointmentView extends AbstractTableModel{
         }
     }
 
-    /**
-     * Gets the color that each cell should be rendered
-     * @param row The row the cell is in
-     * @param col The column the cell is in
-     * @return The color of the cell
-     */
-    public Color getCellColor(int row, int col)
-    {
-        if (col == 0)
-        {
-            return this.DEFAULT_COLOR;
-        }
-        else
-        {
-            if (this.objArray[col][row] != null)
-            {
-                return this.objArray[col][row].getColor();
-            }
-            else
-            {
-                return this.DEFAULT_COLOR;
-            }
-        }
-    }
-
-    /**
-     * Returns the number of rows in the model. A
-     * <code>JTable</code> uses this method to determine how many rows it
-     * should display.  This method should be quick, as it
-     * is called frequently during rendering.
-     *
-     * @return the number of rows in the model
-     * @see #getColumnCount
-     */
-    @Override
-    public int getRowCount()
-    {
-        return ROW_COUNT;
-    }
-
-    /**
-     * Returns the number of columns in the model. A
-     * <code>JTable</code> uses this method to determine how many columns it
-     * should create and display by default.
-     *
-     * @return the number of columns in the model
-     * @see #getRowCount
-     */
-    @Override
-    public int getColumnCount() {
-        return columnCount;
-    }
-
-    /**
-     * Returns the value for the cell at <code>columnIndex</code> and
-     * <code>rowIndex</code>.
-     *
-     * @param rowIndex    the row whose value is to be queried
-     * @param columnIndex the column whose value is to be queried
-     * @return the value Object at the specified cell
-     */
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex)
-    {
-        if (columnIndex == 0)
-        {
-            return timeList.get(rowIndex).to12String();
-        }
-        else
-        {
-            if (this.objArray[columnIndex][rowIndex] != null)
-            {
-                return this.objArray[columnIndex][rowIndex].getData();
-            }
-            else
-            {
-                return null;
-            }
-        }
-    }
 }

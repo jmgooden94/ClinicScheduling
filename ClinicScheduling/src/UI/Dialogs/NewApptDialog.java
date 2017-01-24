@@ -1,13 +1,9 @@
 package UI.Dialogs;
 
 import Models.Appointment.Appointment;
-import Models.Appointment.SpecialType;
 import Models.Patient.*;
-import Models.Provider.Provider;
 import Models.State;
-import Models.TimeOfDay;
 import Utils.MySqlUtils;
-import javafx.util.Pair;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -16,7 +12,6 @@ import javax.swing.*;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.MaskFormatter;
 import java.awt.event.*;
-import java.sql.SQLException;
 import java.text.*;
 import java.util.*;
 
@@ -37,29 +32,17 @@ public class NewApptDialog extends JDialog {
     private JPanel datePickerPanel;
     private JSpinner endHourBox;
     private JTextPane reasonBox;
+    private JSpinner stateSpinner;
     private JSpinner endMinuteBox;
     private JSpinner endPMBox;
-    private JComboBox specialTypesCombo;
-    private JComboBox providerCombo;
-    private JComboBox stateCombo;
-    private JCheckBox smokerCheckBox;
+    private JSpinner providerSpinner;
+    private JSpinner providerTypeSpinner;
     private JDatePickerImpl jDatePicker;
-    private int dialogResult = -1;
-    private HashMap<Integer, Provider> providerMap;
-    /**
-     * The results of the appointment dialog; a new appointment, and the id of the provider servicing it
-     */
-    private Pair<Appointment, Integer>  result;
-    /**
-     * The index of the default state in the dropdown box
-     */
-    private static final int DEFAULT_STATE_INDEX = State.KANSAS.ordinal();
 
     /**
      * Constructor for NewApptDialog
      */
-    public NewApptDialog(HashMap<Integer, Provider> providerMap) {
-        this.providerMap = providerMap;
+    public NewApptDialog() {
         createComponents();
         setContentPane(contentPane);
         setModal(true);
@@ -92,75 +75,48 @@ public class NewApptDialog extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-    }
 
-    public int showDialog(){
         setVisible(true);
-        return dialogResult;
     }
 
     /**
      * Event handler for OK; records data in form and stores
      */
     private void onOK() {
-
-        int startHour = (int) startHourBox.getValue();
-        boolean startAM = startPMBox.getValue().toString().equals("AM");
-        if(startAM && startHour == 12){
-            startHour = 0;
-        }
-        else if (!startAM) startHour += 12;
-        TimeOfDay startTime = new TimeOfDay(startHour, (int) startMinuteBox.getValue());
-        int endHour = (int) endHourBox.getValue();
-        boolean endAM = endPMBox.getValue().toString().equals("AM");
-        if(endAM && endHour == 12){
-            endHour = 0;
-        }
-        else if(!endAM) endHour += 12;
-        TimeOfDay endTime = new TimeOfDay(endHour, (int) endMinuteBox.getValue());
-
-        if (validateForm(startTime, endTime)){
+        if (validateForm()){
             Address patientAddress = new Address(streetBox.getText(), cityBox.getText(),
-                    State.fromName(stateCombo.getSelectedItem().toString()), zipBox.getValue().toString());
+                    State.fromName((String) stateSpinner.getValue()), zipBox.getValue().toString());
             Patient newPatient = new Patient(firstNameBox.getText(), lastNameBox.getText(),
-                    phoneBox.getValue().toString(), patientAddress, smokerCheckBox.isSelected());
+                    phoneBox.getValue().toString(), patientAddress);
             int year = jDatePicker.getModel().getYear();
             int month = jDatePicker.getModel().getMonth();
             int day = jDatePicker.getModel().getDay();
-
+            int startHour = (int) startHourBox.getValue();
+            int endHour = (int) endHourBox.getValue();
+            if (startPMBox.getValue().toString().equals("PM")) {
+                startHour += 11;
+            }
+            if (endPMBox.getValue().toString().equals("PM")) {
+                endHour += 11;
+            }
             GregorianCalendar start = new GregorianCalendar(year, month, day, startHour, (int) startMinuteBox.getValue());
             GregorianCalendar end = new GregorianCalendar(year, month, day, endHour, (int) endMinuteBox.getValue());
-            SpecialType st = null;
-            if (specialTypesCombo.getSelectedItem() != null){
-                st = SpecialType.fromName(specialTypesCombo.getSelectedItem().toString());
-            }
-
-            int provider_id = -1;
-            Provider p = (Provider) providerCombo.getSelectedItem();
-            for (Map.Entry<Integer, Provider> e : providerMap.entrySet()){
-                if (Objects.equals(e.getValue(), p)){
-                    provider_id = e.getKey();
-                }
-            }
-            result = new Pair<>(new Appointment(newPatient, p, reasonBox.getText(), start, end, st), provider_id);
-            dialogResult = JOptionPane.OK_OPTION;
+            //TODO: get provider from list of providers and replace null with provider
+            Appointment newAppt = new Appointment(newPatient, null, reasonBox.getText(), start, end);
+            MySqlUtils.addAppointment(newAppt);
             dispose();
         }
-    }
-
-    /**
-     * Gets the appointment created by the dialog; null if cancelled or invalid form
-     * @return the appointment
-     */
-    public Pair<Appointment, Integer> getResult(){
-        return result;
+        else{
+            JOptionPane.showMessageDialog(contentPane, "Missing or incorrect form information. " +
+                    "Please verify all fields are filled completely.");
+        }
     }
 
     /**
      * Event handler for cancel button
      */
     private void onCancel() {
-        dialogResult = JOptionPane.CANCEL_OPTION;
+        // add your code here if necessary
         dispose();
     }
 
@@ -187,23 +143,9 @@ public class NewApptDialog extends JDialog {
         AbstractDocument reDoc = (AbstractDocument) reasonBox.getDocument();
         reDoc.setDocumentFilter(new Utils.DocumentSizeFilter(500));
 
-        // Populates the provider dropdown
-        DefaultComboBoxModel<Object> providerModel = new DefaultComboBoxModel<>();
-        for (Provider p : providerMap.values()){
-            providerModel.addElement(p);
-        }
-        providerCombo.setModel(providerModel);
-
-        // Populates the state dropdown
-        DefaultComboBoxModel<String> stateModel = new DefaultComboBoxModel<>(State.getNames());
-        stateCombo.setModel(stateModel);
-        stateCombo.setSelectedIndex(DEFAULT_STATE_INDEX);
-
-        // Populates the special type combo box
-        DefaultComboBoxModel<String> specialTypeModel = new DefaultComboBoxModel<>(SpecialType.getNames());
-        specialTypeModel.addElement(null);
-        specialTypesCombo.setModel(specialTypeModel);
-        specialTypesCombo.setSelectedIndex(specialTypeModel.getIndexOf(null));
+        // Populates the state spinner
+        SpinnerListModel stateList = new SpinnerListModel(State.getNames());
+        stateSpinner.setModel(stateList);
 
         // Sets the limits on the time spinners
         SpinnerNumberModel startHours = new SpinnerNumberModel(1, 1, 12, 1);
@@ -218,11 +160,15 @@ public class NewApptDialog extends JDialog {
         endMinuteBox.setModel(endMinutes);
         endMinuteBox.setEditor(new JSpinner.NumberEditor(endMinuteBox, "00"));
 
-        final String[] pmOps = {"AM", "PM"};
+        String[] pmOps = {"AM", "PM"};
         SpinnerListModel startPm = new SpinnerListModel(Arrays.asList(pmOps));
         SpinnerListModel endPm = new SpinnerListModel(Arrays.asList(pmOps));
         startPMBox.setModel(startPm);
         endPMBox.setModel(endPm);
+
+        // Populates the provider types spinner
+        SpinnerListModel provTypes = new SpinnerListModel(Models.Provider.ProviderType.getNames());
+        providerTypeSpinner.setModel(provTypes);
     }
 
     /**
@@ -278,31 +224,14 @@ public class NewApptDialog extends JDialog {
 
     /**
      * Validates the new appointment dialog form
-     * @param start the start time of the appt
-     * @param end the end time of the appt
      * @return true if input is valid; else false
      */
-    private boolean validateForm(TimeOfDay start, TimeOfDay end){
+    private boolean validateForm(){
         if(firstNameBox.getText() == "" || lastNameBox.getText() == "" || streetBox.getText() == "" ||
-                cityBox.getText() == "" || zipBox.getValue() == null || phoneBox.getValue() == null){
-                JOptionPane.showMessageDialog(contentPane, "Missing or incorrect form information. " +
-                        "Please verify all fields are filled completely.", "Missing Fields",
-                        JOptionPane.WARNING_MESSAGE);
-            return false;
-        }
-        if(end.beforeOrEqual(start)){
-            JOptionPane.showMessageDialog(contentPane, "End time is before or equal to start time.",
-                    "Invalid Times", JOptionPane.WARNING_MESSAGE);
+                cityBox.getText() == "" || zipBox.getValue() == null || phoneBox.getValue() == null
+                ){
             return false;
         }
         return true;
-    }
-
-    /**
-     * Shows an error dialog with the exception message
-     * @param ex the exception to display
-     */
-    private void showError(Exception ex){
-        JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Unexpected Error", JOptionPane.ERROR_MESSAGE);
     }
 }

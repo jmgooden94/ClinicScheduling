@@ -1,6 +1,6 @@
 package Utils;
 
-import UI.Panels.AppointmentView;
+import UI.Panels.AllProviderView;
 import UI.Panels.MultiColumnView;
 
 import javax.swing.*;
@@ -8,9 +8,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 /**
- * Created by nicjohnson on 1/12/17.
+ * Created by nicjohnson on 1/18/17.
  */
-public class AppointmentCellRenderer extends DefaultTableCellRenderer
+public class ProviderCellRenderer extends DefaultTableCellRenderer
 {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
@@ -19,7 +19,7 @@ public class AppointmentCellRenderer extends DefaultTableCellRenderer
         JLabel l = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
 
         //Get the status for the current row.
-        AppointmentView tableModel = (AppointmentView) table.getModel();
+        AllProviderView tableModel = (AllProviderView) table.getModel();
         if (tableModel.getValueAt(row, col) != null)
         {
             l.setBackground(tableModel.getCellColor(row, col));

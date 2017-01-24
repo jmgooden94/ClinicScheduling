@@ -73,11 +73,6 @@ public enum State {
         return values().length;
     }
 
-    /**
-     * Returns the enum value of the State from the given string
-     * @param name the plain text name of the state
-     * @return the State enum value
-     */
     public static State fromName(String name){
         String key = name.toUpperCase();
         key = key.replace(' ', '_');

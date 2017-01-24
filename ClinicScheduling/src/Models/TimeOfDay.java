@@ -8,7 +8,7 @@ import java.util.GregorianCalendar;
 /**
  * Simple class representing the type of day in hours and minutes
  */
-public class TimeOfDay {
+public class TimeOfDay implements Comparable {
     /**
      * The hour of the day, from 0 to 23
      */
@@ -25,7 +25,7 @@ public class TimeOfDay {
      */
     public TimeOfDay(int hour, int minute){
         if (hour < 0 || hour > 23 || minute < 0 || minute > 59){
-            throw new IllegalArgumentException("Hour must be between 0 and 23, minute must be between 0 and 59");
+            throw new IllegalArgumentException("Hour must be between 1 and 12, minute must be between 0 and 59");
         }
         this.hour = hour;
         this.minute = minute;
@@ -77,22 +77,8 @@ public class TimeOfDay {
         GregorianCalendar c = new GregorianCalendar();
         c.set(Calendar.HOUR_OF_DAY, hour);
         c.set(Calendar.MINUTE, minute);
-        c.set(Calendar.SECOND, 0);
         Date d = c.getTime();
         return new Time(d.getTime());
-    }
-
-    /**
-     * Converts the given sql time object into a TimeOfDay
-     * @param t the sql time
-     * @return the TimeOfDay built from the sql time
-     */
-    public static TimeOfDay fromSqlTime(Time t){
-        if (t == null){throw new IllegalArgumentException("Time t cannot be null");}
-        Date d = new Date(t.getTime());
-        GregorianCalendar c = new GregorianCalendar();
-        c.setTime(d);
-        return new TimeOfDay(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
     }
 
     /**
@@ -177,5 +163,38 @@ public class TimeOfDay {
         TimeOfDay oth = (TimeOfDay) other;
 
         return (oth.getHour() == hour && oth.getMinute() == minute );
+    }
+
+
+    public int compareTo(Object oth)
+    {
+        if (!(oth instanceof TimeOfDay))
+        {
+            throw new IllegalArgumentException("Arguement must be of type TimeOfDay");
+        }
+        TimeOfDay other = (TimeOfDay) oth;
+        if (this.hour < other.getHour())
+        {
+            return -1;
+        }
+        else if (this.hour == other.getHour())
+        {
+            if (this.minute < other.getMinute())
+            {
+                return -1;
+            }
+            else if (this.minute == other.getMinute())
+            {
+                return 0;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+        else
+        {
+            return 1;
+        }
     }
 }
