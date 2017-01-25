@@ -1,11 +1,14 @@
 package Utils;
 
 import Models.Appointment.Appointment;
+<<<<<<< HEAD
 import Models.Day;
+=======
+>>>>>>> nic-dev
 import Models.Provider.Availability;
 import Models.Provider.Provider;
-import Models.Provider.ProviderType;
 import Models.Provider.Recurrence;
+
 import Models.TimeOfDay;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -13,13 +16,20 @@ import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.List;
+
+import org.json.simple.*;
+
 import javax.swing.*;
+import javax.xml.transform.Result;
+
 public class MySqlUtils {
 
     private static final String URL = "jdbc:mysql://localhost/clinic";
@@ -209,7 +219,7 @@ public class MySqlUtils {
      * @param provider the provider to add
      * @throws SQLException
      */
-    public static void addProvider(Provider provider) throws SQLException {
+    public static void addProvider(Provider provider) throws SQLException{
         PreparedStatement ps;
 
         // Insert provider and get id to be used as key for availability
@@ -267,9 +277,10 @@ public class MySqlUtils {
             }
             // Insert recurrence
             r = availability.getRecurrence();
-            ps = connection.prepareStatement(sql3);
-
-            ps.setString(1, r.toJSONString());
+            ps = connection.prepareStatement(sql3, PreparedStatement.RETURN_GENERATED_KEYS);
+            jsonString = JSONValue.toJSONString(r);
+            ps.setString(1, jsonString);
+            rs = ps.getGeneratedKeys();
             ps.setInt(2, availability_id);
             rows = ps.executeUpdate();
             if (rows == 0){

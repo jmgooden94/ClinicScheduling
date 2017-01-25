@@ -21,7 +21,6 @@ public class LoginDialog extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        this.setTitle("Clinic Scheduler: Login");
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -50,21 +49,24 @@ public class LoginDialog extends JDialog {
 
     private void onOK() {
         //TODO: uncomment this to not bypass login
-        String un = usernameBox.getText().trim();
-        char[] plain = passwordBox.getPassword();
-        String plainString = new String(plain);
-        boolean success = MySqlUtils.openConnection(un, plainString);
-        if(success){
-            UserRole role = null;
-            try {
-                role = MySqlUtils.getRole(un);
-            }
-            catch (SQLException sqle){
-                showError(sqle);
-            }
-            dispose();
-            new MainView(role);
-        }
+        // String un = usernameBox.getText().trim();
+        // char[] plain = passwordBox.getPassword();
+        // String plainString = new String(plain);
+        // boolean success = MySqlUtils.openConnection(un, plainString);
+        // if(success){
+        //     UserRole role = null;
+        //     try {
+        //         role = MySqlUtils.getRole(un);
+        //     }
+        //     catch (SQLException sqle){
+        //         showError(sqle);
+        //     }
+        //     dispose();
+        //     new MainView(role);
+        // }
+        MySqlUtils.openConnection("clinic_admin", "defaultAdminPassword");
+        this.dispose();
+        new MainView(UserRole.ADMIN);
     }
 
     private void onCancel() {

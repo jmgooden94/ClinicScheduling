@@ -3,13 +3,13 @@ package Models.Provider;
 import Models.Day;
 import Models.TimeOfDay;
 
-import java.sql.Time;
 import java.util.List;
 
 /**
  * Stores the availability of a provider
  */
 public class Availability {
+
     /**
      * When this availability recurs
      */
@@ -36,6 +36,19 @@ public class Availability {
      */
     public Availability(Recurrence recurrence, List<Day> days, TimeOfDay start, TimeOfDay end){
         this.recurrence = recurrence;
+        this.days = days;
+        this.start = start;
+        this.end = end;
+    }
+
+    /**
+     * Constructs a new Availability with no recurrence
+     * @param days the day(s) of the week this availability occurs on
+     * @param start the time of day this availability begins at
+     * @param end the time of day this availability ends at
+     */
+    public Availability(List<Day> days, TimeOfDay start, TimeOfDay end){
+        this.recurrence = null;
         this.days = days;
         this.start = start;
         this.end = end;

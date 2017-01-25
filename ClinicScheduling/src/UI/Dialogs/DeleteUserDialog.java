@@ -11,7 +11,6 @@ public class DeleteUserDialog extends JDialog {
     private JButton buttonOK;
     private JButton buttonCancel;
     private JSpinner usernameSpinner;
-    private int dialogResult = -1;
 
     public DeleteUserDialog() {
         setContentPane(contentPane);
@@ -55,19 +54,14 @@ public class DeleteUserDialog extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-    }
 
-    public int showDialog(){
         setVisible(true);
-        return dialogResult;
     }
-
 
     private void onOK() {
         try{
             MySqlUtils.removeUser(usernameSpinner.getValue().toString());
             JOptionPane.showMessageDialog(new JFrame(), "User Deleted.");
-            dialogResult = JOptionPane.OK_OPTION;
             dispose();
         }
         catch (SQLException sqlex){
@@ -80,7 +74,6 @@ public class DeleteUserDialog extends JDialog {
 
     private void onCancel() {
         // add your code here if necessary
-        dialogResult = JOptionPane.CANCEL_OPTION;
         dispose();
     }
 

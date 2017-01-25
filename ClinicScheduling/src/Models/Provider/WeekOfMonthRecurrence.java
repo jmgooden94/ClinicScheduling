@@ -1,12 +1,6 @@
 package Models.Provider;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
-
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.StringJoiner;
 
 /**
  * Recurrence for an availability that occurs on a given week(s) of each month
@@ -16,13 +10,6 @@ public class WeekOfMonthRecurrence implements Recurrence {
      * Array of weeks the availability recurs on
      */
     boolean[] weeks;
-
-    /**
-     * No-op constructor for use with .fromJSONString
-     */
-    public WeekOfMonthRecurrence(){
-
-    }
 
     /**
      * Constructs a new WeekOfMonthRecurrence
@@ -51,35 +38,5 @@ public class WeekOfMonthRecurrence implements Recurrence {
             Arrays.fill(weeks, false);
             weeks[recurWeek] = true;
         }
-    }
-
-    /**
-     * Constructs a recurrence from a JSON object
-     * @param jsonObject the JSON object
-     * @return the recurrence
-     */
-    @Override
-    public Recurrence getImplementation(JSONObject jsonObject) {
-        this.weeks = new boolean[5];
-        JSONArray weeksFromJSON = (JSONArray) jsonObject.get("weeks");
-        Iterator<Boolean> iterator = weeksFromJSON.iterator();
-        int i = 0;
-        while (iterator.hasNext()){
-            this.weeks[i] = iterator.next();
-            i++;
-        }
-        return this;
-    }
-
-    @Override
-    public String toJSONString(){
-        JSONObject obj = new JSONObject();
-        obj.put("class", this.getClass().getName());
-        JSONArray arr = new JSONArray();
-        for (int i = 0; i < weeks.length; i++){
-            arr.add(i, weeks[i]);
-        }
-        obj.put("weeks", arr);
-        return obj.toJSONString();
     }
 }

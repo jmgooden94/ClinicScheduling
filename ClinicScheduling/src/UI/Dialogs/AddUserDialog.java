@@ -17,7 +17,6 @@ public class AddUserDialog extends JDialog {
     private JPasswordField pwBox;
     private JPasswordField confirmPwBox;
     private JSpinner roleSpinner;
-    private int dialogResult = -1;
 
     public AddUserDialog() {
 
@@ -59,6 +58,8 @@ public class AddUserDialog extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        setVisible(true);
     }
 
     private void onOK() {
@@ -74,7 +75,6 @@ public class AddUserDialog extends JDialog {
                 try {
                     MySqlUtils.addUser(un, pwPlain, role);
                     JOptionPane.showMessageDialog(contentPane, "User added.\nUsername: " + un + "\nRole: " + role.toString(), "User Added", JOptionPane.PLAIN_MESSAGE);
-                    dialogResult = JOptionPane.OK_OPTION;
                     dispose();
                 } catch (SQLException sqle) {
                     if (sqle.getMessage().contains("Duplicate entry")) {
@@ -96,14 +96,9 @@ public class AddUserDialog extends JDialog {
 
     private void onCancel() {
         // add your code here if necessary
-        dialogResult = JOptionPane.CANCEL_OPTION;
         dispose();
     }
 
-    public int showDialog(){
-        setVisible(true);
-        return dialogResult;
-    }
 
     /**
      * Shows an error dialog with the exception message
