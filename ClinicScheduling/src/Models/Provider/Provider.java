@@ -86,9 +86,13 @@ public class Provider {
 
     public void setColor(Color c) { this.color = c; }
 
-
-
     public List<Availability> getAvailability(){
         return availability;
+    }
+
+    @Override
+    public String toString()
+    {
+        return firstName + " " + lastName + ", " + providerType.getAbbreviation();
     }
 }

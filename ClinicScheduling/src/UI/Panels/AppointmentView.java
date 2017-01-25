@@ -33,11 +33,6 @@ public class AppointmentView extends MultiColumnView
 
 			this.appointments.get(0).sort(Comparator.comparing(Appointment::getApptStart));
 
-//            for (int i = 0; i < this.appointments.get(0).size(); i++)
-//            {
-//                System.out.println(this.appointments.get(0).get(i).testMethod());
-//            }
-
 			organize();
 			assignColors();
 			this.objArray = buildTableObject();
@@ -47,7 +42,8 @@ public class AppointmentView extends MultiColumnView
 //            {
 //                for (int j = 0; j < this.appointments.get(i).size(); j++)
 //                {
-//                    System.out.println(this.appointments.get(i).get(j).testMethod() + " " + this.appointments.get(i).get(j).test);
+//                    System.out.println(this.appointments.get(i).get(j).getStartTime() + " - " +
+//							this.appointments.get(i).get(j).getEndTime());
 //                }
 //                System.out.println("=-=-=-=-=-");
 //            }
@@ -130,7 +126,7 @@ public class AppointmentView extends MultiColumnView
 				// If the end time of the first appointment is
 				// earlier than the start time of the next appointment,
 				// then they overlap
-				if (b.getApptStart().compareTo(a.getApptEnd()) < 0)
+				if (b.getStartTime().compareTo(a.getEndTime()) < 0)
 				{
 					// Remove b from the array list and catch it
 					b = this.appointments.get(outer).remove(i + 1);

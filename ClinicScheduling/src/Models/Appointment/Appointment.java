@@ -8,6 +8,7 @@ import UI.Panels.MultiColumnView;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
+import java.util.Calendar;
 
 
 /**
@@ -22,10 +23,7 @@ public class Appointment {
      * The provider serving this appointment
      */
     private Provider provider;
-    /**
-     * The type of appointment
-     */
-    private String apptType;
+
     /**
      * The reason for the appointment
      */
@@ -49,12 +47,15 @@ public class Appointment {
      */
     private final TimeOfDay endTime;
 
+    private SpecialType specialType;
+
     /**
      * The color the cells corresponding to this appointment
      * are to be rendered.
      */
     private Color color = MultiColumnView.DEFAULT_COLOR;
 
+    // TODO: rip this out. along with related methods NJJ
     public int test = -1;
 
     /**
@@ -65,11 +66,15 @@ public class Appointment {
      * @param apptStart The start of the appointment
      * @param apptEnd The end of the appointment
      */
-    public Appointment(Patient patient, Provider provider, String reason, GregorianCalendar apptStart, GregorianCalendar apptEnd) {
+    public Appointment(Patient patient, Provider provider, String reason,
+                       GregorianCalendar apptStart, GregorianCalendar apptEnd, SpecialType specialType)
+    {
+        // TODO: uncomment this once we're done with createBullshit()
+//        if (patient == null || provider == null || apptStart == null || apptEnd == null){
+//            throw new IllegalArgumentException("patient, provider, apptStart, and apptEnd cannot be null");
+//        }
         this.patient = patient;
         this.provider = provider;
-        //TODO: uncomment this once we get providers figured out
-        //this.apptType = provider.getProviderType().toString();
         this.reason = reason;
         this.apptStart = apptStart;
         this.apptEnd = apptEnd;
@@ -89,9 +94,15 @@ public class Appointment {
         return provider;
     }
 
-    public String reason(){
+    public String getReason(){
         return reason;
     }
+
+    public TimeOfDay getStartTime() { return startTime; }
+
+    public TimeOfDay getEndTime() { return endTime; }
+
+    public SpecialType getSpecialType() { return this.specialType; }
 
     public GregorianCalendar getApptStart(){
         return apptStart;
@@ -99,16 +110,6 @@ public class Appointment {
 
     public GregorianCalendar getApptEnd(){
         return apptEnd;
-    }
-
-    public TimeOfDay getStartTime()
-    {
-        return startTime;
-    }
-
-    public TimeOfDay getEndTime()
-    {
-        return endTime;
     }
 
     public Color getColor() { return this.color; }

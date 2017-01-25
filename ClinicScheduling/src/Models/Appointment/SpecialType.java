@@ -6,6 +6,7 @@ import Models.State;
  * Enum for special types of appointments
  */
 public enum SpecialType {
+    // All enums must follow this convention so fromName(String s) works
     ASTHMA ("Asthma"),
     DIETITIAN ("Dietitian"),
     PHYSICAL_THERAPY ("Physical Therapy"),
@@ -13,7 +14,8 @@ public enum SpecialType {
     INTAKE ("Intake"),
     CHIROPRACTOR ("Chiropractor"),
     HIGH_BLOOD_PRESSURE ("High Blood Pressure"),
-    DIABETES ("Diabetes");
+    DIABETES ("Diabetes"),
+    PROVIDER_UNAVAILABLE("Provider Unavailable");
 
     private String name;
 

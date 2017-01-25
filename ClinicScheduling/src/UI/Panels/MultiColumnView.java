@@ -18,7 +18,7 @@ public abstract class MultiColumnView extends AbstractTableModel
     /**
      * Time appointments start, corresponds to 9:30am
      */
-    protected final double START_TIME = 9.5;
+    protected final double START_TIME = 9;
 
     /**
      * Time appointments end, corresponds to 6:15pm

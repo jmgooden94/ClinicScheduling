@@ -1,35 +1,25 @@
 package Utils;
 
 import Models.Appointment.Appointment;
-<<<<<<< HEAD
+import Models.Appointment.SpecialType;
 import Models.Day;
-=======
->>>>>>> nic-dev
+import Models.Patient.Address;
+import Models.Patient.Patient;
 import Models.Provider.Availability;
 import Models.Provider.Provider;
+import Models.Provider.ProviderType;
 import Models.Provider.Recurrence;
-
+import Models.State;
 import Models.TimeOfDay;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-
-import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.List;
-
-import org.json.simple.*;
-
+import java.sql.Date;
+import java.util.*;
 import javax.swing.*;
-import javax.xml.transform.Result;
-
 public class MySqlUtils {
 
     private static final String URL = "jdbc:mysql://localhost/clinic";
@@ -82,7 +72,7 @@ public class MySqlUtils {
         }
         if (role == null){
             JOptionPane.showMessageDialog(new JFrame(),"User's role not found. Assuming user is not admin." +
-                    "Verify that user has been added to database correctly.",
+                            "Verify that user has been added to database correctly.",
                     "Role Not Found", JOptionPane.WARNING_MESSAGE);
             role = UserRole.USER;
         }
@@ -207,21 +197,12 @@ public class MySqlUtils {
     }
 
     /**
-     * Adds the appointment to the database
-     * @param appointment the appointment to add
-     */
-    public static void addAppointment(Appointment appointment){
-        //TODO: this
-    }
-
-    /**
      * Adds the provider to the database
      * @param provider the provider to add
      * @throws SQLException
      */
-    public static void addProvider(Provider provider) throws SQLException{
+    public static void addProvider(Provider provider) throws SQLException {
         PreparedStatement ps;
-
         // Insert provider and get id to be used as key for availability
         String sql = "INSERT INTO clinic.provider(first_name, last_name, provider_type) values (?, ?, ?)";
         ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -240,12 +221,23 @@ public class MySqlUtils {
         else {
             throw new SQLException("Failed getting key after inserting provider.");
         }
+        addAvailability(provider_id, provider.getAvailability());
+        connection.commit();
+    }
 
-        // For each availability, insert it, get its key to be used for recurrence, then insert its recurrence
-        List<Availability> availabilityList = provider.getAvailability();
+    /**
+     * Adds the list of availabilities to the database
+     * @param provider_id the id (from the database) this availability belongs to
+     * @param availabilityList the list of availabilities
+     * @throws SQLException
+     */
+    private static void addAvailability(int provider_id, List<Availability> availabilityList) throws SQLException{
+        PreparedStatement ps;
         Recurrence r;
         String sql2 = "INSERT INTO clinic.availability(start_time, end_time, day_list_stringify, provider_fk) values(?, ?, ?, ?)";
         String sql3 = "INSERT INTO clinic.recurrence(stringify, availability_fk) values(?,?)";
+        ResultSet rs;
+        // For each availability, insert it, get its key to be used for recurrence, then insert its recurrence
         for (Availability availability : availabilityList){
 
             // Insert availability and get key
@@ -257,13 +249,13 @@ public class MySqlUtils {
             JSONObject jsObj = new JSONObject();
             JSONArray days = new JSONArray();
             for (Day d : availability.getDays()){
-                days.add(d.toValueString());
+                days.add(d.name());
             }
             jsObj.put("days", days);
 
             ps.setString(3, days.toJSONString());
             ps.setInt(4, provider_id);
-            rows = ps.executeUpdate();
+            int rows = ps.executeUpdate();
             if (rows == 0){
                 throw new SQLException("Failed inserting availability.");
             }
@@ -277,16 +269,14 @@ public class MySqlUtils {
             }
             // Insert recurrence
             r = availability.getRecurrence();
-            ps = connection.prepareStatement(sql3, PreparedStatement.RETURN_GENERATED_KEYS);
-            jsonString = JSONValue.toJSONString(r);
-            ps.setString(1, jsonString);
-            rs = ps.getGeneratedKeys();
+            ps = connection.prepareStatement(sql3);
+
+            ps.setString(1, r.toJSONString());
             ps.setInt(2, availability_id);
             rows = ps.executeUpdate();
             if (rows == 0){
                 throw new SQLException("Failed inserting recurrence.");
             }
-            connection.commit();
         }
     }
 
@@ -391,4 +381,192 @@ public class MySqlUtils {
         }
         return availabilityHashMap;
     }
+
+    /**
+     * Inserts the given address into the database
+     * @param a the address to insert
+     * @return the id of the address in the address table
+     * @throws SQLException
+     */
+    private static int addAddress(Address a) throws SQLException{
+        PreparedStatement ps;
+        String sql = "INSERT INTO clinic.address(street, city, state, zip) values(?,?,?,?)";
+        ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+        ps.setString(1, a.getStreet());
+        ps.setString(2, a.getCity());
+        ps.setString(3, a.getState().name());
+        ps.setString(4, a.getZip());
+        int rows = ps.executeUpdate();
+        if (rows == 0){
+            throw new SQLException("Failed inserting address.");
+        }
+        int address_id;
+        ResultSet rs = ps.getGeneratedKeys();
+        if(rs.next()){
+            address_id = rs.getInt(1);
+        }
+        else {
+            throw new SQLException("Failed getting key after inserting address.");
+        }
+        return address_id;
+    }
+
+    /**
+     * Checks if the address is already in the database and inserts it if it is not
+     * @param a the address to insert
+     * @return the id of the address in the address table
+     * @throws SQLException
+     */
+    private static int addAddressIfNotExists(Address a) throws SQLException{
+        String sql = "SELECT id FROM clinic.address WHERE street=? AND city=? AND state=? AND zip=?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, a.getStreet());
+        ps.setString(2, a.getCity());
+        ps.setString(3, a.getState().name());
+        ps.setString(4, a.getZip());
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()){
+            return rs.getInt(1);
+        }
+        else {
+            return addAddress(a);
+        }
+    }
+
+    /**
+     * Inserts the given patient into the database
+     * @param p the patient to insert
+     * @return the id of the patient from the patient table
+     * @throws SQLException
+     */
+    private static int addPatient(Patient p) throws SQLException{
+        int address_fk = addAddressIfNotExists(p.getAddress());
+        PreparedStatement ps;
+        String sql = "INSERT INTO clinic.patient(first_name, last_name, phone_number, address_fk, smoker) values(?,?,?,?,?)";
+        ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+        ps.setString(1, p.getFirstName());
+        ps.setString(2, p.getLastName());
+        ps.setString(3, p.getPhone());
+        ps.setInt(4, address_fk);
+        ps.setBoolean(5, p.getSmoker());
+        int rows = ps.executeUpdate();
+        if (rows == 0){
+            throw new SQLException("Failed inserting patient.");
+        }
+        int address_id;
+        ResultSet rs = ps.getGeneratedKeys();
+        if(rs.next()){
+            address_id = rs.getInt(1);
+        }
+        else {
+            throw new SQLException("Failed getting key after inserting patient.");
+        }
+        return address_id;
+    }
+
+    /**
+     * Checks if the patient is already in the database and inserts it if it is not
+     * @param p the patient to insert
+     * @param address_fk the id of the patient's address in the database (in most cases, this will be the value
+     *                   returned by addAddressIfNotExists(Address a)
+     * @return the id of the patient in the patient table
+     * @throws SQLException
+     */
+    private static int addPatientIfNotExists(Patient p, int address_fk) throws SQLException{
+        PreparedStatement ps;
+        String sql = "SELECT * FROM clinic.patient WHERE first_name=? AND last_name=? AND (phone_number = ? OR address_fk = ?)";
+        ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+        ps.setString(1, p.getFirstName());
+        ps.setString(2, p.getLastName());
+        ps.setString(3, p.getPhone());
+        ps.setInt(4, address_fk);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()){
+            return rs.getInt(1);
+        }
+        else {
+            return addPatient(p);
+        }
+    }
+
+    /**
+     * Adds the appointment to the database
+     * @param appointment the appointment to add
+     * @param provider_id the id from the database of the provider serving this appointment
+     */
+    public static void addAppointment(Appointment appointment, int provider_id) throws SQLException{
+        int address_id = addAddressIfNotExists(appointment.getPatient().getAddress());
+        int patient_id = addPatientIfNotExists(appointment.getPatient(), address_id);
+        String sql = "INSERT INTO clinic.appointment(reason, start_time, end_time, provider_fk, patient_fk, appt_type) values(?,?,?,?,?,?)";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        String reason = appointment.getReason();
+        ps.setString(1, reason);
+        Timestamp apptStart = new Timestamp(appointment.getApptStart().getTimeInMillis());
+        ps.setTimestamp(2, apptStart);
+        Timestamp apptEnd = new Timestamp(appointment.getApptEnd().getTimeInMillis());
+        ps.setTimestamp(3, apptEnd);
+        ps.setInt(4, provider_id);
+        ps.setInt(5, patient_id);
+        SpecialType s = appointment.getSpecialType();
+        if (s != null){
+            ps.setString(6, appointment.getSpecialType().name());
+        }
+        else {
+            ps.setNull(6, Types.VARCHAR);
+        }
+        ps.execute();
+        connection.commit();
+    }
+
+    /**
+     * Builds a list containing all appointments in the given date range
+     * @param start the beginning of the date range
+     * @param end the end of the date range
+     * @param providerMap the map of providers updated by the getProviders method
+     * @return
+     */
+    public static List<Appointment> getAppointments(GregorianCalendar start, GregorianCalendar end,
+                                                    Map<Integer, Provider> providerMap) throws SQLException{
+        String sql = "select * from clinic.appointment JOIN clinic.patient ON " +
+                "clinic.appointment.patient_fk=clinic.patient.id JOIN clinic.address ON " +
+                "clinic.patient.address_fk=clinic.address.id WHERE start_time BETWEEN ? AND ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        Timestamp begin = new Timestamp(start.getTimeInMillis());
+        Timestamp stop = new Timestamp(end.getTimeInMillis());
+        ps.setTimestamp(1, begin);
+        ps.setTimestamp(2, stop);
+        ResultSet rs = ps.executeQuery();
+        return constructApptsFromResultSet(rs, providerMap);
+    }
+
+    /**
+     * Constructs a list of appointments from the resultset in getAppointments; this method should ONLY be called
+     * using that result set as the parameter
+     * @param rs the result set created by getAppointments
+     * @param providerMap the map of providers to their ids, should be passed through by getAppointments
+     * @return a list of appointments constructed from that result set
+     */
+    private static List<Appointment> constructApptsFromResultSet(ResultSet rs, Map<Integer, Provider> providerMap) throws SQLException{
+        List<Appointment> appointments = new ArrayList<>();
+        GregorianCalendar sc = new GregorianCalendar();
+        GregorianCalendar ec = new GregorianCalendar();
+        while(rs.next()){
+            Address a = new Address(rs.getString("street"), rs.getString("city"), State.valueOf(rs.getString("state")), rs.getString("zip"));
+            Patient p = new Patient(rs.getString("first_name"), rs.getString("last_name"), rs.getString("phone_number"), a, rs.getBoolean("smoker"));
+            Timestamp s = rs.getTimestamp("start_time");
+            sc.setTimeInMillis(s.getTime());
+            Timestamp e = rs.getTimestamp("end_time");
+            ec.setTimeInMillis(e.getTime());
+            String typeString = rs.getString("appt_type");
+            SpecialType st = null;
+            if (typeString != null){
+                st = SpecialType.valueOf(typeString);
+            }
+            Appointment appt = new Appointment(p, providerMap.get(rs.getInt("provider_fk")), rs.getString("reason") , sc, ec, st);
+            appointments.add(appt);
+        }
+        return appointments;
+    }
+
+
 }

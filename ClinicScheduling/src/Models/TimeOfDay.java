@@ -10,7 +10,7 @@ import java.util.GregorianCalendar;
  */
 public class TimeOfDay implements Comparable {
     /**
-     * The hour of the day, from 0 to 12
+     * The hour of the day, from 0 to 23
      */
     private int hour;
     /**
@@ -25,7 +25,7 @@ public class TimeOfDay implements Comparable {
      */
     public TimeOfDay(int hour, int minute){
         if (hour < 0 || hour > 23 || minute < 0 || minute > 59){
-            throw new IllegalArgumentException("Hour must be between 1 and 12, minute must be between 0 and 59");
+            throw new IllegalArgumentException("Hour must be between 0 and 23, minute must be between 0 and 59");
         }
         this.hour = hour;
         this.minute = minute;
@@ -77,8 +77,18 @@ public class TimeOfDay implements Comparable {
         GregorianCalendar c = new GregorianCalendar();
         c.set(Calendar.HOUR_OF_DAY, hour);
         c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.SECOND, 0);
         Date d = c.getTime();
         return new Time(d.getTime());
+    }
+
+    public static TimeOfDay fromSqlTime(Time t)
+    {
+        if (t == null){throw new IllegalArgumentException("Time t cannot be null");}
+        Date d = new Date(t.getTime());
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(d);
+        return new TimeOfDay(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
     }
 
     /**

@@ -21,6 +21,9 @@ public class Patient {
      */
     private Address address;
 
+    /**
+     * Patient is a smoker
+     */
     private boolean smoker;
 
     /**
@@ -29,13 +32,40 @@ public class Patient {
      * @param lastName last name of patient
      * @param phone phone number of patient (stored as string)
      * @param address patient's physical address
+     * @param smoker patient is a smoker
      */
-    public Patient(String firstName, String lastName, String phone, Address address, boolean smoker) {
+    public Patient(String firstName, String lastName, String phone, Address address, boolean smoker)
+    {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
         this.address = address;
         this.smoker = smoker;
+    }
+
+    public String getFirstName()
+    {
+        return firstName;
+    }
+
+    public String getLastName()
+    {
+        return lastName;
+    }
+
+    public String getPhone()
+    {
+        return phone;
+    }
+
+    public Address getAddress()
+    {
+        return address;
+    }
+
+    public boolean getSmoker()
+    {
+        return smoker;
     }
 
     @Override
