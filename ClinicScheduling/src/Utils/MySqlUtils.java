@@ -239,7 +239,7 @@ public class MySqlUtils {
      */
     private static void addAvailability(int provider_id, List<Availability> availabilityList) throws SQLException{
         PreparedStatement ps;
-        String sql = "INSERT INTO clinic.availability(start_time, end_time, provider_fk, monday, tuesday, wednesday, thursday, friday, week) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO clinic.availability(start_time, end_time, provider_fk, monday, tuesday, wednesday, thursday, friday, week) values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
         // For each availability, insert it into the database
         for (Availability availability : availabilityList){
             ps = connection.prepareStatement(sql);
