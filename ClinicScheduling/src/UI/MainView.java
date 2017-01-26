@@ -77,6 +77,20 @@ public class MainView extends JFrame {
             public void actionPerformed(ActionEvent e){onAddProvider(); }
         });
 
+        leftArrowButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onLeftArrow();
+            }
+        });
+
+        rightArrowButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onRightArrow();
+            }
+        });
+
         // TODO: JMG comment this
         if(role == UserRole.ADMIN){
             createAdminControls();
