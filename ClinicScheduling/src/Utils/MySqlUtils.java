@@ -226,6 +226,7 @@ public class MySqlUtils {
         else {
             throw new SQLException("Failed getting key after inserting provider.");
         }
+        provider.setId(provider_id);
         addAvailability(provider_id, provider.getAvailability());
         connection.commit();
     }
@@ -278,13 +279,14 @@ public class MySqlUtils {
         // For each Result in the ResultSet providers, get their availability from the map, then build the provider
         // object and put it in the map
         while (providers.next()){
-            int id = providers.getInt(1);
+            int id = providers.getInt("id");
             List<Availability> availabilityList = availabilityHashMap.get(id);
-            String fn = providers.getString(2);
-            String ln = providers.getString(3);
-            String ptString = providers.getString(4);
+            String fn = providers.getString("first_name");
+            String ln = providers.getString("last_name");
+            String ptString = providers.getString("provider_type");
             ProviderType pt = ProviderType.fromName(ptString);
             Provider p = new Provider(pt, fn, ln, availabilityList);
+            p.setId(id);
             providersList.put(id, p);
         }
 
