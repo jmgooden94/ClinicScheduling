@@ -111,6 +111,17 @@ public class MainView extends JFrame {
 
     private void createProviderView(GregorianCalendar date)
     {
+        List<Provider> providers = new ArrayList<>();
+        try
+        {
+            // PSEUDO-HERE
+            // Map optional, comments in MySQLUtils
+            providers = MySqlUtils.getProvidersForDay(date, providerMap);
+        }
+        catch (SQLException ex)
+        {
+            showError(ex);
+        }
         List<Provider> l = this.createBullshitProviders();
         AllProviderView ap = new AllProviderView(l);
         calendarPanel.add(ap.getView(), BorderLayout.CENTER);

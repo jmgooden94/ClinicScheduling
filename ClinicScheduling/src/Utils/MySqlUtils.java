@@ -523,5 +523,23 @@ public class MySqlUtils {
         return appointments;
     }
 
+    // PSEUDO-HERE
+    public static List<Provider> getProvidersForDay(GregorianCalendar date, HashMap<Integer, Provider> map) throws SQLException
+    {
+        // Query DB to get availability objects/provider id's/objects for the provided day
+
+        // Loop through your result set and use the id's to get the provider object from the map
+        // (make copies of them, however you want to do it, cause these are just for displaying
+        // data so we don't really need to track any changes to the originals, unless they change
+        // their availability in the middle of the day they're scheduled or something?)
+
+        // Set the start time and end time on the provider object based on the availability that
+        // you got from the DB
+
+        // Den gimmie dat list gurl.
+
+        return null;
+    }
+
 
 }
