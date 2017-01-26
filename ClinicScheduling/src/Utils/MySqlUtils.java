@@ -10,10 +10,6 @@ import Models.Provider.Provider;
 import Models.Provider.ProviderType;
 import Models.State;
 import Models.TimeOfDay;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.sql.*;
 import java.sql.Date;
@@ -266,7 +262,6 @@ public class MySqlUtils {
      * Gets the list of providers and their availabilities from the database, mapped to their id from the database
      * @return the map of providers
      * @throws SQLException
-     * @throws ParseException if a JSON field from the database is unable to be parsed
      */
     public static HashMap<Integer, Provider> getProviders() throws SQLException{
         HashMap<Integer, Provider> providersList = new HashMap<>();
@@ -298,13 +293,12 @@ public class MySqlUtils {
 
     /**
      * Builds the availability hashmap used to construct providers' availabilities
-     * @return the constructed hashmap
+     * @return the constructed hashmap; key is the provider's id from the db, value is the list of that provider's
+     * availabilities
      * @throws SQLException
-     * @throws ParseException if a JSON field from the database is unable to be parsed
      */
     private static HashMap<Integer, List<Availability>> getAvailabilityMap() throws SQLException {
         Statement statement = connection.createStatement();
-        JSONParser parser = new JSONParser();
 
         ResultSet availabilities = statement.executeQuery("SELECT * FROM clinic.availability");
 
