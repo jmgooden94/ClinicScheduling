@@ -166,7 +166,9 @@ public class MainView extends JFrame {
             catch (SQLException ex){
                 showError(ex);
             }
-            updateApptView();
+            if (apptView){
+                updateApptView();
+            }
         }
     }
 
@@ -292,18 +294,15 @@ public class MainView extends JFrame {
 
     private void onAddProvider()
     {
-        if (new AddProviderDialog().showDialog() == JOptionPane.OK_OPTION)
+        AddProviderDialog apd = new AddProviderDialog();
+        if (apd.showDialog() == JOptionPane.OK_OPTION)
         {
-            try
-            {
-                providerMap = MySqlUtils.getProviders();
-                updateProviderPanel();
-            }
-            catch (SQLException ex)
-            {
-                showError(ex);
-            }
+            Provider p = apd.getResult();
+            providerMap.put(p.getId(), p);
             updateProviderPanel();
+            if (!apptView){
+                updateProviderView();
+            }
         }
     }
 
@@ -339,7 +338,6 @@ public class MainView extends JFrame {
             pButton.setText(p.getName() + ", " + p.getProviderType().getAbbreviation() + "\n");
             providerPanel.add(pButton);
         }
-        // TODO: figure out how to make a scroll bar appear if the buttons don't fit in the panel
     }
 
     /**
@@ -366,7 +364,7 @@ public class MainView extends JFrame {
             updateApptView();
         }
         else{
-            // TODO: update provider view
+            updateProviderView();
         }
     }
 
@@ -379,7 +377,7 @@ public class MainView extends JFrame {
             updateApptView();
         }
         else{
-            // TODO: update provider view
+            updateProviderView();
         }
     }
 }
