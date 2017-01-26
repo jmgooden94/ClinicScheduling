@@ -5,7 +5,6 @@ import Models.Provider.Provider;
 import Models.Provider.ProviderType;
 import UI.MainView;
 import Utils.MySqlUtils;
-import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
