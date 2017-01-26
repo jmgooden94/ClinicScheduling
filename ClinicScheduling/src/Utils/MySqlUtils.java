@@ -8,7 +8,6 @@ import Models.Patient.Patient;
 import Models.Provider.Availability;
 import Models.Provider.Provider;
 import Models.Provider.ProviderType;
-import Models.Provider.Recurrence;
 import Models.State;
 import Models.TimeOfDay;
 import org.json.simple.JSONArray;
@@ -20,9 +19,19 @@ import java.sql.*;
 import java.sql.Date;
 import java.util.*;
 import javax.swing.*;
+
+/**
+ * Helper class for making queries against the clinic database
+ * Note that this class has A LOT of HARDCODED values that are specific to the database schema and queries being used
+ * This schema is available in createtables.sql
+ */
 public class MySqlUtils {
 
     private static final String URL = "jdbc:mysql://localhost/clinic";
+    /**
+     * The length of the work week; MUST MATCH THE LENGTH OF THE DAYS ARRAY IN Availability.java
+     */
+    private static final int WEEK_LENGTH = 5;
     private static Connection connection;
     private static String loggedInUser;
 
@@ -233,49 +242,22 @@ public class MySqlUtils {
      */
     private static void addAvailability(int provider_id, List<Availability> availabilityList) throws SQLException{
         PreparedStatement ps;
-        Recurrence r;
-        String sql2 = "INSERT INTO clinic.availability(start_time, end_time, day_list_stringify, provider_fk) values(?, ?, ?, ?)";
-        String sql3 = "INSERT INTO clinic.recurrence(stringify, availability_fk) values(?,?)";
-        ResultSet rs;
-        // For each availability, insert it, get its key to be used for recurrence, then insert its recurrence
+        String sql = "INSERT INTO clinic.availability(start_time, end_time, provider_fk, monday, tuesday, wednesday, thursday, friday, week) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        // For each availability, insert it into the database
         for (Availability availability : availabilityList){
-
-            // Insert availability and get key
-            ps = connection.prepareStatement(sql2, PreparedStatement.RETURN_GENERATED_KEYS);
+            ps = connection.prepareStatement(sql);
             ps.setTime(1, availability.getStart().toSqlTime());
             ps.setTime(2, availability.getEnd().toSqlTime());
-
-            // Serialize days from availability
-            JSONObject jsObj = new JSONObject();
-            JSONArray days = new JSONArray();
-            for (Day d : availability.getDays()){
-                days.add(d.name());
+            ps.setInt(3, provider_id);
+            // The index of monday in the INSERT sql string (HARDCODED)
+            int mondayIndex = 4;
+            for (int i = 0; i < WEEK_LENGTH; i++){
+                ps.setBoolean(mondayIndex + i, availability.getDays()[i]);
             }
-            jsObj.put("days", days);
-
-            ps.setString(3, days.toJSONString());
-            ps.setInt(4, provider_id);
+            ps.setInt(9, availability.getWeek());
             int rows = ps.executeUpdate();
             if (rows == 0){
                 throw new SQLException("Failed inserting availability.");
-            }
-            rs = ps.getGeneratedKeys();
-            int availability_id = -1;
-            if(rs.next()){
-                availability_id = rs.getInt(1);
-            }
-            else {
-                throw new SQLException("Failed getting key after inserting availability.");
-            }
-            // Insert recurrence
-            r = availability.getRecurrence();
-            ps = connection.prepareStatement(sql3);
-
-            ps.setString(1, r.toJSONString());
-            ps.setInt(2, availability_id);
-            rows = ps.executeUpdate();
-            if (rows == 0){
-                throw new SQLException("Failed inserting recurrence.");
             }
         }
     }
@@ -324,10 +306,7 @@ public class MySqlUtils {
         Statement statement = connection.createStatement();
         JSONParser parser = new JSONParser();
 
-        ResultSet availabilities = statement.executeQuery("SELECT clinic.recurrence.stringify, " +
-                "clinic.availability.start_time, clinic.availability.end_time, clinic.availability.day_list_stringify, " +
-                "clinic.availability.provider_fk FROM clinic.recurrence INNER JOIN " +
-                "clinic.availability ON clinic.recurrence.availability_fk=clinic.availability.id");
+        ResultSet availabilities = statement.executeQuery("SELECT * FROM clinic.availability");
 
         // If there are no availabilities in the db, return null
         if (!availabilities.isBeforeFirst()){
@@ -336,41 +315,23 @@ public class MySqlUtils {
 
         // For each Result in the availabilities ResultSet, construct a Java Availability and map it to its provider_id
         HashMap<Integer, List<Availability>> availabilityHashMap = new HashMap<>();
-        String recJSON;
-        String daysJSON;
         while(availabilities.next()) {
-            recJSON = availabilities.getString(1);
-            Recurrence rec;
-            try {
-                rec = Recurrence.fromJSONString(recJSON);
-            } catch (ParseException ex){
-                throw new IllegalArgumentException("Failed parsing Recurrence JSON object.", ex);
-            } catch (NoSuchMethodException ex){
-                throw new RuntimeException("Implementation of Recurrence interface is missing no-op constructor.", ex);
-            }
-            Time start_time = availabilities.getTime(2);
+            Time start_time = availabilities.getTime("start_time");
             TimeOfDay startTime = TimeOfDay.fromSqlTime(start_time);
-            Time end_time = availabilities.getTime(3);
+            Time end_time = availabilities.getTime("end_time");
             TimeOfDay endTime = TimeOfDay.fromSqlTime(end_time);
+            boolean m = availabilities.getBoolean("monday");
+            boolean t = availabilities.getBoolean("tuesday");
+            boolean w = availabilities.getBoolean("wednesday");
+            boolean u = availabilities.getBoolean("thursday");
+            boolean f = availabilities.getBoolean("friday");
+            boolean[] days = {m, t, w, u, f};
+            int week = availabilities.getInt("week");
 
-            daysJSON = availabilities.getString(4);
-            List<String> daysNames = new ArrayList<>();
-            JSONArray daysArr;
-            try {
-                daysArr = (JSONArray) parser.parse(daysJSON);
-            } catch (ParseException ex){
-                throw new IllegalArgumentException("Failed parsing days array from database.", ex);
-            }
-            Iterator<String> it = daysArr.iterator();
-            while (it.hasNext()) {
-                daysNames.add(it.next());
-            }
-            List<Day> days = new ArrayList<>();
-            for (String s : daysNames) {
-                days.add(Day.valueOf(s));
-            }
-            Availability a = new Availability(rec, days, startTime, endTime);
-            Integer providerKey = availabilities.getInt(5);
+            // Construct availability object from database values
+            Availability a = new Availability(days, startTime, endTime, week);
+
+            Integer providerKey = availabilities.getInt("provider_fk");
             if (availabilityHashMap.containsKey(providerKey)) {
                 availabilityHashMap.get(providerKey).add(a);
             } else {
