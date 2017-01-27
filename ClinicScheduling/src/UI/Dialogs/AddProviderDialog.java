@@ -37,8 +37,10 @@ public class AddProviderDialog extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        setSize(400, 200);
         setLocationRelativeTo(null);
+
+        availabilityPanel.setLayout(new GridLayout(0, 1));
+        System.out.println(availabilityPanel);
 
         // Sets document filters to limit length of inputs
         AbstractDocument fnDoc = (AbstractDocument) firstNameField.getDocument();
@@ -83,6 +85,8 @@ public class AddProviderDialog extends JDialog {
 
         SpinnerListModel types = new SpinnerListModel(ProviderType.getNames());
         typeSpinner.setModel(types);
+
+        this.pack();
     }
 
     public int showDialog(){
@@ -118,9 +122,15 @@ public class AddProviderDialog extends JDialog {
 
     private void onAddAvailability(){
         AddAvailabilityDialog d = new AddAvailabilityDialog();
-        if(d.showDialog() == JOptionPane.OK_OPTION){
+        if(d.showDialog() == JOptionPane.OK_OPTION)
+        {
+            System.out.println("HERE");
             Availability fromDialog = d.getResult();
             availabilities.add(fromDialog);
+            System.out.println("DISPLAY: " + fromDialog.getDisplayName());
+            availabilityPanel.add(new JLabel(fromDialog.getDisplayName()));
+            availabilityPanel.updateUI();
+            this.pack();
         }
     }
 

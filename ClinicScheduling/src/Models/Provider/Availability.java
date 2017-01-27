@@ -62,4 +62,30 @@ public class Availability {
     }
 
     public int getWeek() { return week; };
+
+    public String getDisplayName()
+    {
+        String dayList = "";
+        String weekList;
+        for (int i = 0; i < days.length; i++)
+        {
+            if (days[i])
+            {
+                dayList += Day.values()[i].getCharAbbrev();
+            }
+        }
+
+        switch(week)
+        {
+            case 0:
+                weekList = "every week";
+                break;
+            default:
+                weekList = "week " + week;
+                break;
+        }
+
+        String ret = dayList + " " + weekList + " from " + start.to12String() + " to " + end.to12String();
+        return ret;
+    }
 }
