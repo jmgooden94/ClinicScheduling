@@ -29,9 +29,10 @@ public class AddAvailabilityDialog extends JDialog {
     private JComboBox recurrenceCombo;
     private Availability result;
     /**
-     * The length of the work week; MUST MATCH THE LENGTH OF THE DAYS ARRAY IN Availability.java
+     * The length of the week; MUST MATCH THE LENGTH OF THE DAYS ARRAY IN Availability.java
      */
-    private static final int WEEK_LENGTH = 5;
+    // TODO: replace this with the global config file
+    private static final int WEEK_LENGTH = 7;
     /**
      * Result code to be returned by the dialog on show
      */

@@ -32,6 +32,15 @@ public class TimeOfDay implements Comparable {
     }
 
     /**
+     * Constructs a new TimeOfDay from a GregorianCalendar
+     * @param c calendar to build time of day from; note date is ignored and only time is retrieved
+     */
+    public TimeOfDay(GregorianCalendar c){
+        this.hour = c.get(Calendar.HOUR_OF_DAY);
+        this.minute = c.get(Calendar.MINUTE);
+    }
+
+    /**
      * Gets the hour of the day in 24h format, from 0 to 23
      * @return the hour of the day
      */

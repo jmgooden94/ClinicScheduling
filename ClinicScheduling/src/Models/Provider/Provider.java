@@ -4,6 +4,7 @@ import Models.TimeOfDay;
 import UI.Panels.MultiColumnView;
 
 import java.awt.*;
+import java.sql.Time;
 import java.util.List;
 
 /**
@@ -37,19 +38,30 @@ public class Provider {
      */
     private Color color = MultiColumnView.DEFAULT_COLOR;
 
-    // TODO: remove, it's a hack
-    public TimeOfDay start;
+    /**
+     * The starting TimeOfDay for a day when this provider is available
+     * this field really just gets populated when a provider is retrieved from the database.
+     * Otherwise it is useless, as it contains no data that is not already contained in availability.
+     * It's kind of a hack to make sorting easier.
+     */
+    private TimeOfDay start;
 
-    // TODO: remove, it's a hack
-    public TimeOfDay end;
+    /**
+     * The ending TimeOfDay for a day when this provider is available
+     * this field really just gets populated when a provider is retrieved from the database.
+     * Otherwise it is useless, as it contains no data that is not already contained in availability.
+     * It's kind of a hack to make sorting easier.
+     */
+    private TimeOfDay end;
 
-    // TODO: remove, it's a hack
     public TimeOfDay getStart() { return start; }
 
-    // TODO: remove, it's a hack
     public TimeOfDay getEnd() { return end; }
 
-    // TODO: remove, it's a hack
+    public void setStart(TimeOfDay t) {this.start = t;}
+
+    public void setEnd(TimeOfDay t) {this.end = t;}
+
     public boolean during(TimeOfDay t)
     {
         return this.start.beforeOrEqual(t) && this.end.after(t);

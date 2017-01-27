@@ -312,21 +312,7 @@ public class MySqlUtils {
         // For each Result in the availabilities ResultSet, construct a Java Availability and map it to its provider_id
         HashMap<Integer, List<Availability>> availabilityHashMap = new HashMap<>();
         while(availabilities.next()) {
-            Time start_time = availabilities.getTime("start_time");
-            TimeOfDay startTime = TimeOfDay.fromSqlTime(start_time);
-            Time end_time = availabilities.getTime("end_time");
-            TimeOfDay endTime = TimeOfDay.fromSqlTime(end_time);
-            boolean m = availabilities.getBoolean("monday");
-            boolean t = availabilities.getBoolean("tuesday");
-            boolean w = availabilities.getBoolean("wednesday");
-            boolean u = availabilities.getBoolean("thursday");
-            boolean f = availabilities.getBoolean("friday");
-            boolean[] days = {m, t, w, u, f};
-            int week = availabilities.getInt("week");
-
-            // Construct availability object from database values
-            Availability a = new Availability(days, startTime, endTime, week);
-
+            Availability a = getAvailabilityFromResultSet(availabilities);
             Integer providerKey = availabilities.getInt("provider_fk");
             if (availabilityHashMap.containsKey(providerKey)) {
                 availabilityHashMap.get(providerKey).add(a);
@@ -525,22 +511,56 @@ public class MySqlUtils {
         return appointments;
     }
 
-    // PSEUDO-HERE
     public static List<Provider> getProvidersForDay(GregorianCalendar date, HashMap<Integer, Provider> map) throws SQLException
     {
+        String day = Day.values()[date.get(Calendar.DAY_OF_WEEK) - 1].getName().toLowerCase();
+        List<Provider> providers = new ArrayList<>();
         // Query DB to get availability objects/provider id's/objects for the provided day
+        String sql = "SELECT * FROM clinic.provider JOIN clinic.availability ON " +
+                "clinic.provider.id=clinic.availability.provider_fk WHERE ((clinic.availability.week=? OR " +
+                "clinic.availability.week=0) AND clinic.availability." + day + "=1)";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, date.get(Calendar.WEEK_OF_MONTH));
+        // Calendar.DAY_OF_WEEK - 2 because Day.values is 0-indexed and excludes weekends, whereas Calendar.DAY_OF_WEEK
+        // is 1-indexed starting with Sunday
+        ResultSet rs = ps.executeQuery();
+        // If no results, return empty list
+        if (!rs.isBeforeFirst()){
+            return providers;
+        }
+        while(rs.next()){
+            int id = rs.getInt("id");
+            Provider p = map.get(id);
+            Availability a = getAvailabilityFromResultSet(rs);
+            p.setStart(a.getStart());
+            p.setEnd(a.getEnd());
+            providers.add(p);
+        }
+        return providers;
+    }
 
-        // Loop through your result set and use the id's to get the provider object from the map
-        // (make copies of them, however you want to do it, cause these are just for displaying
-        // data so we don't really need to track any changes to the originals, unless they change
-        // their availability in the middle of the day they're scheduled or something?)
+    /**
+     * Constructs an availability from a single line of a result set
+     * @param rs the result set
+     * @return the availability
+     */
+    private static Availability getAvailabilityFromResultSet(ResultSet rs) throws SQLException{
+        Time start_time = rs.getTime("start_time");
+        TimeOfDay startTime = TimeOfDay.fromSqlTime(start_time);
+        Time end_time = rs.getTime("end_time");
+        TimeOfDay endTime = TimeOfDay.fromSqlTime(end_time);
+        boolean u = rs.getBoolean("sunday");
+        boolean m = rs.getBoolean("monday");
+        boolean t = rs.getBoolean("tuesday");
+        boolean w = rs.getBoolean("wednesday");
+        boolean r = rs.getBoolean("thursday");
+        boolean f = rs.getBoolean("friday");
+        boolean s = rs.getBoolean("saturday");
+        boolean[] days = {u, m, t, w, r, f, s};
+        int week = rs.getInt("week");
 
-        // Set the start time and end time on the provider object based on the availability that
-        // you got from the DB
-
-        // Den gimmie dat list gurl.
-
-        return null;
+        // Construct availability object from database values
+        return new Availability(days, startTime, endTime, week);
     }
 
 
