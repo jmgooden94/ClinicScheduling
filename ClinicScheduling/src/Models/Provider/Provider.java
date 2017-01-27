@@ -26,6 +26,10 @@ public class Provider {
      * The provider's availability
      */
     private List<Availability> availability;
+    /**
+     * The provider's id from the db; should be set by getProviders and addProvider
+     */
+    private int id;
 
     /**
      * The color the cells corresponding to this provider
@@ -89,6 +93,10 @@ public class Provider {
     public List<Availability> getAvailability(){
         return availability;
     }
+
+    public void setId(int id){ this.id = id; }
+
+    public int getId() { return id; }
 
     @Override
     public String toString()

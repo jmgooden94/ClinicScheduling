@@ -78,6 +78,20 @@ public class MainView extends JFrame {
             public void actionPerformed(ActionEvent e){onAddProvider(); }
         });
 
+        leftArrowButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onLeftArrow();
+            }
+        });
+
+        rightArrowButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onRightArrow();
+            }
+        });
+
         // TODO: JMG comment this
         if(role == UserRole.ADMIN){
             createAdminControls();
@@ -112,6 +126,17 @@ public class MainView extends JFrame {
 
     private void createProviderView(GregorianCalendar date)
     {
+        List<Provider> providers = new ArrayList<>();
+        try
+        {
+            // PSEUDO-HERE
+            // Map optional, comments in MySQLUtils
+            providers = MySqlUtils.getProvidersForDay(date, providerMap);
+        }
+        catch (SQLException ex)
+        {
+            showError(ex);
+        }
         List<Provider> l = this.createBullshitProviders();
         AllProviderView ap = new AllProviderView(l);
         calendarPanel.add(ap.getView(), BorderLayout.CENTER);
@@ -167,7 +192,9 @@ public class MainView extends JFrame {
             catch (SQLException ex){
                 showError(ex);
             }
-            updateApptView();
+            if (apptView){
+                updateApptView();
+            }
         }
     }
 
@@ -293,18 +320,15 @@ public class MainView extends JFrame {
 
     private void onAddProvider()
     {
-        if (new AddProviderDialog().showDialog() == JOptionPane.OK_OPTION)
+        AddProviderDialog apd = new AddProviderDialog();
+        if (apd.showDialog() == JOptionPane.OK_OPTION)
         {
-            try
-            {
-                providerMap = MySqlUtils.getProviders();
-                updateProviderPanel();
-            }
-            catch (SQLException ex)
-            {
-                showError(ex);
-            }
+            Provider p = apd.getResult();
+            providerMap.put(p.getId(), p);
             updateProviderPanel();
+            if (!apptView){
+                updateProviderView();
+            }
         }
     }
 
@@ -377,7 +401,7 @@ public class MainView extends JFrame {
             updateApptView();
         }
         else{
-            // TODO: update provider view
+            updateProviderView();
         }
     }
 
@@ -390,7 +414,7 @@ public class MainView extends JFrame {
             updateApptView();
         }
         else{
-            // TODO: update provider view
+            updateProviderView();
         }
     }
 }

@@ -93,7 +93,12 @@ CREATE TABLE IF NOT EXISTS `clinic`.`Availability` (
   `start_time` TIME NOT NULL,
   `end_time` TIME NOT NULL,
   `provider_fk` INT(11) NOT NULL,
-  `day_list_stringify TEXT NOT NULL,
+  `monday` TINYINT(1) NOT NULL,
+  `tuesday` TINYINT(1) NOT NULL,
+  `wednesday` TINYINT(1) NOT NULL,
+  `thursday` TINYINT(1) NOT NULL,
+  `friday` TINYINT(1) NOT NULL,
+  `week` INT(1) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `provider_fk_idx` (`provider_fk` ASC),
   CONSTRAINT `provider_fk`
@@ -104,21 +109,6 @@ CREATE TABLE IF NOT EXISTS `clinic`.`Availability` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
 
-
--- -----------------------------------------------------
--- Table `clinic`.`Recurrence`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `clinic`.`Recurrence` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `stringify` VARCHAR(500) NOT NULL,
-  `availability_fk` INT(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `availability_fk_idx` (`availability_fk` ASC),
-  CONSTRAINT `availability_fk`
-    FOREIGN KEY (`availability_fk`)
-    REFERENCES `clinic`.`Availability` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
 

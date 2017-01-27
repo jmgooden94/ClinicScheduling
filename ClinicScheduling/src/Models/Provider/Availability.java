@@ -11,13 +11,11 @@ import java.util.List;
 public class Availability {
 
     /**
-     * When this availability recurs
+     * Boolean array indicating if the availability applies to a given day; 0 for monday, 1 for tuesday,...
+     * 4 for friday
+     * MUST HAVE LENGTH OF EXACTLY 5
      */
-    private Recurrence recurrence;
-    /**
-     * The days this availability recurs on
-     */
-    private List<Day> days;
+    private boolean[] days;
     /**
      * The beginning of this availability
      */
@@ -26,37 +24,34 @@ public class Availability {
      * The end of this availability
      */
     private TimeOfDay end;
+    /**
+     * The week_of_month this availability occurs on; 0 for every week
+     */
+    private int week;
 
     /**
-     * Constructs a new Availability with recurrence
-     * @param recurrence when this availability recurs
-     * @param days the day(s) of the week this availability occurs on
+     * Constructs a new Availability
+     * @param days Boolean array indicating if the availability applies to a given day; 0 for monday, 1 for tuesday, ...
+     *             4 for friday
+     *             MUST HAVE LENGTH OF EXACTLY 5
      * @param start the time of day this availability begins at
      * @param end the time of day this availability ends at
+     * @param week the week_of_month this availability occurs on; 0 for every week
      */
-    public Availability(Recurrence recurrence, List<Day> days, TimeOfDay start, TimeOfDay end){
-        this.recurrence = recurrence;
+    public Availability(boolean[] days, TimeOfDay start, TimeOfDay end, int week){
+        if (week < 0 || week > 5){
+            throw new IllegalArgumentException("Week must be a valid week_of_month or 0 for all weeks.");
+        }
+        if (days.length != 5){
+            throw new IllegalArgumentException("Days array must have length 5; one index for each weekday.");
+        }
         this.days = days;
         this.start = start;
         this.end = end;
+        this.week = week;
     }
 
-    /**
-     * Constructs a new Availability with no recurrence
-     * @param days the day(s) of the week this availability occurs on
-     * @param start the time of day this availability begins at
-     * @param end the time of day this availability ends at
-     */
-    public Availability(List<Day> days, TimeOfDay start, TimeOfDay end){
-        this.recurrence = null;
-        this.days = days;
-        this.start = start;
-        this.end = end;
-    }
-
-    public Recurrence getRecurrence(){
-        return recurrence;
-    }
+    public boolean[] getDays() {return days; }
 
     public TimeOfDay getStart(){
         return start;
@@ -66,7 +61,5 @@ public class Availability {
         return end;
     }
 
-    public List<Day> getDays(){
-        return days;
-    }
+    public int getWeek() { return week; };
 }
