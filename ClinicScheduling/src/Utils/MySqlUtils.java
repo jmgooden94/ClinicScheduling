@@ -21,9 +21,11 @@ import javax.swing.*;
  * Note that this class has A LOT of HARDCODED values that are specific to the database schema and queries being used
  * This schema is available in createtables.sql
  */
-public class MySqlUtils {
+public class MySqlUtils
+{
+    private static GlobalConfig config = GlobalConfig.getInstance();
 
-    private static final String URL = "jdbc:mysql://localhost/clinic";
+    private static final String URL = config.getUrl();
     /**
      * The length of the work week; MUST MATCH THE LENGTH OF THE DAYS ARRAY IN Availability.java
      */

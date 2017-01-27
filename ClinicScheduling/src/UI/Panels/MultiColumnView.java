@@ -3,6 +3,7 @@ package UI.Panels;
 
 import Models.TimeOfDay;
 import Utils.ColoredDataCell;
+import Utils.GlobalConfig;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -14,16 +15,16 @@ import java.util.List;
 
 public abstract class MultiColumnView extends AbstractTableModel
 {
-
+    private GlobalConfig config = GlobalConfig.getInstance();
     /**
      * Time appointments start, corresponds to 9:30am
      */
-    protected final double START_TIME = 9;
+    protected final double START_TIME = config.getStart_time();
 
     /**
      * Time appointments end, corresponds to 6:15pm
      */
-    protected final double END_TIME = 18.25;
+    protected final double END_TIME = config.getEnd_time();
 
     /**
      * The length of an appointment, corresponds to
