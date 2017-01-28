@@ -128,9 +128,6 @@ public class MainView extends JFrame {
         {
             showError(ex);
         }
-        for (Provider p : providers){
-            System.out.println(p.getName());
-        }
         AllProviderView ap = new AllProviderView(providers);
         calendarPanel.add(ap.getView(), BorderLayout.CENTER);
         dateLabel.setText(dateFormater.format(date.getTime()));
@@ -211,43 +208,6 @@ public class MainView extends JFrame {
         dateLabel.setText(dateFormater.format(date.getTime()));
     }
 
-    // TODO: remove, only for testing
-    private List<Appointment> createBullshitAppointments()
-    {
-        List<Appointment> list = new ArrayList<>();
-        Appointment a = new Appointment(null, null, "Fuck you",
-                new GregorianCalendar(2016, 1, 11, 10, 30),
-                new GregorianCalendar(2016, 1, 11, 11, 0),
-                null);
-        a.setTest(1);
-        list.add(a);
-        Appointment b = new Appointment(null, null, "Double fuck you",
-                new GregorianCalendar(2016, 1, 11, 9, 30),
-                new GregorianCalendar(2016, 1, 11, 9, 45),
-                null);
-        b.setTest(2);
-        list.add(b);
-        Appointment c = new Appointment(null, null, "Triple fuck you",
-                new GregorianCalendar(2016, 1, 11, 9, 30),
-                new GregorianCalendar(2016, 1, 11, 9, 45),
-                null);
-        c.setTest(3);
-        list.add(c);
-        Appointment d = new Appointment(null, null, "Triple fuck you",
-                new GregorianCalendar(2016, 1, 11, 9, 45),
-                new GregorianCalendar(2016, 1, 11, 10, 30),
-                null);
-        d.setTest(4);
-        list.add(d);
-        Appointment e = new Appointment(null, null, "Triple fuck you",
-                new GregorianCalendar(2016, 1, 11, 10, 30),
-                new GregorianCalendar(2016, 1, 11, 11, 00),
-                null);
-        e.setTest(5);
-        list.add(e);
-        return list;
-    }
-
     /**
      * Creates the admin controls and adds them to the panel
      */
@@ -255,6 +215,14 @@ public class MainView extends JFrame {
     {
         GridLayout g = new GridLayout(0, 1, 5, 5);
         adminControlPanel.setLayout(g);
+
+        JButton getStats = new JButton("Get Statistics");
+        getStats.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onGetStats();
+            }
+        });
 
         JButton addUser = new JButton("Add User");
         addUser.addActionListener(new ActionListener() {
@@ -390,5 +358,12 @@ public class MainView extends JFrame {
         else{
             updateProviderView();
         }
+    }
+
+    /**
+     * Event handler for get stats admin button
+     */
+    private void onGetStats(){
+        //TODO
     }
 }
