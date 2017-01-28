@@ -2,8 +2,6 @@ package UI;
 
 import Models.Appointment.Appointment;
 import Models.Provider.Provider;
-import Models.Provider.ProviderType;
-import Models.TimeOfDay;
 import UI.Dialogs.*;
 
 import Utils.MySqlUtils;
@@ -92,7 +90,7 @@ public class MainView extends JFrame {
             }
         });
 
-        // TODO: JMG comment this
+        // If the User has the ADMIN role in the database, set up the admin control panel
         if(role == UserRole.ADMIN){
             createAdminControls();
         }
@@ -116,12 +114,7 @@ public class MainView extends JFrame {
         updateProviderPanel();
 
         createAppointmentView(displayedDate);
-        apptView = false;
-    }
-
-    //TODO: consider removing this
-    public HashMap<Integer, Provider> getProviderMap(){
-        return providerMap;
+        apptView = true;
     }
 
     private void createProviderView(GregorianCalendar date)
@@ -141,28 +134,6 @@ public class MainView extends JFrame {
         AllProviderView ap = new AllProviderView(providers);
         calendarPanel.add(ap.getView(), BorderLayout.CENTER);
         dateLabel.setText(dateFormater.format(date.getTime()));
-    }
-
-    private List<Provider> createBullshitProviders()
-    {
-        List<Provider> l = new ArrayList<>();
-
-        Provider a = new Provider(ProviderType.LAB, "John", "Doe",null);
-        a.setStart(new TimeOfDay(9, 30));
-        a.setEnd(new TimeOfDay(12, 30));
-        l.add(a);
-
-        Provider b = new Provider(ProviderType.LAB, "Jane", "Doe", null);
-        b.setStart(new TimeOfDay(12, 45));
-        b.setEnd(new TimeOfDay(15, 0));
-        l.add(b);
-
-        Provider c = new Provider(ProviderType.LAB, "Jim", "Bob", null);
-        c.setStart(new TimeOfDay(11, 30));
-        c.setEnd(new TimeOfDay(13, 45));
-        l.add(c);
-
-        return l;
     }
 
     private void onCancel() {
@@ -185,7 +156,10 @@ public class MainView extends JFrame {
             Pair<Appointment, Integer> apptData = d.getResult();
             try {
                 MySqlUtils.addAppointment(apptData.getKey(), apptData.getValue());
-                if (apptView && (apptData.getKey().getApptStart().after(displayedDate) || apptData.getKey().getApptEnd().before(displayedDate))){
+                GregorianCalendar endOfDay = new GregorianCalendar();
+                endOfDay.setTime(displayedDate.getTime());
+                endOfDay.add(Calendar.DAY_OF_MONTH, 1);
+                if (apptView && (apptData.getKey().getApptStart().after(displayedDate) && apptData.getKey().getApptEnd().before(endOfDay))){
                     updateApptView();
                 }
             }
@@ -204,12 +178,12 @@ public class MainView extends JFrame {
     private void onToggle(){
         calendarPanel.removeAll();
         if (apptView){
-            toggleViewButton.setText("Provider View");
-            createAppointmentView(displayedDate);
+            toggleViewButton.setText("Appointment View");
+            createProviderView(displayedDate);
         }
         else {
-            toggleViewButton.setText("Appointment View");
-            createProviderView(new GregorianCalendar());
+            toggleViewButton.setText("Provider View");
+            createAppointmentView(displayedDate);
         }
         calendarPanel.updateUI();
         apptView = !apptView;
