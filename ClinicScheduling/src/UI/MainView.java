@@ -223,6 +223,7 @@ public class MainView extends JFrame {
                 onGetStats();
             }
         });
+        adminControlPanel.add(getStats);
 
         JButton addUser = new JButton("Add User");
         addUser.addActionListener(new ActionListener() {
@@ -364,6 +365,6 @@ public class MainView extends JFrame {
      * Event handler for get stats admin button
      */
     private void onGetStats(){
-        //TODO
+        new getStatsDialog().showDialog();
     }
 }
