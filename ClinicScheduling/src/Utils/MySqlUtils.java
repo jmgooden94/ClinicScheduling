@@ -12,7 +12,6 @@ import Models.State;
 import Models.TimeOfDay;
 
 import java.sql.*;
-import java.sql.Date;
 import java.util.*;
 import javax.swing.*;
 
@@ -410,14 +409,14 @@ public class MySqlUtils
     }
 
     /**
-     * Checks if the patient is already in the database and inserts it if it is not
+     * Checks if the patient is already in the database, updates it if it is, inserts it if it is not
      * @param p the patient to insert
      * @param address_fk the id of the patient's address in the database (in most cases, this will be the value
      *                   returned by addAddressIfNotExists(Address a)
      * @return the id of the patient in the patient table
      * @throws SQLException
      */
-    private static int addPatientIfNotExists(Patient p, int address_fk) throws SQLException{
+    private static int addOrUpdatePatient(Patient p, int address_fk) throws SQLException{
         PreparedStatement ps;
         String sql = "SELECT * FROM clinic.patient WHERE first_name=? AND last_name=? AND (phone_number = ? OR address_fk = ?)";
         ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -427,11 +426,29 @@ public class MySqlUtils
         ps.setInt(4, address_fk);
         ResultSet rs = ps.executeQuery();
         if(rs.next()){
-            return rs.getInt(1);
+            int pid = rs.getInt("id");
+            updatePatient(p, pid, address_fk);
+            return pid;
         }
         else {
             return addPatient(p);
         }
+    }
+
+    /**
+     * Updates an existing patient in the database
+     * @param p the patient to update
+     * @param pid the patient's id from the database
+     * @param address_fk the patient's address foreign key
+     * @throws SQLException
+     */
+    private static void updatePatient(Patient p, int pid, int address_fk) throws SQLException{
+        String sql = "UPDATE clinic.patient SET clinic.patient.phone_number=?, clinic.patient.address_fk=? WHERE clinic.patient.id=?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, p.getPhone());
+        ps.setInt(2, address_fk);
+        ps.setInt(3, pid);
+        ps.executeUpdate();
     }
 
     /**
@@ -441,7 +458,7 @@ public class MySqlUtils
      */
     public static void addAppointment(Appointment appointment, int provider_id) throws SQLException{
         int address_id = addAddressIfNotExists(appointment.getPatient().getAddress());
-        int patient_id = addPatientIfNotExists(appointment.getPatient(), address_id);
+        int patient_id = addOrUpdatePatient(appointment.getPatient(), address_id);
         String sql = "INSERT INTO clinic.appointment(reason, start_time, end_time, provider_fk, patient_fk, appt_type) values(?,?,?,?,?,?)";
         PreparedStatement ps = connection.prepareStatement(sql);
         String reason = appointment.getReason();
