@@ -2,8 +2,6 @@ package UI.Dialogs;
 
 import Models.Day;
 import Models.Provider.Availability;
-import Models.Provider.Recurrence;
-import Models.Provider.WeekOfMonthRecurrence;
 import Models.TimeOfDay;
 
 import javax.swing.*;
@@ -30,6 +28,14 @@ public class AddAvailabilityDialog extends JDialog {
     private JSpinner endPMSpinner;
     private JComboBox recurrenceCombo;
     private Availability result;
+    /**
+     * The length of the week; MUST MATCH THE LENGTH OF THE DAYS ARRAY IN Availability.java
+     */
+    // TODO: replace this with the global config file
+    private static final int WEEK_LENGTH = 7;
+    /**
+     * Result code to be returned by the dialog on show
+     */
     private int dialogResult = -1;
 
     public AddAvailabilityDialog() {
@@ -107,16 +113,16 @@ public class AddAvailabilityDialog extends JDialog {
     }
 
     private void onOK() {
-        int recurOption = recurrenceCombo.getSelectedIndex();
-        Recurrence r = new WeekOfMonthRecurrence(recurOption);
+        int week = recurrenceCombo.getSelectedIndex();
 
-        List<Day> days = new ArrayList<>();
-        if (mondayCheckBox.isSelected()){days.add(Day.MONDAY);}
-        if (tuesdayCheckBox.isSelected()){days.add(Day.TUESDAY);}
-        if (wednesdayCheckBox.isSelected()){days.add(Day.WEDNESDAY);}
-        if (thursdayCheckBox.isSelected()){days.add(Day.THURSDAY);}
-        if (fridayCheckBox.isSelected()){days.add(Day.FRIDAY);}
+        boolean[] days = new boolean[WEEK_LENGTH];
+        days[0] = mondayCheckBox.isSelected();
+        days[1] = tuesdayCheckBox.isSelected();
+        days[2] = wednesdayCheckBox.isSelected();
+        days[3] = thursdayCheckBox.isSelected();
+        days[4] = fridayCheckBox.isSelected();
 
+        // Convert 12 hour time format shown on GUI into 24 hour format used by calendar class
         int startHour = (int) startHourSpinner.getValue();
         boolean startAM = startPMSpinner.getValue().toString().compareTo("AM") == 0;
         if(startAM && startHour == 12){
@@ -133,7 +139,7 @@ public class AddAvailabilityDialog extends JDialog {
         TimeOfDay end = new TimeOfDay(endHour, (int) endMinuteSpinner.getValue());
 
         if(validateForm(start, end)){
-            result = new Availability(r, days, start, end);
+            result = new Availability(days, start, end, week);
             dispose();
         }
         dialogResult = JOptionPane.OK_OPTION;

@@ -125,8 +125,19 @@ public class MainView extends JFrame {
 
     private void createProviderView(GregorianCalendar date)
     {
-        List<Provider> l = this.createBullshitProviders();
-        AllProviderView ap = new AllProviderView(l);
+        List<Provider> providers = new ArrayList<>();
+        try
+        {
+            providers = MySqlUtils.getProvidersForDay(date, providerMap);
+        }
+        catch (SQLException ex)
+        {
+            showError(ex);
+        }
+        for (Provider p : providers){
+            System.out.println(p.getName());
+        }
+        AllProviderView ap = new AllProviderView(providers);
         calendarPanel.add(ap.getView(), BorderLayout.CENTER);
         dateLabel.setText(dateFormater.format(date.getTime()));
     }
@@ -136,18 +147,18 @@ public class MainView extends JFrame {
         List<Provider> l = new ArrayList<>();
 
         Provider a = new Provider(ProviderType.LAB, "John", "Doe",null);
-        a.start = new TimeOfDay(9, 30);
-        a.end = new TimeOfDay(12, 30);
+        a.setStart(new TimeOfDay(9, 30));
+        a.setEnd(new TimeOfDay(12, 30));
         l.add(a);
 
         Provider b = new Provider(ProviderType.LAB, "Jane", "Doe", null);
-        b.start = new TimeOfDay(12, 45);
-        b.end = new TimeOfDay(15, 0);
+        b.setStart(new TimeOfDay(12, 45));
+        b.setEnd(new TimeOfDay(15, 0));
         l.add(b);
 
         Provider c = new Provider(ProviderType.LAB, "Jim", "Bob", null);
-        c.start = new TimeOfDay(11, 30);
-        c.end = new TimeOfDay(13, 45);
+        c.setStart(new TimeOfDay(11, 30));
+        c.setEnd(new TimeOfDay(13, 45));
         l.add(c);
 
         return l;
@@ -180,7 +191,9 @@ public class MainView extends JFrame {
             catch (SQLException ex){
                 showError(ex);
             }
-            updateApptView();
+            if (apptView){
+                updateApptView();
+            }
         }
     }
 
@@ -306,18 +319,15 @@ public class MainView extends JFrame {
 
     private void onAddProvider()
     {
-        if (new AddProviderDialog().showDialog() == JOptionPane.OK_OPTION)
+        AddProviderDialog apd = new AddProviderDialog();
+        if (apd.showDialog() == JOptionPane.OK_OPTION)
         {
-            try
-            {
-                providerMap = MySqlUtils.getProviders();
-                updateProviderPanel();
-            }
-            catch (SQLException ex)
-            {
-                showError(ex);
-            }
+            Provider p = apd.getResult();
+            providerMap.put(p.getId(), p);
             updateProviderPanel();
+            if (!apptView){
+                updateProviderView();
+            }
         }
     }
 
@@ -353,7 +363,6 @@ public class MainView extends JFrame {
             pButton.setText(p.getName() + ", " + p.getProviderType().getAbbreviation() + "\n");
             providerPanel.add(pButton);
         }
-        // TODO: figure out how to make a scroll bar appear if the buttons don't fit in the panel
     }
 
     /**
@@ -380,7 +389,7 @@ public class MainView extends JFrame {
             updateApptView();
         }
         else{
-            // TODO: update provider view
+            updateProviderView();
         }
     }
 
@@ -393,7 +402,7 @@ public class MainView extends JFrame {
             updateApptView();
         }
         else{
-            // TODO: update provider view
+            updateProviderView();
         }
     }
 }

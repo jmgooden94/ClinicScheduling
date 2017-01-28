@@ -5,7 +5,6 @@ import Models.Provider.Provider;
 import Models.Provider.ProviderType;
 import UI.MainView;
 import Utils.MySqlUtils;
-import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
@@ -27,6 +26,7 @@ public class AddProviderDialog extends JDialog {
     private List<Availability> availabilities = new ArrayList<>();
     private MainView mainView;
     private int dialogResult = -1;
+    private Provider result;
 
     /**
      * Constructor for add provider dialog
@@ -104,6 +104,7 @@ public class AddProviderDialog extends JDialog {
             catch (SQLException ex){
                 showError(ex);
             }
+            result = p;
             dialogResult = JOptionPane.OK_OPTION;
             dispose();
         }
@@ -149,4 +150,6 @@ public class AddProviderDialog extends JDialog {
     private void showError(Exception ex){
         JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Unexpected Error", JOptionPane.ERROR_MESSAGE);
     }
+
+    public Provider getResult(){ return result; }
 }
