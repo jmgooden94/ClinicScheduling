@@ -98,8 +98,6 @@ CREATE TABLE IF NOT EXISTS `clinic`.`Availability` (
   `wednesday` TINYINT(1) NOT NULL,
   `thursday` TINYINT(1) NOT NULL,
   `friday` TINYINT(1) NOT NULL,
-  `saturday` TINYINT(1) NOT NULL,
-  `sunday` TINYINT(1) NOT NULL,
   `week` INT(1) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `provider_fk_idx` (`provider_fk` ASC),

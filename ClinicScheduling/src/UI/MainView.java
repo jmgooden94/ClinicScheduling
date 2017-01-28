@@ -49,7 +49,8 @@ public class MainView extends JFrame {
     {
         this.setTitle("Clinic Scheduler");
 
-        providerPanel.setPreferredSize(new Dimension(180, 10));
+        providerPanel.setPreferredSize(new Dimension(190, 10));
+        this.setResizable(false);
 
         // call onCancel() when cross is clicked
         addWindowListener(new WindowAdapter() {
@@ -96,7 +97,7 @@ public class MainView extends JFrame {
             createAdminControls();
         }
 
-        setSize(1024, 768);
+        setSize(1044, 700);
         setLocationRelativeTo(null);
         setLayout(null);
         setContentPane(contentPane);
@@ -358,11 +359,22 @@ public class MainView extends JFrame {
      */
     private void updateProviderPanel(){
         providerPanel.removeAll();
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(0, 1));
         for(Provider p : providerMap.values()){
             JButton pButton = new JButton();
-            pButton.setText(p.getName() + ", " + p.getProviderType().getAbbreviation() + "\n");
-            providerPanel.add(pButton);
+            pButton.setText(p.getName() + ", " + p.getProviderType().getAbbreviation());
+            panel.add(pButton);
         }
+
+        // Gotta do this so the buttons don't expand
+        // to take up the whole height of the scroll pane
+        JPanel container = new JPanel(new FlowLayout(FlowLayout.CENTER, 0,0));
+        container.add(panel);
+        JScrollPane sp = new JScrollPane(container,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        providerPanel.add(sp);
     }
 
     /**
