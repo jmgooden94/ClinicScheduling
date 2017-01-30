@@ -69,10 +69,9 @@ public class Appointment {
     public Appointment(Patient patient, Provider provider, String reason,
                        GregorianCalendar apptStart, GregorianCalendar apptEnd, SpecialType specialType)
     {
-        // TODO: uncomment this once we're done with createBullshit()
-//        if (patient == null || provider == null || apptStart == null || apptEnd == null){
-//            throw new IllegalArgumentException("patient, provider, apptStart, and apptEnd cannot be null");
-//        }
+        if (patient == null || provider == null || apptStart == null || apptEnd == null){
+            throw new IllegalArgumentException("patient, provider, apptStart, and apptEnd cannot be null");
+        }
         this.patient = patient;
         this.provider = provider;
         this.reason = reason;
