@@ -10,6 +10,8 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import Utils.GlobalConfig;
+import jdk.nashorn.internal.objects.Global;
 
 public class AddAvailabilityDialog extends JDialog {
     private JPanel contentPane;
@@ -28,11 +30,7 @@ public class AddAvailabilityDialog extends JDialog {
     private JSpinner endPMSpinner;
     private JComboBox recurrenceCombo;
     private Availability result;
-    /**
-     * The length of the week; MUST MATCH THE LENGTH OF THE DAYS ARRAY IN Availability.java
-     */
-    // TODO: replace this with the global config file
-    private static final int WEEK_LENGTH = 7;
+
     /**
      * Result code to be returned by the dialog on show
      */
@@ -115,12 +113,12 @@ public class AddAvailabilityDialog extends JDialog {
     private void onOK() {
         int week = recurrenceCombo.getSelectedIndex();
 
-        boolean[] days = new boolean[WEEK_LENGTH];
-        days[0] = mondayCheckBox.isSelected();
-        days[1] = tuesdayCheckBox.isSelected();
-        days[2] = wednesdayCheckBox.isSelected();
-        days[3] = thursdayCheckBox.isSelected();
-        days[4] = fridayCheckBox.isSelected();
+        boolean[] days = new boolean[GlobalConfig.WEEK_LENGTH];
+        days[Day.MONDAY.getDayOfWeek()] = mondayCheckBox.isSelected();
+        days[Day.TUESDAY.getDayOfWeek()] = tuesdayCheckBox.isSelected();
+        days[Day.WEDNESDAY.getDayOfWeek()] = wednesdayCheckBox.isSelected();
+        days[Day.THURSDAY.getDayOfWeek()] = thursdayCheckBox.isSelected();
+        days[Day.FRIDAY.getDayOfWeek()] = fridayCheckBox.isSelected();
 
         // Convert 12 hour time format shown on GUI into 24 hour format used by calendar class
         int startHour = (int) startHourSpinner.getValue();

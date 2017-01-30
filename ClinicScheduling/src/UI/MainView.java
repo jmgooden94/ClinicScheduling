@@ -318,6 +318,7 @@ public class MainView extends JFrame {
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         providerPanel.add(sp);
+        providerPanel.updateUI();
     }
 
     /**

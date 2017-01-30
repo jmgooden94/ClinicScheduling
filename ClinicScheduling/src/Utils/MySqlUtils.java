@@ -25,10 +25,7 @@ public class MySqlUtils
     private static GlobalConfig config = GlobalConfig.getInstance();
 
     private static final String URL = config.getUrl();
-    /**
-     * The length of the work week; MUST MATCH THE LENGTH OF THE DAYS ARRAY IN Availability.java
-     */
-    private static final int WEEK_LENGTH = 5;
+
     private static Connection connection;
     private static String loggedInUser;
 
@@ -249,7 +246,7 @@ public class MySqlUtils
             ps.setInt(3, provider_id);
             // The index of monday in the INSERT sql string (HARDCODED)
             int mondayIndex = 4;
-            for (int i = 0; i < WEEK_LENGTH; i++){
+            for (int i = 0; i < GlobalConfig.WEEK_LENGTH; i++){
                 ps.setBoolean(mondayIndex + i, availability.getDays()[i]);
             }
             ps.setInt(9, availability.getWeek());
