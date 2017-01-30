@@ -31,22 +31,34 @@ public class AppointmentView extends MultiColumnView
 			this.appointments.add(new ArrayList<Appointment>());
 			this.appointments.get(0).addAll(appointments);
 
-			this.appointments.get(0).sort(Comparator.comparing(Appointment::getApptStart));
+			for (int i = 0; i < this.appointments.get(0).size(); i++)
+			{
+				System.out.println(this.appointments.get(0).get(i).getStartTime() + " - " +
+						this.appointments.get(0).get(i).getEndTime());
+			}
+
+			this.appointments.get(0).sort(Comparator.comparing(Appointment::getStartTime));
+
+			for (int i = 0; i < this.appointments.get(0).size(); i++)
+			{
+				System.out.println(this.appointments.get(0).get(i).getStartTime() + " - " +
+						this.appointments.get(0).get(i).getEndTime());
+			}
 
 			organize();
 			assignColors();
 			this.objArray = buildTableObject();
 
-//            System.out.println("ORGANIZED\n");
-//            for (int i = 0; i < this.appointments.size(); i++)
-//            {
-//                for (int j = 0; j < this.appointments.get(i).size(); j++)
-//                {
-//                    System.out.println(this.appointments.get(i).get(j).getStartTime() + " - " +
-//							this.appointments.get(i).get(j).getEndTime());
-//                }
-//                System.out.println("=-=-=-=-=-");
-//            }
+            System.out.println("ORGANIZED\n");
+            for (int i = 0; i < this.appointments.size(); i++)
+            {
+                for (int j = 0; j < this.appointments.get(i).size(); j++)
+                {
+                    System.out.println(this.appointments.get(i).get(j).getStartTime() + " - " +
+							this.appointments.get(i).get(j).getEndTime());
+                }
+                System.out.println("=-=-=-=-=-");
+            }
 		}
 	}
 
@@ -183,7 +195,7 @@ public class AppointmentView extends MultiColumnView
 
 					if (a.during(t))
 					{
-						obj[col + 1][i] = new ColoredDataCell(a.testDisplay(), a.getColor());
+						obj[col + 1][i] = new ColoredDataCell(a.displayString(), a.getColor());
 					}
 				}
 			}
