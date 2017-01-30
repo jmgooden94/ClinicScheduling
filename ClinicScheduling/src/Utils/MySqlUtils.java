@@ -246,7 +246,7 @@ public class MySqlUtils
             ps.setInt(3, provider_id);
             // The index of monday in the INSERT sql string (HARDCODED)
             int mondayIndex = 4;
-            for (int i = 0; i < GlobalConfig.WEEK_LENGTH; i++){
+            for (int i = 0; i < GlobalConfig.PROVIDER_WEEK_LENGTH; i++){
                 ps.setBoolean(mondayIndex + i, availability.getDays()[i]);
             }
             ps.setInt(9, availability.getWeek());
@@ -505,6 +505,7 @@ public class MySqlUtils
      * @param providerMap the map of providers to their ids, should be passed through by getAppointments
      * @return a list of appointments constructed from that result set
      */
+    // MARK
     private static List<Appointment> constructApptsFromResultSet(ResultSet rs, Map<Integer, Provider> providerMap) throws SQLException{
         List<Appointment> appointments = new ArrayList<>();
         GregorianCalendar sc = new GregorianCalendar();

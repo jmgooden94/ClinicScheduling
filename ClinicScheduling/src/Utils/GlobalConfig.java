@@ -12,6 +12,8 @@ public class GlobalConfig
 
     public static final int WEEK_LENGTH = 7;
 
+    public static final int PROVIDER_WEEK_LENGTH = 5;
+
     private static final String CONFIG_FILENAME = "resources/config.properties";
 
     private double start_time;
