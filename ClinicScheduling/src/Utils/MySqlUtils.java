@@ -505,7 +505,6 @@ public class MySqlUtils
      * @param providerMap the map of providers to their ids, should be passed through by getAppointments
      * @return a list of appointments constructed from that result set
      */
-    // MARK
     private static List<Appointment> constructApptsFromResultSet(ResultSet rs, Map<Integer, Provider> providerMap) throws SQLException{
         List<Appointment> appointments = new ArrayList<>();
         GregorianCalendar sc = new GregorianCalendar();
