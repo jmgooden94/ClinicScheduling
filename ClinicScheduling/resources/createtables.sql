@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS `clinic`.`Patient` (
   `last_name` VARCHAR(100) NOT NULL,
   `phone_number` VARCHAR(30) NOT NULL,
   `address_fk` INT(11) NOT NULL,
+  `smoker` TINYINT(0) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `address_fk_idx` (`address_fk` ASC),
   CONSTRAINT `address_fk`
@@ -68,6 +69,7 @@ CREATE TABLE IF NOT EXISTS `clinic`.`Appointment` (
   `end_time` DATETIME NOT NULL,
   `provider_fk` INT(11) NOT NULL,
   `patient_fk` INT(11) NOT NULL,
+  `appt_type` VARCHAR(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `appt_patient_fk_idx` (`patient_fk` ASC),
   INDEX `appt_provider_fk_idx` (`provider_fk` ASC),
