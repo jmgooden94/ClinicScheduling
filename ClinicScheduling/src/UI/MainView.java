@@ -163,9 +163,6 @@ public class MainView extends JFrame {
             catch (SQLException ex){
                 showError(ex);
             }
-            if (apptView){
-                updateApptView();
-            }
         }
     }
 
