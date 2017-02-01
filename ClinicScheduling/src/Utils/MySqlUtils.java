@@ -488,7 +488,8 @@ public class MySqlUtils
                                                     Map<Integer, Provider> providerMap) throws SQLException{
         String sql = "select * from clinic.appointment JOIN clinic.patient ON " +
                 "clinic.appointment.patient_fk=clinic.patient.id JOIN clinic.address ON " +
-                "clinic.patient.address_fk=clinic.address.id WHERE start_time BETWEEN ? AND ?";
+                "clinic.patient.address_fk=clinic.address.id WHERE clinic.appointment.status IS NULL" +
+                " AND start_time BETWEEN ? AND ?";
         PreparedStatement ps = connection.prepareStatement(sql);
         Timestamp begin = new Timestamp(start.getTimeInMillis());
         Timestamp stop = new Timestamp(end.getTimeInMillis());
