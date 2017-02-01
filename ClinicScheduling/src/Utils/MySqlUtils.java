@@ -473,8 +473,8 @@ public class MySqlUtils
     {
         int address_id = addAddressIfNotExists(appointment.getPatient().getAddress());
         int patient_id = addOrUpdatePatient(appointment.getPatient(), address_id);
-        String sql = "INSERT INTO clinic.appointment(reason, start_time, end_time, provider_fk, patient_fk, appt_type)" +
-                " values(?,?,?,?,?,?)";
+        String sql = "INSERT INTO clinic.appointment(reason, start_time, end_time, provider_fk, patient_fk, appt_type, smoker)" +
+                " values(?,?,?,?,?,?,?)";
         PreparedStatement ps = connection.prepareStatement(sql);
         String reason = appointment.getReason();
         ps.setString(1, reason);
@@ -484,6 +484,7 @@ public class MySqlUtils
         ps.setTimestamp(3, apptEnd);
         ps.setInt(4, provider_id);
         ps.setInt(5, patient_id);
+        ps.setBoolean(6, appointment.getSmoker());
         SpecialType s = appointment.getSpecialType();
         if (s != null){
             ps.setString(6, appointment.getSpecialType().name());
