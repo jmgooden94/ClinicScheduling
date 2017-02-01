@@ -397,13 +397,12 @@ public class MySqlUtils
     {
         int address_fk = addAddressIfNotExists(p.getAddress());
         PreparedStatement ps;
-        String sql = "INSERT INTO clinic.patient(first_name, last_name, phone_number, address_fk, smoker) values(?,?,?,?,?)";
+        String sql = "INSERT INTO clinic.patient(first_name, last_name, phone_number, address_fk, smoker) values(?,?,?,?)";
         ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
         ps.setString(1, p.getFirstName());
         ps.setString(2, p.getLastName());
         ps.setString(3, p.getPhone());
         ps.setInt(4, address_fk);
-        ps.setBoolean(5, p.getSmoker());
         int rows = ps.executeUpdate();
         if (rows == 0){
             throw new SQLException("Failed inserting patient.");
@@ -534,7 +533,7 @@ public class MySqlUtils
         GregorianCalendar ec = new GregorianCalendar();
         while(rs.next()){
             Address a = new Address(rs.getString("street"), rs.getString("city"), State.valueOf(rs.getString("state")), rs.getString("zip"));
-            Patient p = new Patient(rs.getString("first_name"), rs.getString("last_name"), rs.getString("phone_number"), a, rs.getBoolean("smoker"));
+            Patient p = new Patient(rs.getString("first_name"), rs.getString("last_name"), rs.getString("phone_number"), a);
             Timestamp s = rs.getTimestamp("start_time");
             sc.setTimeInMillis(s.getTime());
             Timestamp e = rs.getTimestamp("end_time");
@@ -544,7 +543,7 @@ public class MySqlUtils
             if (typeString != null){
                 st = SpecialType.valueOf(typeString);
             }
-            Appointment appt = new Appointment(p, providerMap.get(rs.getInt("provider_fk")), rs.getString("reason") , sc, ec, st);
+            Appointment appt = new Appointment(p, providerMap.get(rs.getInt("provider_fk")), rs.getString("reason") , sc, ec, st, rs.getBoolean("smoker"));
             appointments.add(appt);
         }
         return appointments;
@@ -610,7 +609,7 @@ public class MySqlUtils
      */
     public static int getSmokerCount() throws SQLException
     {
-        String sql = "SELECT COUNT(clinic.patient.id) FROM clinic.patient WHERE clinic.patient.smoker IS TRUE";
+        String sql = "SELECT COUNT(DISTINCT clinic.appointment.patient_fk) FROM clinic.appointment WHERE clinic.appointment.smoker=1";
         PreparedStatement ps = connection.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
         return rs.getInt(1);
