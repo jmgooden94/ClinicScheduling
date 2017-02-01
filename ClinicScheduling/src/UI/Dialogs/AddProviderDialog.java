@@ -127,7 +127,6 @@ public class AddProviderDialog extends JDialog {
             System.out.println("HERE");
             Availability fromDialog = d.getResult();
             availabilities.add(fromDialog);
-            System.out.println("DISPLAY: " + fromDialog.getDisplayName());
             availabilityPanel.add(new JLabel(fromDialog.getDisplayName()));
             availabilityPanel.updateUI();
             this.pack();
