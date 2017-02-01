@@ -46,7 +46,7 @@ public class GetStatsDialog extends JDialog
         this.setVisible(true);
         this.setMinimumSize(new Dimension(285, 390));
         this.setResizable(false);
-        
+
     }
 
     private void buildUI()

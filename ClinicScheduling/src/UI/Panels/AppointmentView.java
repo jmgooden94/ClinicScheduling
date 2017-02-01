@@ -6,9 +6,9 @@ import Models.TimeOfDay;
 import Utils.ColoredDataCell;
 import Utils.AppointmentCellRenderer;
 
+import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.awt.Color;
 
 /**
  * Monthly calendar view panel
@@ -57,10 +57,10 @@ public class AppointmentView extends MultiColumnView
 	 *
 	 * @return A JTable representing this day
 	 */
-	public JTable getView()
-	{
+	public JScrollPane getView() {
 		JTable table = new JTable(this);
-
+		table.setTableHeader(null);
+		
 		// These two get grid lines to show up on Mac
 		table.setGridColor(Color.black);
 		table.setShowGrid(true);
@@ -68,12 +68,13 @@ public class AppointmentView extends MultiColumnView
 		// So the time column isn't equal sized as the rest.
 		table.getColumnModel().getColumn(0).setMaxWidth(75);
 
-		for (int i = 1; i < this.columnCount; i++)
-		{
+		for (int i = 1; i < this.columnCount; i++) {
 			table.getColumnModel().getColumn(i).setCellRenderer(new AppointmentCellRenderer());
 		}
 
-		return table;
+		JScrollPane sp = new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		return sp;
 	}
 
 	/**
