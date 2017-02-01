@@ -484,7 +484,6 @@ public class MySqlUtils
         ps.setTimestamp(3, apptEnd);
         ps.setInt(4, provider_id);
         ps.setInt(5, patient_id);
-        ps.setBoolean(6, appointment.getSmoker());
         SpecialType s = appointment.getSpecialType();
         if (s != null){
             ps.setString(6, appointment.getSpecialType().name());
@@ -492,6 +491,7 @@ public class MySqlUtils
         else {
             ps.setNull(6, Types.VARCHAR);
         }
+        ps.setBoolean(7, appointment.getSmoker());
         ps.execute();
         connection.commit();
     }
