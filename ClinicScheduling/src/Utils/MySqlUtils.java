@@ -35,7 +35,8 @@ public class MySqlUtils
      * @param password the password to log in with
      * @return boolean indicating if the connection was successful
      */
-    public static boolean openConnection(String username, String password){
+    public static boolean openConnection(String username, String password)
+    {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection(URL, username, password);
@@ -62,7 +63,8 @@ public class MySqlUtils
      * @return the user's role
      * @throws SQLException
      */
-    public static UserRole getRole(String un) throws SQLException{
+    public static UserRole getRole(String un) throws SQLException
+    {
         String q = "select role from user where username = ?";
         PreparedStatement query = connection.prepareStatement(q);
         query.setString(1, un);
@@ -89,7 +91,8 @@ public class MySqlUtils
      * @param role the user's role
      * @throws SQLException
      */
-    public static void addUser(String username, String pw, UserRole role) throws SQLException{
+    public static void addUser(String username, String pw, UserRole role) throws SQLException
+    {
         String cs = "CREATE USER ? IDENTIFIED BY ?";
         String is = "INSERT INTO clinic.user(username, role) values(?, ?)";
 
@@ -142,7 +145,8 @@ public class MySqlUtils
      * @param username the user to delete
      * @throws SQLException
      */
-    public static void removeUser(String username) throws SQLException{
+    public static void removeUser(String username) throws SQLException
+    {
         if (username.equals(loggedInUser)){
             throw new IllegalArgumentException("Cannot delete yourself.");
         }
@@ -166,11 +170,13 @@ public class MySqlUtils
      * Closes the connection to the SQL db
      * @throws SQLException
      */
-    public static void closeConnection() throws SQLException{
+    public static void closeConnection() throws SQLException
+    {
         connection.close();
     }
 
-    public static List<String> getUsernames() throws SQLException{
+    public static List<String> getUsernames() throws SQLException
+    {
         List<String> users = new ArrayList<>();
         String sql = "SELECT username FROM clinic.user";
         PreparedStatement ps = connection.prepareStatement(sql);
@@ -204,7 +210,8 @@ public class MySqlUtils
      * @param provider the provider to add
      * @throws SQLException
      */
-    public static void addProvider(Provider provider) throws SQLException {
+    public static void addProvider(Provider provider) throws SQLException
+    {
         PreparedStatement ps;
         // Insert provider and get id to be used as key for availability
         String sql = "INSERT INTO clinic.provider(first_name, last_name, provider_type) values (?, ?, ?)";
@@ -235,7 +242,8 @@ public class MySqlUtils
      * @param availabilityList the list of availabilities
      * @throws SQLException
      */
-    private static void addAvailability(int provider_id, List<Availability> availabilityList) throws SQLException{
+    private static void addAvailability(int provider_id, List<Availability> availabilityList) throws SQLException
+    {
         PreparedStatement ps;
         String sql = "INSERT INTO clinic.availability(start_time, end_time, provider_fk, monday, tuesday, wednesday, thursday, friday, week) values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
         // For each availability, insert it into the database
@@ -262,7 +270,8 @@ public class MySqlUtils
      * @return the map of providers
      * @throws SQLException
      */
-    public static HashMap<Integer, Provider> getProviders() throws SQLException{
+    public static HashMap<Integer, Provider> getProviders() throws SQLException
+    {
         HashMap<Integer, Provider> providersList = new HashMap<>();
 
         Statement statement = connection.createStatement();
@@ -297,7 +306,8 @@ public class MySqlUtils
      * availabilities
      * @throws SQLException
      */
-    private static HashMap<Integer, List<Availability>> getAvailabilityMap() throws SQLException {
+    private static HashMap<Integer, List<Availability>> getAvailabilityMap() throws SQLException
+    {
         Statement statement = connection.createStatement();
 
         ResultSet availabilities = statement.executeQuery("SELECT * FROM clinic.availability");
@@ -329,7 +339,8 @@ public class MySqlUtils
      * @return the id of the address in the address table
      * @throws SQLException
      */
-    private static int addAddress(Address a) throws SQLException{
+    private static int addAddress(Address a) throws SQLException
+    {
         PreparedStatement ps;
         String sql = "INSERT INTO clinic.address(street, city, state, zip) values(?,?,?,?)";
         ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -358,7 +369,8 @@ public class MySqlUtils
      * @return the id of the address in the address table
      * @throws SQLException
      */
-    private static int addAddressIfNotExists(Address a) throws SQLException{
+    private static int addAddressIfNotExists(Address a) throws SQLException
+    {
         String sql = "SELECT id FROM clinic.address WHERE street=? AND city=? AND state=? AND zip=?";
         PreparedStatement ps = connection.prepareStatement(sql);
         ps.setString(1, a.getStreet());
@@ -380,7 +392,8 @@ public class MySqlUtils
      * @return the id of the patient from the patient table
      * @throws SQLException
      */
-    private static int addPatient(Patient p) throws SQLException{
+    private static int addPatient(Patient p) throws SQLException
+    {
         int address_fk = addAddressIfNotExists(p.getAddress());
         PreparedStatement ps;
         String sql = "INSERT INTO clinic.patient(first_name, last_name, phone_number, address_fk, smoker) values(?,?,?,?,?)";
@@ -413,7 +426,8 @@ public class MySqlUtils
      * @return the id of the patient in the patient table
      * @throws SQLException
      */
-    private static int addOrUpdatePatient(Patient p, int address_fk) throws SQLException{
+    private static int addOrUpdatePatient(Patient p, int address_fk) throws SQLException
+    {
         PreparedStatement ps;
         String sql = "SELECT * FROM clinic.patient WHERE first_name=? AND last_name=? AND (phone_number = ? OR address_fk = ?)";
         ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -439,8 +453,10 @@ public class MySqlUtils
      * @param address_fk the patient's address foreign key
      * @throws SQLException
      */
-    private static void updatePatient(Patient p, int pid, int address_fk) throws SQLException{
-        String sql = "UPDATE clinic.patient SET clinic.patient.phone_number=?, clinic.patient.address_fk=? WHERE clinic.patient.id=?";
+    private static void updatePatient(Patient p, int pid, int address_fk) throws SQLException
+    {
+        String sql = "UPDATE clinic.patient SET clinic.patient.phone_number=?, clinic.patient.address_fk=?" +
+                " WHERE clinic.patient.id=?";
         PreparedStatement ps = connection.prepareStatement(sql);
         ps.setString(1, p.getPhone());
         ps.setInt(2, address_fk);
@@ -453,10 +469,12 @@ public class MySqlUtils
      * @param appointment the appointment to add
      * @param provider_id the id from the database of the provider serving this appointment
      */
-    public static void addAppointment(Appointment appointment, int provider_id) throws SQLException{
+    public static void addAppointment(Appointment appointment, int provider_id) throws SQLException
+    {
         int address_id = addAddressIfNotExists(appointment.getPatient().getAddress());
         int patient_id = addOrUpdatePatient(appointment.getPatient(), address_id);
-        String sql = "INSERT INTO clinic.appointment(reason, start_time, end_time, provider_fk, patient_fk, appt_type) values(?,?,?,?,?,?)";
+        String sql = "INSERT INTO clinic.appointment(reason, start_time, end_time, provider_fk, patient_fk, appt_type)" +
+                " values(?,?,?,?,?,?)";
         PreparedStatement ps = connection.prepareStatement(sql);
         String reason = appointment.getReason();
         ps.setString(1, reason);
@@ -485,7 +503,8 @@ public class MySqlUtils
      * @return
      */
     public static List<Appointment> getAppointments(GregorianCalendar start, GregorianCalendar end,
-                                                    Map<Integer, Provider> providerMap) throws SQLException{
+                                                    Map<Integer, Provider> providerMap) throws SQLException
+    {
         String sql = "select * from clinic.appointment JOIN clinic.patient ON " +
                 "clinic.appointment.patient_fk=clinic.patient.id JOIN clinic.address ON " +
                 "clinic.patient.address_fk=clinic.address.id WHERE clinic.appointment.status IS NULL" +
@@ -506,7 +525,9 @@ public class MySqlUtils
      * @param providerMap the map of providers to their ids, should be passed through by getAppointments
      * @return a list of appointments constructed from that result set
      */
-    private static List<Appointment> constructApptsFromResultSet(ResultSet rs, Map<Integer, Provider> providerMap) throws SQLException{
+    private static List<Appointment> constructApptsFromResultSet(ResultSet rs, Map<Integer, Provider> providerMap)
+            throws SQLException
+    {
         List<Appointment> appointments = new ArrayList<>();
         GregorianCalendar sc = new GregorianCalendar();
         GregorianCalendar ec = new GregorianCalendar();
@@ -561,7 +582,8 @@ public class MySqlUtils
      * @param rs the result set
      * @return the availability
      */
-    private static Availability getAvailabilityFromResultSet(ResultSet rs) throws SQLException{
+    private static Availability getAvailabilityFromResultSet(ResultSet rs) throws SQLException
+    {
         Time start_time = rs.getTime("start_time");
         TimeOfDay startTime = TimeOfDay.fromSqlTime(start_time);
         Time end_time = rs.getTime("end_time");
@@ -580,5 +602,55 @@ public class MySqlUtils
         return new Availability(days, startTime, endTime, week);
     }
 
+    /**
+     * Gets the number of patients in the database who are smokers
+     * @return the number of patients in the database who are smokers
+     * @throws SQLException
+     */
+    public static int getSmokerCount() throws SQLException
+    {
+        String sql = "SELECT COUNT(clinic.patient.id) FROM clinic.patient WHERE clinic.patient.smoker IS TRUE";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        return rs.getInt(1);
+    }
 
+    /**
+     * Gets the number of each special type of appointment
+     * @param start the beginning date of the range to get stats for
+     * @param end the end date of the range to get stats for
+     * @return hashmap with key of special_type and value of the number of occurrences of that type of appt
+     * @throws SQLException
+     */
+    public static HashMap<String, Integer> getSpecialTypeCounts(GregorianCalendar start, GregorianCalendar end) throws
+            SQLException
+    {
+        HashMap<String, Integer> typeCounts = new HashMap<>();
+        String sql = "SELECT clinic.appointment.appt_type WHERE clinic.appointment.appt_type IS NOT NULL AND" +
+                "AND clinic.appointment.appt_type IS NOT " + SpecialType.PROVIDER_UNAVAILABLE + " AND " +
+                "clinic.appointment.start_time BETWEEN ? AND ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        Timestamp begin = new Timestamp(start.getTimeInMillis());
+        Timestamp stop = new Timestamp(end.getTimeInMillis());
+        ps.setTimestamp(1, begin);
+        ps.setTimestamp(2, stop);
+        ResultSet rs = ps.executeQuery();
+        if (!rs.isBeforeFirst())
+        {
+            return typeCounts;
+        }
+        while (rs.next())
+        {
+            String t = rs.getString("appt_type");
+            if(!typeCounts.containsKey(t))
+            {
+                typeCounts.put(t, 1);
+            }
+            else {
+                int c = typeCounts.get(t);
+                typeCounts.replace(t, c+1);
+            }
+        }
+        return typeCounts;
+    }
 }
