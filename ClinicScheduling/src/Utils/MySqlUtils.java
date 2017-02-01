@@ -714,4 +714,16 @@ public class MySqlUtils
         }
         return cancelCounts;
     }
+
+    /**
+     * Closes and reopens the database connection with the same logged in user
+     * @param password the user's password (should be re-entered_
+     * @return if it was successful
+     * @throws SQLException
+     */
+    public static boolean refreshConnection(String password) throws SQLException
+    {
+        connection.close();
+        return openConnection(loggedInUser, password);
+    }
 }
