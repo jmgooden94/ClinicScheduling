@@ -47,7 +47,15 @@ public class Appointment {
      */
     private final TimeOfDay endTime;
 
+    /**
+     * Special type of appointment for statistics tracking
+     */
     private SpecialType specialType;
+
+    /**
+     * Patient for this appointment smokes
+     */
+    private boolean smoker;
 
     /**
      * The color the cells corresponding to this appointment
@@ -65,9 +73,10 @@ public class Appointment {
      * @param reason The reason for the appointment
      * @param apptStart The start of the appointment
      * @param apptEnd The end of the appointment
+     * @param smoker The patient for this appointment smokes
      */
     public Appointment(Patient patient, Provider provider, String reason,
-                       GregorianCalendar apptStart, GregorianCalendar apptEnd, SpecialType specialType)
+                       GregorianCalendar apptStart, GregorianCalendar apptEnd, SpecialType specialType, boolean smoker)
     {
         if (patient == null || provider == null || apptStart == null || apptEnd == null){
             throw new IllegalArgumentException("patient, provider, apptStart, and apptEnd cannot be null");
@@ -110,6 +119,8 @@ public class Appointment {
     public GregorianCalendar getApptEnd(){
         return apptEnd;
     }
+
+    public boolean getSmoker(){ return smoker; }
 
     public Color getColor() { return this.color; }
 
