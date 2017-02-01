@@ -628,7 +628,7 @@ public class MySqlUtils
         HashMap<String, Integer> typeCounts = new HashMap<>();
         String sql = "SELECT clinic.appointment.appt_type WHERE clinic.appointment.appt_type IS NOT NULL AND" +
                 "AND clinic.appointment.appt_type IS NOT " + SpecialType.PROVIDER_UNAVAILABLE + " AND " +
-                "clinic.appointment.start_time BETWEEN ? AND ?";
+                "clinic.appointment.start_time BETWEEN ? AND ? AND clinic.appoint.status IS NULL";
         PreparedStatement ps = connection.prepareStatement(sql);
         Timestamp begin = new Timestamp(start.getTimeInMillis());
         Timestamp stop = new Timestamp(end.getTimeInMillis());
