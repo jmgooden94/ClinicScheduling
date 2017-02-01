@@ -268,6 +268,7 @@ public class NewApptDialog extends JDialog
         try {
             MaskFormatter zipFormat = new MaskFormatter("#####");
             zipBox = new JFormattedTextField(zipFormat);
+            zipBox.setCaretPosition(0);
         } catch (ParseException e) {
             JOptionPane.showMessageDialog(contentPane, "Invalid ZIP");
         }
@@ -275,6 +276,7 @@ public class NewApptDialog extends JDialog
         try {
             MaskFormatter phoneFormat = new MaskFormatter("(###) ###-####");
             phoneBox = new JFormattedTextField(phoneFormat);
+            phoneBox.setCaretPosition(0);
         } catch (ParseException e){
             JOptionPane.showMessageDialog(contentPane, "Invalid phone number.");
         }

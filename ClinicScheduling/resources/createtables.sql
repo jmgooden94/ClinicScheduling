@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS `clinic`.`Appointment` (
   `provider_fk` INT(11) NOT NULL,
   `patient_fk` INT(11) NOT NULL,
   `appt_type` VARCHAR(45) DEFAULT NULL,
+  `status` VARCHAR(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `appt_patient_fk_idx` (`patient_fk` ASC),
   INDEX `appt_provider_fk_idx` (`provider_fk` ASC),
