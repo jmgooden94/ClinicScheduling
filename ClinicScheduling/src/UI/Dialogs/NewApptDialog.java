@@ -126,7 +126,7 @@ public class NewApptDialog extends JDialog
             Address patientAddress = new Address(streetBox.getText(), cityBox.getText(),
                     State.fromName(stateCombo.getSelectedItem().toString()), zipBox.getValue().toString());
             Patient newPatient = new Patient(firstNameBox.getText(), lastNameBox.getText(),
-                    phoneBox.getValue().toString(), patientAddress, smokerCheckBox.isSelected());
+                    phoneBox.getValue().toString(), patientAddress);
             int year = jDatePicker.getModel().getYear();
             int month = jDatePicker.getModel().getMonth();
             int day = jDatePicker.getModel().getDay();
@@ -145,7 +145,7 @@ public class NewApptDialog extends JDialog
                     provider_id = e.getKey();
                 }
             }
-            result = new Pair<>(new Appointment(newPatient, p, reasonBox.getText(), start, end, st), provider_id);
+            result = new Pair<>(new Appointment(newPatient, p, reasonBox.getText(), start, end, st, smokerCheckBox.isSelected()), provider_id);
             dialogResult = JOptionPane.OK_OPTION;
             dispose();
         }
