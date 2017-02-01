@@ -609,7 +609,7 @@ public class MySqlUtils
      */
     public static int getSmokerCount() throws SQLException
     {
-        String sql = "SELECT COUNT(clinic.patient.id) FROM clinic.patient WHERE clinic.patient.smoker IS TRUE";
+        String sql = "SELECT COUNT(DISTINCT clinic.appointment.patient_fk) FROM clinic.appointment WHERE clinic.appointment.smoker=1";
         PreparedStatement ps = connection.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
         return rs.getInt(1);
