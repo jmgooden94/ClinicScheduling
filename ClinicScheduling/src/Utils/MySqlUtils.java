@@ -681,7 +681,7 @@ public class MySqlUtils
     {
         HashMap<String, Integer> cancelCounts = new HashMap<>();
         String sql = "SELECT clinic.appointment.status FROM clinic.appointment WHERE clinic.appointment.status IS NOT " +
-                "NULL AND clinic.appointment.appt_type IS NOT \"" + SpecialType.PROVIDER_UNAVAILABLE.toString() +
+                "NULL AND clinic.appointment.appt_type != \"" + SpecialType.PROVIDER_UNAVAILABLE.toString() +
                 "\" AND clinic.appointment.start_time BETWEEN ? AND ?";
         PreparedStatement ps = connection.prepareStatement(sql);
         Timestamp begin = new Timestamp(start.getTimeInMillis());
