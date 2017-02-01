@@ -1,6 +1,7 @@
 package Utils;
 
 import Models.Appointment.Appointment;
+import Models.Appointment.ApptStatus;
 import Models.Appointment.SpecialType;
 import Models.Day;
 import Models.Patient.Address;
@@ -635,22 +636,75 @@ public class MySqlUtils
         ps.setTimestamp(1, begin);
         ps.setTimestamp(2, stop);
         ResultSet rs = ps.executeQuery();
-        if (!rs.isBeforeFirst())
+        if (rs.isBeforeFirst())
         {
-            return typeCounts;
-        }
-        while (rs.next())
-        {
-            String t = rs.getString("appt_type");
-            if(!typeCounts.containsKey(t))
+            while (rs.next())
             {
-                typeCounts.put(t, 1);
+                String t = rs.getString("appt_type");
+                if(!typeCounts.containsKey(t))
+                {
+                    typeCounts.put(t, 1);
+                }
+                else
+                {
+                    int c = typeCounts.get(t);
+                    typeCounts.replace(t, c+1);
+                }
             }
-            else {
-                int c = typeCounts.get(t);
-                typeCounts.replace(t, c+1);
+        }
+        for (SpecialType st : SpecialType.values())
+        {
+            if(!typeCounts.containsKey(st.toString()))
+            {
+                typeCounts.put(st.toString(), 0);
             }
         }
         return typeCounts;
+    }
+
+    /**
+     * Gets the number of each special type of appointment
+     * @param start the beginning date of the range to get stats for
+     * @param end the end date of the range to get stats for
+     * @return hashmap with key of special_type and value of the number of occurrences of that type of appt
+     * @throws SQLException
+     */
+    public static HashMap<String, Integer> getCancellationCounts(GregorianCalendar start, GregorianCalendar end)
+            throws SQLException
+    {
+        HashMap<String, Integer> cancelCounts = new HashMap<>();
+        String sql = "SELECT clinic.appointment.status WHERE clinic.appointment.status IS NOT NULL AND" +
+                "AND clinic.appointment.appt_type IS NOT " + SpecialType.PROVIDER_UNAVAILABLE + " AND " +
+                "clinic.appointment.start_time BETWEEN ? AND ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        Timestamp begin = new Timestamp(start.getTimeInMillis());
+        Timestamp stop = new Timestamp(end.getTimeInMillis());
+        ps.setTimestamp(1, begin);
+        ps.setTimestamp(2, stop);
+        ResultSet rs = ps.executeQuery();
+        if (!rs.isBeforeFirst())
+        {
+            while (rs.next())
+            {
+                String t = rs.getString("status");
+                if(!cancelCounts.containsKey(t))
+                {
+                    cancelCounts.put(t, 1);
+                }
+                else
+                {
+                    int c = cancelCounts.get(t);
+                    cancelCounts.replace(t, c+1);
+                }
+            }
+        }
+        for (ApptStatus st : ApptStatus.values())
+        {
+            if(!cancelCounts.containsKey(st.toString()))
+            {
+                cancelCounts.put(st.toString(), 0);
+            }
+        }
+        return cancelCounts;
     }
 }
