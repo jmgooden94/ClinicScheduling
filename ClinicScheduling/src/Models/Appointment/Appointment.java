@@ -55,9 +55,6 @@ public class Appointment {
      */
     private Color color = MultiColumnView.DEFAULT_COLOR;
 
-    // TODO: rip this out. along with related methods NJJ
-    public int test = -1;
-
     /**
      * Constructs a new appointment
      * @param patient The patient this appointment is for
@@ -115,11 +112,6 @@ public class Appointment {
 
     public void setColor(Color c) { this.color = c; }
 
-    public void setTest(int i)
-    {
-        this.test = i;
-    }
-
     public boolean during(TimeOfDay t)
     {
         return this.startTime.beforeOrEqual(t) && this.endTime.after(t);
@@ -138,8 +130,4 @@ public class Appointment {
         return patient.toString() + " - " + provider.getName();
     }
 
-    public String testDisplay()
-    {
-        return "Test " + this.test + " - Dr. Test";
-    }
 }

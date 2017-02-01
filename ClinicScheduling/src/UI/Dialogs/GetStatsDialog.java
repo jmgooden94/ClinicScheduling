@@ -1,5 +1,6 @@
 package UI.Dialogs;
 
+import Models.Appointment.ApptStatus;
 import Utils.MySqlUtils;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -9,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -39,6 +41,7 @@ public class GetStatsDialog extends JDialog
         this.setLocationRelativeTo(null);
         this.pack();
         this.setVisible(true);
+        this.setMinimumSize(new Dimension(250, 206));
     }
 
     private void buildUI()
@@ -124,9 +127,17 @@ public class GetStatsDialog extends JDialog
                 GregorianCalendar end = new GregorianCalendar(endYear, endMonth, endDay,
                                                     23, 59, 59);
 
-                JPanel types = buildSpecialTypes(start, end);
-                contentPanel.add(types);
-                contentPanel.updateUI();
+                if (validateDateRanges(start, end))
+                {
+                    JPanel types = buildSpecialTypes(start, end);
+                    contentPanel.add(types);
+                    contentPanel.updateUI();
+                }
+                else
+                {
+                    showError("Start date must be before end date and end date must be before current date.",
+                            "Date Error");
+                }
             }
         });
         panel.add(getStatsBtn);
@@ -142,15 +153,29 @@ public class GetStatsDialog extends JDialog
         JPanel data = new JPanel();
         data.setLayout(new BoxLayout(data, BoxLayout.Y_AXIS));
 
-        data.add(new JLabel("Number of appointments of type: "));
+        try {
 
-        HashMap<String, Integer> specialMap = MySqlUtils.getSpecialTypeCounts(start, end);
+            HashMap<String, Integer> specialMap = MySqlUtils.getSpecialTypeCounts(start, end);
+            data.add(new JLabel("Number of appointments of type: "));
+            for (String key : specialMap.keySet()) {
+                data.add(new JLabel("        " + SpecialType.valueOf(key).getName() + ": " + specialMap.get(key)));
+            }
 
-        for (String key : specialMap.keySet())
-        {
-            data.add(new JLabel("        " + SpecialType.valueOf(key).getName() + ": " + specialMap.get(key)));
+            HashMap<String, Integer> cancelMap = MySqlUtils.getCancellationCounts(start, end);
+            data.add(new JLabel("Number of cancelations: "));
+            for (String key : cancelMap.keySet())
+            {
+                data.add(new JLabel("        " + ApptStatus.valueOf(key).getName() + ": " + cancelMap.get(key)));
+            }
+
+            int smokers = MySqlUtils.getSmokerCount();
+
+            data.add(new JLabel("Smokers: " + smokers));
         }
-
+        catch (SQLException ex)
+        {
+            showError("Error querying database.", "Error");
+        }
 
 
         JPanel dataContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -161,5 +186,20 @@ public class GetStatsDialog extends JDialog
         panel.add(sp);
 
         return panel;
+    }
+
+    private void showError(String msg, String title)
+    {
+        JOptionPane.showMessageDialog(new JFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
+    }
+
+    private boolean validateDateRanges(GregorianCalendar start, GregorianCalendar end)
+    {
+        GregorianCalendar now = new GregorianCalendar();
+
+        boolean startBeforeEnd = start.before(end);
+        boolean endBeforeNow = end.before(now);
+
+        return startBeforeEnd && endBeforeNow;
     }
 }
