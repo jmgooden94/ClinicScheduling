@@ -23,6 +23,11 @@ public enum SpecialType {
         this.name = name;
     }
 
+    public String getName()
+    {
+        return this.name;
+    }
+
     /**
      * Gets all of the names of the special appt types
      * @return String array containing the names of the types

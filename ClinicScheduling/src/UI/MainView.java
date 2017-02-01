@@ -362,7 +362,8 @@ public class MainView extends JFrame {
     /**
      * Event handler for get stats admin button
      */
-    private void onGetStats(){
-        new getStatsDialog().showDialog();
+    private void onGetStats()
+    {
+        new GetStatsDialog();
     }
 }
