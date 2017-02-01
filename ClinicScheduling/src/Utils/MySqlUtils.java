@@ -397,7 +397,7 @@ public class MySqlUtils
     {
         int address_fk = addAddressIfNotExists(p.getAddress());
         PreparedStatement ps;
-        String sql = "INSERT INTO clinic.patient(first_name, last_name, phone_number, address_fk, smoker) values(?,?,?,?)";
+        String sql = "INSERT INTO clinic.patient(first_name, last_name, phone_number, address_fk) values(?,?,?,?)";
         ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
         ps.setString(1, p.getFirstName());
         ps.setString(2, p.getLastName());
@@ -613,10 +613,14 @@ public class MySqlUtils
         String sql = "SELECT COUNT(DISTINCT clinic.appointment.patient_fk) FROM clinic.appointment WHERE clinic.appointment.smoker=1";
         PreparedStatement ps = connection.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
-        if(rs.next()){
+        if (rs.next())
+        {
             return rs.getInt(1);
         }
-        else return 0;
+        else
+        {
+            return 0;
+        }
     }
 
     /**
