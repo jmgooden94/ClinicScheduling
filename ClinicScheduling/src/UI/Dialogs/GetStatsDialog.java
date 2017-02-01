@@ -174,6 +174,7 @@ public class GetStatsDialog extends JDialog
         }
         catch (SQLException ex)
         {
+            System.out.println(ex.getMessage());
             showError("Error querying database.", "Error");
         }
 

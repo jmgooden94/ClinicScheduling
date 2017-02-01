@@ -89,6 +89,7 @@ public class Appointment {
                                         this.apptStart.get(Calendar.MINUTE));
         this.endTime = new TimeOfDay(this.apptEnd.get(Calendar.HOUR_OF_DAY),
                                         this.apptEnd.get(Calendar.MINUTE));
+        this.smoker = smoker;
     }
 
     public Patient getPatient(){
