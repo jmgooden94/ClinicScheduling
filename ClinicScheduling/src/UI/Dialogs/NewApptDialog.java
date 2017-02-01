@@ -306,6 +306,22 @@ public class NewApptDialog extends JDialog
                     "Invalid Times", JOptionPane.WARNING_MESSAGE);
             return false;
         }
+        double open = GlobalConfig.getInstance().getStart_time();
+        int openHour = open.intValue();
+        int openMinute = (open - openHour) * 60;
+        double close = GlobalConfig.getInstance().getEnd_time();
+        int closeHour = close.intValue();
+        int closeMinute = (close - closeHour) * 60;
+        TimeOfDay openTime = new TimeOfDay(openHour, openMinute);
+        TimeOfDay closeTime = new TimeOfDay(closeHour, closeMinute);
+        if (start.before(open) || start.after(close) || end.before(open) || end.after(close))
+        {
+            int dialogResult = JOptionPane.showMessageDialog(contentPane, "Appointment is outside normal business hours. Schedule anyways?", "Outside Business Hours", JOptionPane.WARNING_MESSAGE);
+            if (dialogResult = JOptionPane.CANCEL_OPTION)
+            {
+                return false;
+            }
+        }
         return true;
     }
 
