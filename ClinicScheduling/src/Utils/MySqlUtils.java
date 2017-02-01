@@ -612,7 +612,10 @@ public class MySqlUtils
         String sql = "SELECT COUNT(DISTINCT clinic.appointment.patient_fk) FROM clinic.appointment WHERE clinic.appointment.smoker=1";
         PreparedStatement ps = connection.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
-        return rs.getInt(1);
+        if(rs.next()){
+            return rs.getInt(1);
+        }
+        else return 0;
     }
 
     /**
@@ -626,9 +629,9 @@ public class MySqlUtils
             SQLException
     {
         HashMap<String, Integer> typeCounts = new HashMap<>();
-        String sql = "SELECT clinic.appointment.appt_type WHERE clinic.appointment.appt_type IS NOT NULL AND" +
-                "AND clinic.appointment.appt_type IS NOT " + SpecialType.PROVIDER_UNAVAILABLE + " AND " +
-                "clinic.appointment.start_time BETWEEN ? AND ? AND clinic.appoint.status IS NULL";
+        String sql = "SELECT clinic.appointment.appt_type FROM clinic.appointment WHERE clinic.appointment.appt_type " +
+                "IS NOT NULL AND clinic.appointment.appt_type != \"" + SpecialType.PROVIDER_UNAVAILABLE.toString() +
+                "\" AND clinic.appointment.start_time BETWEEN ? AND ? AND clinic.appointment.status IS NULL";
         PreparedStatement ps = connection.prepareStatement(sql);
         Timestamp begin = new Timestamp(start.getTimeInMillis());
         Timestamp stop = new Timestamp(end.getTimeInMillis());
@@ -672,9 +675,9 @@ public class MySqlUtils
             throws SQLException
     {
         HashMap<String, Integer> cancelCounts = new HashMap<>();
-        String sql = "SELECT clinic.appointment.status WHERE clinic.appointment.status IS NOT NULL AND" +
-                "AND clinic.appointment.appt_type IS NOT " + SpecialType.PROVIDER_UNAVAILABLE + " AND " +
-                "clinic.appointment.start_time BETWEEN ? AND ?";
+        String sql = "SELECT clinic.appointment.status FROM clinic.appointment WHERE clinic.appointment.status IS NOT " +
+                "NULL AND clinic.appointment.appt_type IS NOT \"" + SpecialType.PROVIDER_UNAVAILABLE.toString() +
+                "\" AND clinic.appointment.start_time BETWEEN ? AND ?";
         PreparedStatement ps = connection.prepareStatement(sql);
         Timestamp begin = new Timestamp(start.getTimeInMillis());
         Timestamp stop = new Timestamp(end.getTimeInMillis());
