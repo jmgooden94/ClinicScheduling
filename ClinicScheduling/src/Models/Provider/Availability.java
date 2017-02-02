@@ -35,6 +35,10 @@ public class Availability {
      * The week_of_month this availability occurs on; 0 for every week
      */
     private int week;
+    /**
+     * This object's id in the database
+     */
+    private int id;
 
     /**
      * Constructs a new Availability
@@ -115,4 +119,8 @@ public class Availability {
         }
         return false;
     }
+
+    public int getId(){return id;}
+
+    public void setId(int id){this.id = id; }
 }
