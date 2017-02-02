@@ -30,7 +30,7 @@ public class Provider {
     /**
      * The provider's id from the db; should be set by getProviders and addProvider
      */
-    private int id;
+    private int id = -1;
 
     /**
      * The color the cells corresponding to this provider
