@@ -4,6 +4,8 @@ import Models.Day;
 import Models.TimeOfDay;
 import Utils.GlobalConfig;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -92,5 +94,25 @@ public class Availability {
 
         String ret = dayList + " " + weekList + " from " + start.to12String() + " to " + end.to12String();
         return ret;
+    }
+
+    /**
+     * Checks if the given Gregorian Calendar date and time fall within this availability
+     * @param c the date and time to check
+     * @return boolean indicating if c is within the availability
+     */
+    public boolean duringThis(GregorianCalendar c)
+    {
+        int cWeekOfMonth = c.get(Calendar.WEEK_OF_MONTH);
+        int cDayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        int cHour = c.get(Calendar.HOUR_OF_DAY);
+        int cMinute = c.get(Calendar.MINUTE);
+        TimeOfDay cTimeOfDay = new TimeOfDay(cHour, cMinute);
+        if ((cWeekOfMonth == week || week == 0) && days[cDayOfWeek-1] == true && cTimeOfDay.afterOrEqual(start)
+                && cTimeOfDay.beforeOrEqual(end))
+        {
+            return true;
+        }
+        return false;
     }
 }

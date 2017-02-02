@@ -3,6 +3,7 @@ package UI.Dialogs;
 import Models.Appointment.Appointment;
 import Models.Appointment.SpecialType;
 import Models.Patient.*;
+import Models.Provider.Availability;
 import Models.Provider.Provider;
 import Models.State;
 import Models.TimeOfDay;
@@ -127,7 +128,8 @@ public class NewApptDialog extends JDialog
         int month = jDatePicker.getModel().getMonth();
         int day = jDatePicker.getModel().getDay();
         int dayOfWeek = new GregorianCalendar(year, month, day).get(Calendar.DAY_OF_WEEK);
-        if (validateForm(startTime, endTime, dayOfWeek)){
+        if (validateForm(startTime, endTime, dayOfWeek))
+        {
             Address patientAddress = new Address(streetBox.getText(), cityBox.getText(),
                     State.fromName(stateCombo.getSelectedItem().toString()), zipBox.getValue().toString());
             Patient newPatient = new Patient(firstNameBox.getText(), lastNameBox.getText(),
@@ -135,20 +137,35 @@ public class NewApptDialog extends JDialog
             GregorianCalendar start = new GregorianCalendar(year, month, day, startHour, (int) startMinuteBox.getValue());
             GregorianCalendar end = new GregorianCalendar(year, month, day, endHour, (int) endMinuteBox.getValue());
             SpecialType st = null;
-            if (specialTypesCombo.getSelectedItem() != null){
+            if (specialTypesCombo.getSelectedItem() != null)
+            {
                 st = SpecialType.fromName(specialTypesCombo.getSelectedItem().toString());
             }
 
             int provider_id = -1;
             Provider p = (Provider) providerCombo.getSelectedItem();
-            for (Map.Entry<Integer, Provider> e : providerMap.entrySet()){
-                if (Objects.equals(e.getValue(), p)){
+            for (Map.Entry<Integer, Provider> e : providerMap.entrySet())
+            {
+                if (Objects.equals(e.getValue(), p))
+                {
                     provider_id = e.getKey();
                 }
             }
-            result = new Pair<>(new Appointment(newPatient, p, reasonBox.getText(), start, end, st, smokerCheckBox.isSelected()), provider_id);
-            dialogResult = JOptionPane.OK_OPTION;
-            dispose();
+            boolean providerAvailable = true;
+            providerAvailable = checkAvailable(p, start);
+            int availabilityCheckResult = -1;
+            if (!providerAvailable)
+            {
+                availabilityCheckResult = JOptionPane.showConfirmDialog(contentPane, "Provider is not " +
+                        "available at this time. Schedule anyways?", "Provider Unavailable",
+                        JOptionPane.OK_CANCEL_OPTION);
+            }
+            if (providerAvailable || availabilityCheckResult == JOptionPane.OK_OPTION)
+            {
+                result = new Pair<>(new Appointment(newPatient, p, reasonBox.getText(), start, end, st, smokerCheckBox.isSelected()), provider_id);
+                dialogResult = JOptionPane.OK_OPTION;
+                dispose();
+            }
         }
     }
 
@@ -333,6 +350,28 @@ public class NewApptDialog extends JDialog
      * @param ex the exception to display
      */
     private void showError(Exception ex){
+        System.out.println(ex.getMessage());
+        ex.printStackTrace();
         JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Unexpected Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     *
+     * @param p
+     * @param c
+     * @return
+     */
+    private boolean checkAvailable(Provider p, GregorianCalendar c)
+    {
+        boolean available = false;
+        for(Availability a : p.getAvailability())
+        {
+            if (a.duringThis(c))
+            {
+                available = true;
+                break;
+            }
+        }
+        return available;
     }
 }
