@@ -60,7 +60,7 @@ public class AppointmentView extends MultiColumnView
 	public JScrollPane getView() {
 		JTable table = new JTable(this);
 		table.setTableHeader(null);
-		
+
 		// These two get grid lines to show up on Mac
 		table.setGridColor(Color.black);
 		table.setShowGrid(true);

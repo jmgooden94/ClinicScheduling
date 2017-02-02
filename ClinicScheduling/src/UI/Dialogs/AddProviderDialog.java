@@ -20,9 +20,9 @@ public class AddProviderDialog extends JDialog {
     private JButton buttonCancel;
     private JTextField firstNameField;
     private JTextField lastNameField;
-    private JSpinner typeSpinner;
     private JButton addAvailabilityButton;
     private JPanel availabilityPanel;
+    private JComboBox typeSpinner;
     private List<Availability> availabilities = new ArrayList<>();
     private MainView mainView;
     private int dialogResult = -1;
@@ -31,7 +31,6 @@ public class AddProviderDialog extends JDialog {
     /**
      * Constructor for add provider dialog
      */
-    // TODO: stringify availability when returning from Add Availability button NJJ
     public AddProviderDialog() {
         this.mainView = mainView;
         setContentPane(contentPane);
@@ -40,7 +39,6 @@ public class AddProviderDialog extends JDialog {
         setLocationRelativeTo(null);
 
         availabilityPanel.setLayout(new GridLayout(0, 1));
-        System.out.println(availabilityPanel);
 
         // Sets document filters to limit length of inputs
         AbstractDocument fnDoc = (AbstractDocument) firstNameField.getDocument();
@@ -83,9 +81,16 @@ public class AddProviderDialog extends JDialog {
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        SpinnerListModel types = new SpinnerListModel(ProviderType.getNames());
-        typeSpinner.setModel(types);
+        List<String> list = Models.Provider.ProviderType.getNames();
+        String[] values = new String[list.size()];
+        for (int i = 0; i < list.size(); i++)
+        {
+            values[i] = list.get(i);
+        }
 
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(values);
+
+        typeSpinner.setModel(model);
         this.pack();
     }
 
@@ -100,7 +105,7 @@ public class AddProviderDialog extends JDialog {
             fn = fn.substring(0,1).toUpperCase() + fn.substring(1);
             String ln = lastNameField.getText();
             ln = ln.substring(0,1).toUpperCase() + ln.substring(1);
-            ProviderType pt = ProviderType.fromName(typeSpinner.getValue().toString());
+            ProviderType pt = ProviderType.fromName((String)typeSpinner.getSelectedItem());
             Provider p = new Provider(pt, fn, ln, availabilities);
             try{
                 MySqlUtils.addProvider(p);
@@ -124,7 +129,6 @@ public class AddProviderDialog extends JDialog {
         AddAvailabilityDialog d = new AddAvailabilityDialog();
         if(d.showDialog() == JOptionPane.OK_OPTION)
         {
-            System.out.println("HERE");
             Availability fromDialog = d.getResult();
             availabilities.add(fromDialog);
             availabilityPanel.add(new JLabel(fromDialog.getDisplayName()));
@@ -161,4 +165,5 @@ public class AddProviderDialog extends JDialog {
     }
 
     public Provider getResult(){ return result; }
+
 }
