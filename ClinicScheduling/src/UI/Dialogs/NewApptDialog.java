@@ -3,10 +3,13 @@ package UI.Dialogs;
 import Models.Appointment.Appointment;
 import Models.Appointment.SpecialType;
 import Models.Patient.*;
+import Models.Provider.Availability;
 import Models.Provider.Provider;
 import Models.State;
 import Models.TimeOfDay;
+import Utils.GlobalConfig;
 import Utils.MySqlUtils;
+import com.sun.javafx.geom.AreaOp;
 import javafx.util.Pair;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -121,33 +124,48 @@ public class NewApptDialog extends JDialog
         }
         else if(!endAM && endHour != 12) endHour += 12;
         TimeOfDay endTime = new TimeOfDay(endHour, (int) endMinuteBox.getValue());
-
-        if (validateForm(startTime, endTime)){
+        int year = jDatePicker.getModel().getYear();
+        int month = jDatePicker.getModel().getMonth();
+        int day = jDatePicker.getModel().getDay();
+        int dayOfWeek = new GregorianCalendar(year, month, day).get(Calendar.DAY_OF_WEEK);
+        if (validateForm(startTime, endTime, dayOfWeek))
+        {
             Address patientAddress = new Address(streetBox.getText(), cityBox.getText(),
                     State.fromName(stateCombo.getSelectedItem().toString()), zipBox.getValue().toString());
             Patient newPatient = new Patient(firstNameBox.getText(), lastNameBox.getText(),
                     phoneBox.getValue().toString(), patientAddress);
-            int year = jDatePicker.getModel().getYear();
-            int month = jDatePicker.getModel().getMonth();
-            int day = jDatePicker.getModel().getDay();
-
             GregorianCalendar start = new GregorianCalendar(year, month, day, startHour, (int) startMinuteBox.getValue());
             GregorianCalendar end = new GregorianCalendar(year, month, day, endHour, (int) endMinuteBox.getValue());
             SpecialType st = null;
-            if (specialTypesCombo.getSelectedItem() != null){
+            if (specialTypesCombo.getSelectedItem() != null)
+            {
                 st = SpecialType.fromName(specialTypesCombo.getSelectedItem().toString());
             }
 
             int provider_id = -1;
             Provider p = (Provider) providerCombo.getSelectedItem();
-            for (Map.Entry<Integer, Provider> e : providerMap.entrySet()){
-                if (Objects.equals(e.getValue(), p)){
+            for (Map.Entry<Integer, Provider> e : providerMap.entrySet())
+            {
+                if (Objects.equals(e.getValue(), p))
+                {
                     provider_id = e.getKey();
                 }
             }
-            result = new Pair<>(new Appointment(newPatient, p, reasonBox.getText(), start, end, st, smokerCheckBox.isSelected()), provider_id);
-            dialogResult = JOptionPane.OK_OPTION;
-            dispose();
+            boolean providerAvailable = true;
+            providerAvailable = checkAvailable(p, start);
+            int availabilityCheckResult = -1;
+            if (!providerAvailable)
+            {
+                availabilityCheckResult = JOptionPane.showConfirmDialog(contentPane, "Provider is not " +
+                        "available at this time. Schedule anyways?", "Provider Unavailable",
+                        JOptionPane.OK_CANCEL_OPTION);
+            }
+            if (providerAvailable || availabilityCheckResult == JOptionPane.OK_OPTION)
+            {
+                result = new Pair<>(new Appointment(newPatient, p, reasonBox.getText(), start, end, st, smokerCheckBox.isSelected()), provider_id);
+                dialogResult = JOptionPane.OK_OPTION;
+                dispose();
+            }
         }
     }
 
@@ -286,9 +304,10 @@ public class NewApptDialog extends JDialog
      * Validates the new appointment dialog form
      * @param start the start time of the appt
      * @param end the end time of the appt
+     * @param dayOfWeek the day of the week for the appointment
      * @return true if input is valid; else false
      */
-    private boolean validateForm(TimeOfDay start, TimeOfDay end){
+    private boolean validateForm(TimeOfDay start, TimeOfDay end, int dayOfWeek){
         if(firstNameBox.getText() == "" || lastNameBox.getText() == "" || streetBox.getText() == "" ||
                 cityBox.getText() == "" || zipBox.getValue() == null || phoneBox.getValue() == null){
                 JOptionPane.showMessageDialog(contentPane, "Missing or incorrect form information. " +
@@ -306,6 +325,23 @@ public class NewApptDialog extends JDialog
                     "Invalid Times", JOptionPane.WARNING_MESSAGE);
             return false;
         }
+        double open = GlobalConfig.getInstance().getStart_time();
+        int openHour = (int)open;
+        int openMinute = (int)(open - openHour) * 60;
+        double close = GlobalConfig.getInstance().getEnd_time();
+        int closeHour = (int)close;
+        int closeMinute = (int)(close - closeHour) * 60;
+        TimeOfDay openTime = new TimeOfDay(openHour, openMinute);
+        TimeOfDay closeTime = new TimeOfDay(closeHour, closeMinute);
+        if (start.before(openTime) || start.after(closeTime) || end.before(openTime) || end.after(closeTime)
+                || dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.SATURDAY)
+        {
+            int dialogResult = JOptionPane.showConfirmDialog(contentPane, "Appointment is outside normal business hours. Schedule anyways?", "Outside Business Hours", JOptionPane.WARNING_MESSAGE);
+            if (dialogResult == JOptionPane.CANCEL_OPTION)
+            {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -314,6 +350,28 @@ public class NewApptDialog extends JDialog
      * @param ex the exception to display
      */
     private void showError(Exception ex){
+        System.out.println(ex.getMessage());
+        ex.printStackTrace();
         JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Unexpected Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     *
+     * @param p
+     * @param c
+     * @return
+     */
+    private boolean checkAvailable(Provider p, GregorianCalendar c)
+    {
+        boolean available = false;
+        for(Availability a : p.getAvailability())
+        {
+            if (a.duringThis(c))
+            {
+                available = true;
+                break;
+            }
+        }
+        return available;
     }
 }

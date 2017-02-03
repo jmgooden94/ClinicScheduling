@@ -16,8 +16,11 @@ public class LoginDialog extends JDialog {
     private JLabel passwordLabel;
     private JTextField usernameBox;
     private JPasswordField passwordBox;
+    private boolean login;
+    private int dialogResult = -1;
 
-    public LoginDialog() {
+    public LoginDialog(boolean login) {
+        this.login = login;
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -67,13 +70,20 @@ public class LoginDialog extends JDialog {
         // }
         MySqlUtils.openConnection("clinic_admin", "defaultAdminPassword");
         this.dispose();
-        new MainView(UserRole.ADMIN);
+        if(login)
+        {
+            new MainView(UserRole.ADMIN);
+        }
+        dialogResult = JOptionPane.OK_OPTION;
     }
 
     private void onCancel() {
-        // add your code here if necessary
+        dialogResult = JOptionPane.CANCEL_OPTION;
         dispose();
-        System.exit(0);
+        if(login)
+        {
+            System.exit(0);
+        }
     }
 
     /**
@@ -84,10 +94,15 @@ public class LoginDialog extends JDialog {
         JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Unexpected Error", JOptionPane.ERROR_MESSAGE);
     }
 
+    public int showDialog()
+    {
+        this.pack();
+        this.setVisible(true);
+        return dialogResult;
+    }
+
     public static void main(String[] args) {
-        LoginDialog dialog = new LoginDialog();
-        dialog.pack();
-        dialog.setVisible(true);
+        new LoginDialog(true).showDialog();
     }
 
 }

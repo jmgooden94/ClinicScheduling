@@ -20,6 +20,7 @@ import java.awt.event.WindowEvent;
 import java.sql.SQLException;
 import java.util.List;
 import javafx.util.Pair;
+import sun.rmi.runtime.Log;
 
 
 public class MainView extends JFrame {
@@ -36,6 +37,7 @@ public class MainView extends JFrame {
     private JPanel calendarPanel;
     private JPanel leftPanel;
     private JPanel adminControlPanel;
+    private JButton refreshButton;
     private boolean apptView;
     private HashMap<Integer, Provider> providerMap;
     private SimpleDateFormat dateFormater = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
@@ -87,6 +89,15 @@ public class MainView extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 onRightArrow();
+            }
+        });
+
+        refreshButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                onRefresh();
             }
         });
 
@@ -291,6 +302,8 @@ public class MainView extends JFrame {
      * @param ex the exception to display
      */
     private void showError(Exception ex){
+        System.out.println(ex.getMessage());
+        ex.printStackTrace();
         JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Unexpected Error", JOptionPane.ERROR_MESSAGE);
     }
 
@@ -382,4 +395,36 @@ public class MainView extends JFrame {
             new ProviderViewDialog(p);
         }
     };
+
+    private void onRefresh()
+    {
+        try
+        {
+            MySqlUtils.closeConnection();
+        }
+        catch (SQLException ex)
+        {
+            showError(ex);
+        }
+        LoginDialog d = new LoginDialog(false);
+        if (d.showDialog() == JOptionPane.OK_OPTION)
+        {
+            if(apptView)
+            {
+                updateApptView();
+            }
+            else
+            {
+                updateProviderView();
+            }
+            updateProviderPanel();
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(contentPane, "Database connection has been closed, but not reopened. " +
+                            "Close and re-open the application to continue use.", "Database Closed",
+                    JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
+    }
 }

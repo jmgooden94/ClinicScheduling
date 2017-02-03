@@ -322,6 +322,8 @@ public class MySqlUtils
         HashMap<Integer, List<Availability>> availabilityHashMap = new HashMap<>();
         while(availabilities.next()) {
             Availability a = getAvailabilityFromResultSet(availabilities);
+            // TODO: Untested
+            a.setId(availabilities.getInt("id"));
             Integer providerKey = availabilities.getInt("provider_fk");
             if (availabilityHashMap.containsKey(providerKey)) {
                 availabilityHashMap.get(providerKey).add(a);
@@ -462,6 +464,7 @@ public class MySqlUtils
         ps.setInt(2, address_fk);
         ps.setInt(3, pid);
         ps.executeUpdate();
+        connection.commit();
     }
 
     /**
@@ -545,6 +548,7 @@ public class MySqlUtils
                 st = SpecialType.valueOf(typeString);
             }
             Appointment appt = new Appointment(p, providerMap.get(rs.getInt("provider_fk")), rs.getString("reason") , sc, ec, st, rs.getBoolean("smoker"));
+            appt.setId(rs.getInt("id"));
             appointments.add(appt);
         }
         return appointments;
@@ -713,5 +717,79 @@ public class MySqlUtils
             }
         }
         return cancelCounts;
+    }
+
+    // TODO: UNTESTED
+
+    /**
+     * Updates the appointment's status
+     * @param apptId the appointment to update's id
+     * @param s the
+     * @throws SQLException
+     */
+    public static void updateApptStatus(int apptId, ApptStatus s) throws SQLException
+    {
+        if(apptId == -1)
+        {
+            throw new IllegalArgumentException("Appointment has an invalid id.");
+        }
+        String sql = "UPDATE clinic.appointment SET clinic.appointment.status = ? WHERE clinic.appointment.id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, s.toString());
+        ps.setInt(2, apptId);
+        int rows = ps.executeUpdate();
+        if (rows != 1)
+        {
+            throw new SQLException("Error updating appointment status.");
+        }
+        connection.commit();
+    }
+
+    // TODO: UNTESTED
+    /**
+     * Deletes an availability from the database
+     * @param availabilityId the id of the availability to delete
+     */
+    public static void deleteAvailability(int availabilityId) throws SQLException
+    {
+        String sql = "DELETE FROM clinic.availability WHERE id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, availabilityId);
+        int rows = ps.executeUpdate();
+        if (rows != 1)
+        {
+            throw new SQLException("Error deleting availability.");
+        }
+        connection.commit();
+    }
+
+    // TODO: UNTESTED
+    /**
+     * Deletes the given provider from the database
+     * @param p the provider to delete
+     * @throws SQLException
+     */
+    public static void deleteProvider(Provider p) throws SQLException
+    {
+        String deleteAv = "DELETE FROM clinic.availability WHERE id = ?";
+        PreparedStatement ps = connection.prepareStatement(deleteAv);
+        for (Availability a : p.getAvailability())
+        {
+            ps.setInt(1, a.getId());
+            int rows = ps.executeUpdate();
+            if (rows != 1)
+            {
+                throw new SQLException("Error deleting availability for provider " + p.getName());
+            }
+            connection.commit();
+        }
+        String deleteP = "DELETE FROM clinic.provider WHERE id = ?";
+        ps = connection.prepareStatement(deleteP);
+        ps.setInt(1, p.getId());
+        int rows = ps.executeUpdate();
+        if (rows != 1)
+        {
+            throw new SQLException("Error deleting provider: " + p.getName());
+        }
     }
 }

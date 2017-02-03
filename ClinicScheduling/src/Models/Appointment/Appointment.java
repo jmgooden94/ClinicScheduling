@@ -64,6 +64,11 @@ public class Appointment {
     private Color color = MultiColumnView.DEFAULT_COLOR;
 
     /**
+     *
+     */
+    private int id = -1;
+
+    /**
      * Constructs a new appointment
      * @param patient The patient this appointment is for
      * @param provider The provider serving this appointment
@@ -142,4 +147,7 @@ public class Appointment {
         return patient.toString() + " - " + provider.getName();
     }
 
+    public void setId (int id) { this.id = id; }
+
+    public int getId () { return id; }
 }
