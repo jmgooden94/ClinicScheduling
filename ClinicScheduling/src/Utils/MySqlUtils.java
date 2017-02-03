@@ -299,6 +299,7 @@ public class MySqlUtils
         }
         else {
             rs.next();
+            connection.commit();
             return rs.getInt(1);
         }
     }

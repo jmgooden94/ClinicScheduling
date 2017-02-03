@@ -28,6 +28,7 @@ public class ProviderViewDialog extends JDialog
     public ProviderViewDialog(Provider p)
     {
         this.setModal(true);
+        this.setLocationRelativeTo(null);
         self = this;
         provider = p;
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
