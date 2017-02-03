@@ -1,6 +1,9 @@
 package UI.Panels;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import Models.Appointment.Appointment;
 import Models.TimeOfDay;
 import Utils.ColoredDataCell;
@@ -60,7 +63,31 @@ public class AppointmentView extends MultiColumnView
 	 * @return A JTable representing this day
 	 */
 	public JScrollPane getView() {
-		JTable table = new JTable(this);
+		JTable table = new JTable(this)
+		{
+			@Override
+			public boolean isCellEditable(int rowIndex, int colIndex) {
+				return false;
+			}
+		};
+
+		table.setCellSelectionEnabled(true);
+		ListSelectionModel cellSelectionModel = table.getSelectionModel();
+		cellSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				if (!e.getValueIsAdjusting())
+				{
+					int selectedRow = table.getSelectedRow();
+					int selectedColumn = table.getSelectedColumn();
+
+					System.out.printf("CELL SELECTED AT [%d, %d]\n", selectedRow, selectedColumn);
+				}
+			}
+
+		});
+
 		table.setTableHeader(null);
 
 		// These two get grid lines to show up on Mac
