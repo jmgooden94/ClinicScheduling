@@ -6,6 +6,7 @@ import javax.swing.event.ListSelectionListener;
 
 import Models.Appointment.Appointment;
 import Models.TimeOfDay;
+import Utils.Appointment_ColoredDataCell;
 import Utils.ColoredDataCell;
 import Utils.AppointmentCellRenderer;
 
@@ -82,7 +83,15 @@ public class AppointmentView extends MultiColumnView
 					int selectedRow = table.getSelectedRow();
 					int selectedColumn = table.getSelectedColumn();
 
-					System.out.printf("CELL SELECTED AT [%d, %d]\n", selectedRow, selectedColumn);
+					//System.out.printf("CELL SELECTED AT [%d, %d]\n", selectedRow, selectedColumn);
+
+					if (objArray[selectedColumn][selectedRow] != null)
+					{
+						Appointment_ColoredDataCell cell = (Appointment_ColoredDataCell) objArray[selectedColumn][selectedRow];
+						Appointment a = cell.getAppointment();
+						// TODO: pop a dialog with this appoinments data
+						
+					}
 				}
 			}
 
@@ -213,7 +222,7 @@ public class AppointmentView extends MultiColumnView
 
 					if (a.during(t))
 					{
-						obj[col + 1][i] = new ColoredDataCell(a.displayString(), a.getColor());
+						obj[col + 1][i] = new Appointment_ColoredDataCell(a.displayString(), a.getColor(), a);
 					}
 				}
 			}
