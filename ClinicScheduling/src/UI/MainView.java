@@ -393,6 +393,10 @@ public class MainView extends JFrame {
             int id = Integer.parseInt(command);
             Provider p = providerMap.get(id);
             new ProviderViewDialog(p);
+            if (!apptView)
+            {
+                updateProviderView();
+            }
         }
     };
 

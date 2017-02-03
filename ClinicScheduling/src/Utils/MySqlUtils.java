@@ -267,6 +267,43 @@ public class MySqlUtils
     }
 
     /**
+     * Inserts a single availability into the database
+     * @param provider_id the provider id this availability belongs to
+     * @param availability the availability to add
+     * @return the id of the added availability
+     * @throws SQLException
+     */
+    public static int addSingleAvailability(int provider_id, Availability availability) throws SQLException
+    {
+        PreparedStatement ps;
+        String sql = "INSERT INTO clinic.availability(start_time, end_time, provider_fk, monday, tuesday, wednesday, thursday, friday, week) values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+        ps.setTime(1, availability.getStart().toSqlTime());
+        ps.setTime(2, availability.getEnd().toSqlTime());
+        ps.setInt(3, provider_id);
+        // The index of monday in the INSERT sql string (HARDCODED)
+        int mondayIndex = 4;
+        for (int i = 0; i < GlobalConfig.PROVIDER_WEEK_LENGTH; i++){
+            ps.setBoolean(mondayIndex + i, availability.getDays()[i]);
+        }
+        ps.setInt(9, availability.getWeek());
+        int rows = ps.executeUpdate();
+        if (rows == 0)
+        {
+            throw new SQLException("Failed inserting availability.");
+        }
+        ResultSet rs = ps.getGeneratedKeys();
+        if (!rs.isBeforeFirst())
+        {
+            throw new SQLException("Failed getting availabiity key.");
+        }
+        else {
+            rs.next();
+            return rs.getInt(1);
+        }
+    }
+
+    /**
      * Gets the list of providers and their availabilities from the database, mapped to their id from the database
      * @return the map of providers
      * @throws SQLException
@@ -288,7 +325,10 @@ public class MySqlUtils
         // object and put it in the map
         while (providers.next()){
             int id = providers.getInt("id");
-            List<Availability> availabilityList = availabilityHashMap.get(id);
+            List<Availability> availabilityList = new ArrayList<>();
+            if (availabilityHashMap.containsKey(id)) {
+                availabilityList.addAll(availabilityHashMap.get(id));
+            }
             String fn = providers.getString("first_name");
             String ln = providers.getString("last_name");
             String ptString = providers.getString("provider_type");
@@ -313,13 +353,13 @@ public class MySqlUtils
 
         ResultSet availabilities = statement.executeQuery("SELECT * FROM clinic.availability");
 
+        HashMap<Integer, List<Availability>> availabilityHashMap = new HashMap<>();
         // If there are no availabilities in the db, return null
         if (!availabilities.isBeforeFirst()){
-            return null;
+            return  availabilityHashMap;
         }
 
         // For each Result in the availabilities ResultSet, construct a Java Availability and map it to its provider_id
-        HashMap<Integer, List<Availability>> availabilityHashMap = new HashMap<>();
         while(availabilities.next()) {
             Availability a = getAvailabilityFromResultSet(availabilities);
             // TODO: Untested

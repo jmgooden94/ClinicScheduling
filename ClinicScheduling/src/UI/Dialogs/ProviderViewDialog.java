@@ -3,11 +3,14 @@ package UI.Dialogs;
 
 import Models.Provider.Availability;
 import Models.Provider.Provider;
+import Utils.MySqlUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProviderViewDialog extends JDialog
@@ -24,6 +27,7 @@ public class ProviderViewDialog extends JDialog
 
     public ProviderViewDialog(Provider p)
     {
+        this.setModal(true);
         self = this;
         provider = p;
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
@@ -65,17 +69,7 @@ public class ProviderViewDialog extends JDialog
         contentPanel.add(availabilityBtnBox);
 
         outer = Box.createHorizontalBox();
-        List<Availability> availList = provider.getAvailability();
-        for (int i = 0; i < availList.size(); i++)
-        {
-            Box b = Box.createHorizontalBox();
-            JButton button = new JButton("Delete");
-            button.setActionCommand(Integer.toString(i));
-            button.addActionListener(deleteListener);
-            b.add(button);
-            b.add(new JLabel(availList.get(i).getDisplayName()));
-            outer.add(b);
-        }
+        displayAvailabilites();
         contentPanel.add(outer);
 
         JPanel buttonPanel = new JPanel();
@@ -87,20 +81,71 @@ public class ProviderViewDialog extends JDialog
         contentPanel.add(buttonPanel);
     }
 
+    private void displayAvailabilites()
+    {
+        if (provider.getAvailability() != null)
+        {
+            List<Availability> availList = provider.getAvailability();
+            for (int i = 0; i < availList.size(); i++)
+            {
+                Box b = Box.createHorizontalBox();
+                JButton button = new JButton("Delete");
+                button.setActionCommand(Integer.toString(i));
+                button.addActionListener(deleteListener);
+                b.add(button);
+                b.add(new JLabel(availList.get(i).getDisplayName()));
+                outer.add(b);
+            }
+        }
+    }
+
     private ActionListener addListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // TODO: pop add availability dialog and add
-            System.out.println("ADD CLICKED");
+            try
+            {
+                AddAvailabilityDialog d = new AddAvailabilityDialog();
+                if(d.showDialog() == JOptionPane.OK_OPTION)
+                {
+                    Availability fromDialog = d.getResult();
+                    int id = MySqlUtils.addSingleAvailability(provider.getId(), fromDialog);
+                    fromDialog.setId(id);
+                    provider.getAvailability().add(fromDialog);
+                    Box b = Box.createHorizontalBox();
+                    JButton button = new JButton("Delete");
+                    button.setActionCommand(Integer.toString(id));
+                    button.addActionListener(deleteListener);
+                    b.add(button);
+                    b.add(new JLabel(fromDialog.getDisplayName()));
+                    outer.add(b);
+                    outer.updateUI();
+                    self.pack();
+                }
+            }
+            catch(SQLException ex)
+            {
+                showError("Unexpected Error", "Cannot add availability to database.", ex);
+            }
         }
     };
 
     private ActionListener deleteListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            //TODO: call the MySQLUtils delete availability
-            int index = Integer.parseInt(e.getActionCommand());
-            System.out.println("DELETE INDEX " + index);
+           try
+           {
+               int index = Integer.parseInt(e.getActionCommand());
+               MySqlUtils.deleteAvailability(provider.getAvailability().get(index).getId());
+               provider.getAvailability().remove(index);
+               outer.removeAll();
+               displayAvailabilites();
+               contentPanel.revalidate();
+               contentPanel.updateUI();
+           }
+           catch (SQLException ex)
+           {
+               showError("Unexpected Error", "Error deleting availability.", ex);
+           }
         }
     };
 
@@ -110,4 +155,11 @@ public class ProviderViewDialog extends JDialog
             self.dispose();
         }
     };
+
+    private void showError(String title, String msg, Exception e)
+    {
+        System.out.println(e.getMessage());
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(new JFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
+    }
 }

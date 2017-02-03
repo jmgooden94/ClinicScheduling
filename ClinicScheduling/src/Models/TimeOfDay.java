@@ -4,6 +4,7 @@ import java.sql.Time;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
 /**
  * Simple class representing the type of day in hours and minutes
@@ -183,7 +184,6 @@ public class TimeOfDay implements Comparable {
 
         return (oth.getHour() == hour && oth.getMinute() == minute );
     }
-
 
     public int compareTo(Object oth)
     {

@@ -7,6 +7,7 @@ import Utils.ColoredDataCell;
 import Utils.AppointmentCellRenderer;
 
 import java.awt.*;
+import java.sql.Time;
 import java.util.*;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class AppointmentView extends MultiColumnView
 
 	public AppointmentView(List<Appointment> appointments)
 	{
+
 		timeList = this.createTimes();
 		if (appointments != null)
 		{
