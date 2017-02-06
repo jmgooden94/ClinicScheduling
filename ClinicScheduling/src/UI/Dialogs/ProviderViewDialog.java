@@ -22,8 +22,11 @@ public class ProviderViewDialog extends JDialog
     private JTextField providerType;
     private JButton addAvailabilityBtn;
     private JButton okBtn;
+    private JButton deleteProviderBtn;
     private Provider provider;
     private Box outer;
+    private int dialogResult = -1;
+    private boolean providerDeleted = false;
 
     public ProviderViewDialog(Provider p)
     {
@@ -36,7 +39,17 @@ public class ProviderViewDialog extends JDialog
         buildUI();
         this.getContentPane().add(contentPanel);
         this.pack();
-        this.setVisible(true);
+    }
+
+    public int showDialog()
+    {
+        setVisible(true);
+        return dialogResult;
+    }
+
+    public boolean getProviderDeleted()
+    {
+        return providerDeleted;
     }
 
     private void buildUI()
@@ -69,9 +82,15 @@ public class ProviderViewDialog extends JDialog
         availabilityBtnBox.add(addAvailabilityBtn);
         contentPanel.add(availabilityBtnBox);
 
-        outer = Box.createHorizontalBox();
+        outer = Box.createVerticalBox();
         displayAvailabilites();
         contentPanel.add(outer);
+
+        JPanel deletePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        deleteProviderBtn = new JButton("Delete Provider");
+        deleteProviderBtn.addActionListener(deleteProviderListener);
+        deletePanel.add(deleteProviderBtn);
+        contentPanel.add(deletePanel);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
@@ -152,7 +171,9 @@ public class ProviderViewDialog extends JDialog
 
     private ActionListener disposeListener = new ActionListener() {
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e)
+        {
+            dialogResult = JOptionPane.OK_OPTION;
             self.dispose();
         }
     };
@@ -163,4 +184,26 @@ public class ProviderViewDialog extends JDialog
         e.printStackTrace();
         JOptionPane.showMessageDialog(new JFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
     }
+
+    private ActionListener deleteProviderListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int result = JOptionPane.showConfirmDialog(contentPanel, "Are you sure you want to delete this provider?",
+                    "Delete Provider?", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.OK_OPTION)
+            {
+                try
+                {
+                    MySqlUtils.deleteProvider(provider);
+                    providerDeleted = true;
+                    dialogResult = JOptionPane.OK_OPTION;
+                    dispose();
+                }
+                catch (SQLException ex)
+                {
+                    showError("Deletion Error", "Error deleting provider from database", ex);
+                }
+            }
+        }
+    };
 }

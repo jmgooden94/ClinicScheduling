@@ -812,25 +812,14 @@ public class MySqlUtils
      */
     public static void deleteProvider(Provider p) throws SQLException
     {
-        String deleteAv = "DELETE FROM clinic.availability WHERE id = ?";
-        PreparedStatement ps = connection.prepareStatement(deleteAv);
-        for (Availability a : p.getAvailability())
-        {
-            ps.setInt(1, a.getId());
-            int rows = ps.executeUpdate();
-            if (rows != 1)
-            {
-                throw new SQLException("Error deleting availability for provider " + p.getName());
-            }
-            connection.commit();
-        }
         String deleteP = "UPDATE clinic.provider SET clinic.provider.active = 0 WHERE id = ?";
-        ps = connection.prepareStatement(deleteP);
+        PreparedStatement ps = connection.prepareStatement(deleteP);
         ps.setInt(1, p.getId());
         int rows = ps.executeUpdate();
         if (rows != 1)
         {
             throw new SQLException("Error deleting provider: " + p.getName());
         }
+        connection.commit();
     }
 }

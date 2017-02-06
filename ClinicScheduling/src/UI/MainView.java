@@ -392,7 +392,16 @@ public class MainView extends JFrame {
             String command = e.getActionCommand();
             int id = Integer.parseInt(command);
             Provider p = providerMap.get(id);
-            new ProviderViewDialog(p);
+            // THis is a modal dialog, so execution pauses
+            ProviderViewDialog d = new ProviderViewDialog(p);
+            if(d.showDialog() == JOptionPane.OK_OPTION)
+            {
+                if(d.getProviderDeleted())
+                {
+                    providerMap.remove(p.getId());
+                    updateProviderPanel();
+                }
+            }
             if (!apptView)
             {
                 updateProviderView();
@@ -413,6 +422,14 @@ public class MainView extends JFrame {
         LoginDialog d = new LoginDialog(false);
         if (d.showDialog() == JOptionPane.OK_OPTION)
         {
+            try
+            {
+                providerMap = MySqlUtils.getProviders();
+            }
+            catch (SQLException ex)
+            {
+                showError(ex);
+            }
             if(apptView)
             {
                 updateApptView();
