@@ -6,12 +6,12 @@ import javax.swing.event.ListSelectionListener;
 
 import Models.Appointment.Appointment;
 import Models.TimeOfDay;
+import UI.Dialogs.ApptViewDialog;
 import Utils.Appointment_ColoredDataCell;
 import Utils.ColoredDataCell;
 import Utils.AppointmentCellRenderer;
 
 import java.awt.*;
-import java.sql.Time;
 import java.util.*;
 import java.util.List;
 
@@ -90,7 +90,7 @@ public class AppointmentView extends MultiColumnView
 						Appointment_ColoredDataCell cell = (Appointment_ColoredDataCell) objArray[selectedColumn][selectedRow];
 						Appointment a = cell.getAppointment();
 						// TODO: pop a dialog with this appoinments data
-						
+						new ApptViewDialog(a);
 					}
 				}
 			}
