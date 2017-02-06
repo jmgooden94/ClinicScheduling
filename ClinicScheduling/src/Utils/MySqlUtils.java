@@ -314,7 +314,7 @@ public class MySqlUtils
         HashMap<Integer, Provider> providersList = new HashMap<>();
 
         Statement statement = connection.createStatement();
-        ResultSet providers = statement.executeQuery("SELECT * FROM clinic.provider");
+        ResultSet providers = statement.executeQuery("SELECT * FROM clinic.provider WHERE clinic.provider.active = 1");
         HashMap<Integer, List<Availability>> availabilityHashMap = getAvailabilityMap();
 
         // If there are no providers in the database, return an empty list
@@ -602,7 +602,7 @@ public class MySqlUtils
         // Query DB to get availability objects/provider id's/objects for the provided day
         String sql = "SELECT * FROM clinic.provider JOIN clinic.availability ON " +
                 "clinic.provider.id=clinic.availability.provider_fk WHERE ((clinic.availability.week=? OR " +
-                "clinic.availability.week=0) AND clinic.availability." + day + "=1)";
+                "clinic.availability.week=0) AND clinic.availability." + day + "=1) AND clinic.provider.active = 1";
         PreparedStatement ps = connection.prepareStatement(sql);
         ps.setInt(1, date.get(Calendar.WEEK_OF_MONTH));
         // Calendar.DAY_OF_WEEK - 2 because Day.values is 0-indexed and excludes weekends, whereas Calendar.DAY_OF_WEEK
@@ -824,7 +824,7 @@ public class MySqlUtils
             }
             connection.commit();
         }
-        String deleteP = "DELETE FROM clinic.provider WHERE id = ?";
+        String deleteP = "UPDATE clinic.provider SET clinic.provider.active = 0 WHERE id = ?";
         ps = connection.prepareStatement(deleteP);
         ps.setInt(1, p.getId());
         int rows = ps.executeUpdate();
