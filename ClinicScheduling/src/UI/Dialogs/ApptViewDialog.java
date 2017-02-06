@@ -121,31 +121,39 @@ public class ApptViewDialog extends JDialog
         return panel;
     }
 
-    private ActionListener okListener = new ActionListener() {
+    private ActionListener okListener = new ActionListener()
+    {
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e)
+        {
             self.dispose();
         }
     };
 
-    private ActionListener rescheduleListener = new ActionListener() {
+    private ActionListener rescheduleListener = new ActionListener()
+    {
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e)
+        {
 
         }
     };
 
-    private ActionListener noShowListener = new ActionListener() {
+    private ActionListener noShowListener = new ActionListener()
+    {
         @Override
-        public void actionPerformed(ActionEvent e) {
-
+        public void actionPerformed(ActionEvent e)
+        {
+            // TODO hit DB?
         }
     };
 
-    private ActionListener cancelListener = new ActionListener() {
+    private ActionListener cancelListener = new ActionListener()
+    {
         @Override
-        public void actionPerformed(ActionEvent e) {
-
+        public void actionPerformed(ActionEvent e)
+        {
+            // TODO pop another dialog for dr/patient cancel
         }
     };
 
