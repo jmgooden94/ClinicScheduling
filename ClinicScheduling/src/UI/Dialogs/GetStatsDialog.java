@@ -10,6 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,23 +27,26 @@ public class GetStatsDialog extends JDialog
     private JDatePickerImpl start_date;
     private JDatePickerImpl end_date;
     private JButton getStatsBtn;
+    private GetStatsDialog self;
     /**
      * I would put all the JLabels here for all the special
      * types of appointments but looping through them makes adding
      * new appointment types way easier
      */
 
-    public GetStatsDialog()
-    {
+    public GetStatsDialog() {
+        self = this;
         contentPanel.setLayout(new GridLayout(0, 1));
-        contentPanel.setBorder(BorderFactory.createEmptyBorder(5,10,5,10));
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         buildUI();
         this.getContentPane().setLayout(new BorderLayout());
         this.getContentPane().add(contentPanel, BorderLayout.CENTER);
         this.setLocationRelativeTo(null);
         this.pack();
         this.setVisible(true);
-        this.setMinimumSize(new Dimension(250, 206));
+        this.setMinimumSize(new Dimension(285, 390));
+        this.setResizable(false);
+
     }
 
     private void buildUI()
@@ -132,6 +137,9 @@ public class GetStatsDialog extends JDialog
                     JPanel types = buildSpecialTypes(start, end);
                     contentPanel.add(types);
                     contentPanel.updateUI();
+                    System.out.println(self.getSize());
+                    self.setMinimumSize(new Dimension(250, 206));
+
                 }
                 else
                 {

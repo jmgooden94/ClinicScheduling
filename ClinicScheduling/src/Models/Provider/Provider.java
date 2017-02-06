@@ -5,6 +5,7 @@ import UI.Panels.MultiColumnView;
 
 import java.awt.*;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ public class Provider {
     /**
      * The provider's availability
      */
-    private List<Availability> availability;
+    private List<Availability> availability = new ArrayList<>();
     /**
      * The provider's id from the db; should be set by getProviders and addProvider
      */
@@ -76,10 +77,14 @@ public class Provider {
      * @param availability A list providing the provider's availability
      */
     public Provider(ProviderType providerType, String firstName, String lastName, List<Availability> availability) {
+        if (providerType == null || firstName == null || lastName == null || availability == null)
+        {
+            throw new IllegalArgumentException("No parameters can be null.");
+        }
         this.providerType = providerType;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.availability = availability;
+        this.availability.addAll(availability);
     }
 
     public ProviderType getProviderType(){

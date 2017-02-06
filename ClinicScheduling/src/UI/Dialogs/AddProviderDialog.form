@@ -110,12 +110,6 @@
             </constraints>
             <properties/>
           </component>
-          <component id="27c62" class="javax.swing.JSpinner" binding="typeSpinner">
-            <constraints>
-              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties/>
-          </component>
           <component id="bc8c" class="javax.swing.JButton" binding="addAvailabilityButton">
             <constraints>
               <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -132,6 +126,12 @@
             <border type="none"/>
             <children/>
           </grid>
+          <component id="232a1" class="javax.swing.JComboBox" binding="typeSpinner">
+            <constraints>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+          </component>
         </children>
       </grid>
     </children>

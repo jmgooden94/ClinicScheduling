@@ -153,7 +153,7 @@ public abstract class MultiColumnView extends AbstractTableModel
      * data contained
      * @return JTable representing class
      */
-    public abstract JTable getView();
+    public abstract JScrollPane getView();
 
     /**
      * Gets the color that each cell should be rendered

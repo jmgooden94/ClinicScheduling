@@ -317,6 +317,8 @@ public class MainView extends JFrame {
         for(Provider p : providerMap.values()){
             JButton pButton = new JButton();
             pButton.setText(p.getName() + ", " + p.getProviderType().getAbbreviation());
+            pButton.setActionCommand(Integer.toString(p.getId()));
+            pButton.addActionListener(providerButtonListener);
             panel.add(pButton);
         }
 
@@ -379,6 +381,24 @@ public class MainView extends JFrame {
     {
         new GetStatsDialog();
     }
+
+    /**
+     * Action listener for when the provider buttons are clicked.
+     */
+    private ActionListener providerButtonListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            String command = e.getActionCommand();
+            int id = Integer.parseInt(command);
+            Provider p = providerMap.get(id);
+            new ProviderViewDialog(p);
+            if (!apptView)
+            {
+                updateProviderView();
+            }
+        }
+    };
 
     private void onRefresh()
     {

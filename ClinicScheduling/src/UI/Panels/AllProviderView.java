@@ -152,9 +152,10 @@ public class AllProviderView extends MultiColumnView
         }
     }
 
-    public JTable getView()
+    public JScrollPane getView()
     {
         JTable table = new JTable(this);
+        table.setTableHeader(null);
 
         // These two get grid lines to show up on Mac
         table.setGridColor(Color.black);
@@ -168,6 +169,11 @@ public class AllProviderView extends MultiColumnView
             table.getColumnModel().getColumn(i).setCellRenderer(new ProviderCellRenderer());
         }
 
-        return table;
+        JPanel inner = new JPanel();
+        inner.add(table);
+        JScrollPane sp = new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        return sp;
     }
 }
