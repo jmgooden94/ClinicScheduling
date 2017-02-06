@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `clinic`.`Provider` (
   `first_name` VARCHAR(100) NOT NULL,
   `last_name` VARCHAR(100) NOT NULL,
   `provider_type` VARCHAR(45) NOT NULL,
-  `active` TINYINT(1) NOT NULL,
+  `active` TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
