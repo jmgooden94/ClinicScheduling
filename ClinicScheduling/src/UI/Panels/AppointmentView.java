@@ -1,13 +1,17 @@
 package UI.Panels;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import Models.Appointment.Appointment;
 import Models.TimeOfDay;
+import UI.Dialogs.ApptViewDialog;
+import Utils.Appointment_ColoredDataCell;
 import Utils.ColoredDataCell;
 import Utils.AppointmentCellRenderer;
 
 import java.awt.*;
-import java.sql.Time;
 import java.util.*;
 import java.util.List;
 
@@ -60,7 +64,39 @@ public class AppointmentView extends MultiColumnView
 	 * @return A JTable representing this day
 	 */
 	public JScrollPane getView() {
-		JTable table = new JTable(this);
+		JTable table = new JTable(this)
+		{
+			@Override
+			public boolean isCellEditable(int rowIndex, int colIndex) {
+				return false;
+			}
+		};
+
+		table.setCellSelectionEnabled(true);
+		ListSelectionModel cellSelectionModel = table.getSelectionModel();
+		cellSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				if (!e.getValueIsAdjusting())
+				{
+					int selectedRow = table.getSelectedRow();
+					int selectedColumn = table.getSelectedColumn();
+
+					//System.out.printf("CELL SELECTED AT [%d, %d]\n", selectedRow, selectedColumn);
+
+					if (objArray[selectedColumn][selectedRow] != null)
+					{
+						Appointment_ColoredDataCell cell = (Appointment_ColoredDataCell) objArray[selectedColumn][selectedRow];
+						Appointment a = cell.getAppointment();
+						// TODO: pop a dialog with this appoinments data
+						new ApptViewDialog(a);
+					}
+				}
+			}
+
+		});
+
 		table.setTableHeader(null);
 
 		// These two get grid lines to show up on Mac
@@ -186,7 +222,7 @@ public class AppointmentView extends MultiColumnView
 
 					if (a.during(t))
 					{
-						obj[col + 1][i] = new ColoredDataCell(a.displayString(), a.getColor());
+						obj[col + 1][i] = new Appointment_ColoredDataCell(a.displayString(), a.getColor(), a);
 					}
 				}
 			}
