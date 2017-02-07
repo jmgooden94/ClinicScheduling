@@ -1,13 +1,17 @@
 package UI.Dialogs;
 
 import Models.Appointment.Appointment;
+import Models.Appointment.ApptStatus;
 import Models.Patient.Address;
 import Models.Patient.Patient;
+import Utils.MySqlUtils;
+import com.sun.codemodel.internal.JOp;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 
@@ -135,7 +139,8 @@ public class ApptViewDialog extends JDialog
         @Override
         public void actionPerformed(ActionEvent e)
         {
-
+            new RescheduleDialog(appointment);
+            //self.dispose();
         }
     };
 
@@ -144,7 +149,20 @@ public class ApptViewDialog extends JDialog
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            // TODO hit DB?
+            try
+            {
+                int result = JOptionPane.showConfirmDialog(contentPanel, "Are you sure you want to mark this appointment as a no-show?",
+                        "No Show?", JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION)
+                {
+                    MySqlUtils.updateApptStatus(appointment.getId(), ApptStatus.NO_SHOW);
+                    self.dispose();
+                }
+            }
+            catch(SQLException ex)
+            {
+                showError("Appointment Error", "Error setting appointment status.", ex);
+            }
         }
     };
 
@@ -157,4 +175,10 @@ public class ApptViewDialog extends JDialog
         }
     };
 
+    private void showError(String title, String msg, Exception e)
+    {
+        System.out.println(e.getMessage());
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(new JFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
+    }
 }
