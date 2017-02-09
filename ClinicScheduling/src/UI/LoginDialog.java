@@ -51,28 +51,30 @@ public class LoginDialog extends JDialog {
         setLocationRelativeTo(null);
     }
 
-    private void onOK() {
-        //TODO: uncomment this to not bypass login
-        // String un = usernameBox.getText().trim();
-        // char[] plain = passwordBox.getPassword();
-        // String plainString = new String(plain);
-        // boolean success = MySqlUtils.openConnection(un, plainString);
-        // if(success){
-        //     UserRole role = null;
-        //     try {
-        //         role = MySqlUtils.getRole(un);
-        //     }
-        //     catch (SQLException sqle){
-        //         showError(sqle);
-        //     }
-        //     dispose();
-        //     new MainView(role);
-        // }
-        MySqlUtils.openConnection("clinic_admin", "defaultAdminPassword");
-        this.dispose();
-        if(login)
+    private void onOK()
+    {
+        UserRole role = null;
+        String un = usernameBox.getText().trim();
+        char[] plain = passwordBox.getPassword();
+        String plainString = new String(plain);
+        boolean success = MySqlUtils.openConnection(un, plainString);
+        if(success){
+            try {
+                role = MySqlUtils.getRole(un);
+            }
+            catch (SQLException sqle){
+                showError(sqle);
+            }
+            dispose();
+            if(login)
+            {
+                new MainView(role);
+            }
+        }
+        else
         {
-            new MainView(UserRole.ADMIN);
+            JOptionPane.showMessageDialog(contentPane, "Unable to connect to database. Check your credentials "
+                    + "and/or verify that server is running.", "Database Error", JOptionPane.ERROR_MESSAGE);
         }
         dialogResult = JOptionPane.OK_OPTION;
     }

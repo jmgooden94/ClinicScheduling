@@ -15,7 +15,7 @@ public class GlobalConfig
 
     public static final int PROVIDER_WEEK_LENGTH = 5;
 
-    private static final String CONFIG_FILENAME = "resources/config.properties";
+    private static final String CONFIG_FILENAME = "resources/config.txt";
 
     public static final Font CALENDAR_PANEL_FONT = new Font("Arial", Font.PLAIN, 16);
 

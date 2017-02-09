@@ -45,15 +45,17 @@ public class MySqlUtils
             loggedInUser = username;
             return true;
         }
-        catch (ClassNotFoundException e){
-            JOptionPane.showMessageDialog(new JFrame(),"Unable to load MySQL driver. Unable to connect to " +
+        catch (ClassNotFoundException e)
+        {
+            JOptionPane.showMessageDialog(new JFrame(), "Unable to load MySQL driver. Unable to connect to " +
                     "database. Contact developer.", "MySQL Error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
             return false;
         }
-        catch (SQLException ex) {
-            JOptionPane.showMessageDialog(new JFrame(),"Error connecting to database. Verify that MySQL is " +
-                    "running and/or check credentials", "MySQL Error", JOptionPane.ERROR_MESSAGE);
+        catch (SQLException ex)
+        {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
             return false;
         }
     }
