@@ -62,8 +62,6 @@ public class NewApptDialog extends JDialog
     /**
      * Constructor for NewApptDialog
      */
-    // TODO: when you click on phone number box and zip, it's always at the beginning JMG
-    // TODO: pop dialog when user clicks in date box or do something else ???
     public NewApptDialog(HashMap<Integer, Provider> providerMap) {
         this.providerMap = providerMap;
         createComponents();
