@@ -1,6 +1,7 @@
 package Utils;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
@@ -15,6 +16,8 @@ public class GlobalConfig
     public static final int PROVIDER_WEEK_LENGTH = 5;
 
     private static final String CONFIG_FILENAME = "resources/config.properties";
+
+    public static final Font CALENDAR_PANEL_FONT = new Font("Arial", Font.PLAIN, 16);
 
     private double start_time;
 
