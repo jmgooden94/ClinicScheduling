@@ -192,7 +192,7 @@ public class ApptViewDialog extends JDialog
             }
             catch(SQLException ex)
             {
-                // TODO: showError() <--- this method exists on Nic's branch
+                showError("Appointment Error", "Error canceling appointment.", ex);
             }
         }
     };
