@@ -139,7 +139,7 @@ public class ApptViewDialog extends JDialog
         public void actionPerformed(ActionEvent e)
         {
             new RescheduleDialog(appointment);
-            //self.dispose();
+            self.dispose();
         }
     };
 

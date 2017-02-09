@@ -207,11 +207,11 @@ public class RescheduleDialog extends JDialog
                 {
                     if ((canceledByBox.getSelectedItem()).equals("Provider"))
                     {
-                        MySqlUtils.updateApptStatus(appointment.getId(), ApptStatus.CANCELLED_BY_PROVIDER);
+                        MySqlUtils.updateApptStatus(appointment.getId(), ApptStatus.RESCHEDULED_BY_PROVIDER);
                     }
                     else
                     {
-                        MySqlUtils.updateApptStatus(appointment.getId(), ApptStatus.CANCELLED_BY_PATIENT);
+                        MySqlUtils.updateApptStatus(appointment.getId(), ApptStatus.RESCHEDULED_BY_PATIENT);
                     }
                 }
                 catch(SQLException ex)
