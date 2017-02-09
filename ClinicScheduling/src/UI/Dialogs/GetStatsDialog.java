@@ -165,6 +165,12 @@ public class GetStatsDialog extends JDialog
 
             HashMap<String, Integer> specialMap = MySqlUtils.getSpecialTypeCounts(start, end);
             data.add(new JLabel("Number of appointments of type: "));
+            int total = 0;
+            for(int n : specialMap.values())
+            {
+                total += n;
+            }
+            data.add(new JLabel("       " + "Standard Appointments: " + total));
             for (String key : specialMap.keySet()) {
                 data.add(new JLabel("        " + SpecialType.valueOf(key).getName() + ": " + specialMap.get(key)));
             }
