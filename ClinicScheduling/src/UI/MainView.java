@@ -20,7 +20,6 @@ import java.awt.event.WindowEvent;
 import java.sql.SQLException;
 import java.util.List;
 import javafx.util.Pair;
-import sun.rmi.runtime.Log;
 
 
 public class MainView extends JFrame {
@@ -38,6 +37,9 @@ public class MainView extends JFrame {
     private JPanel leftPanel;
     private JPanel adminControlPanel;
     private JButton refreshButton;
+    private JButton leftMonthButton;
+    private JButton rightMonthButton;
+    private JButton jumpDateButton;
     private boolean apptView;
     private HashMap<Integer, Provider> providerMap;
     private SimpleDateFormat dateFormater = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
@@ -90,6 +92,27 @@ public class MainView extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 onRightArrow();
             }
+        });
+
+        leftMonthButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            { onLeftMonth();}
+        });
+
+        rightMonthButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            { onRightMonth();}
+        });
+
+        jumpDateButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            { onJumpDate();}
         });
 
         refreshButton.addActionListener(new ActionListener()
@@ -371,6 +394,52 @@ public class MainView extends JFrame {
         }
         else{
             updateProviderView();
+        }
+    }
+
+    /**
+     * Decreases the displayed date by one month
+     */
+    private void onLeftMonth(){
+        displayedDate.add(Calendar.MONTH, -1);
+        if(apptView){
+            updateApptView();
+        }
+        else{
+            updateProviderView();
+        }
+    }
+
+    /**
+     * Decreases the displayed date by one month
+     */
+    private void onRightMonth(){
+        displayedDate.add(Calendar.MONTH, 1);
+        if(apptView){
+            updateApptView();
+        }
+        else{
+            updateProviderView();
+        }
+    }
+
+    /**
+     * Displays a dialog to set a date to jump to, then jumps to that date
+     */
+    private void onJumpDate()
+    {
+        JumpDateDialog d = new JumpDateDialog();
+        if (d.showDialog() == JOptionPane.OK_OPTION)
+        {
+            displayedDate = d.getSelected();
+            if (apptView)
+            {
+                updateApptView();
+            }
+            else
+            {
+                updateProviderView();
+            }
         }
     }
 
