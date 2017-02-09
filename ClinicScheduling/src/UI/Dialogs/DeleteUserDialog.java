@@ -84,13 +84,6 @@ public class DeleteUserDialog extends JDialog {
         dispose();
     }
 
-    public static void main(String[] args) {
-        DeleteUserDialog dialog = new DeleteUserDialog();
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
-    }
-
     /**
      * Shows an error dialog with the exception message
      * @param ex the exception to display
