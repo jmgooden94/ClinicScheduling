@@ -1,10 +1,10 @@
 package UI.Panels;
 
 
-import Models.Appointment.Appointment;
 import Models.Provider.Provider;
 import Models.TimeOfDay;
 import Utils.ColoredDataCell;
+import Utils.GlobalConfig;
 import Utils.ProviderCellRenderer;
 
 import javax.swing.*;
@@ -156,6 +156,7 @@ public class AllProviderView extends MultiColumnView
     {
         JTable table = new JTable(this);
         table.setTableHeader(null);
+        table.setFont(GlobalConfig.CALENDAR_PANEL_FONT);
 
         // These two get grid lines to show up on Mac
         table.setGridColor(Color.black);

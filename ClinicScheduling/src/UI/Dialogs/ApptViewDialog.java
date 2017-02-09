@@ -138,7 +138,8 @@ public class ApptViewDialog extends JDialog
         @Override
         public void actionPerformed(ActionEvent e)
         {
-
+            new RescheduleDialog(appointment);
+            self.dispose();
         }
     };
 
@@ -147,7 +148,20 @@ public class ApptViewDialog extends JDialog
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            // TODO hit DB?
+            try
+            {
+                int result = JOptionPane.showConfirmDialog(contentPanel, "Are you sure you want to mark this appointment as a no-show?",
+                        "No Show?", JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION)
+                {
+                    MySqlUtils.updateApptStatus(appointment.getId(), ApptStatus.NO_SHOW);
+                    self.dispose();
+                }
+            }
+            catch(SQLException ex)
+            {
+                showError("Appointment Error", "Error setting appointment status.", ex);
+            }
         }
     };
 
@@ -178,9 +192,15 @@ public class ApptViewDialog extends JDialog
             }
             catch(SQLException ex)
             {
-                // TODO: showError() <--- this method exists on Nic's branch
+                showError("Appointment Error", "Error canceling appointment.", ex);
             }
         }
     };
 
+    private void showError(String title, String msg, Exception e)
+    {
+        System.out.println(e.getMessage());
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(new JFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
+    }
 }

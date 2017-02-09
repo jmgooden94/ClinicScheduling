@@ -11,6 +11,7 @@ import UI.MainView;
 import Utils.Appointment_ColoredDataCell;
 import Utils.ColoredDataCell;
 import Utils.AppointmentCellRenderer;
+import Utils.GlobalConfig;
 
 import java.awt.*;
 import java.util.*;
@@ -73,6 +74,7 @@ public class AppointmentView extends MultiColumnView
 				return false;
 			}
 		};
+		table.setFont(GlobalConfig.CALENDAR_PANEL_FONT);
 
 		table.setCellSelectionEnabled(true);
 		ListSelectionModel cellSelectionModel = table.getSelectionModel();
