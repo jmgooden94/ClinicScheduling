@@ -246,19 +246,19 @@ public class MySqlUtils
     private static void addAvailability(int provider_id, List<Availability> availabilityList) throws SQLException
     {
         PreparedStatement ps;
-        String sql = "INSERT INTO clinic.availability(start_time, end_time, provider_fk, monday, tuesday, wednesday, thursday, friday, week) values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO clinic.availability(start_time, end_time, provider_fk, week, sunday, monday, tuesday, wednesday, thursday, friday, saturday) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         // For each availability, insert it into the database
         for (Availability availability : availabilityList){
             ps = connection.prepareStatement(sql);
             ps.setTime(1, availability.getStart().toSqlTime());
             ps.setTime(2, availability.getEnd().toSqlTime());
             ps.setInt(3, provider_id);
+            ps.setInt(4, availability.getWeek());
             // The index of monday in the INSERT sql string (HARDCODED)
-            int mondayIndex = 4;
-            for (int i = 0; i < GlobalConfig.PROVIDER_WEEK_LENGTH; i++){
-                ps.setBoolean(mondayIndex + i, availability.getDays()[i]);
+            int sundayIndex = 5;
+            for (int i = 0; i < GlobalConfig.WEEK_LENGTH; i++){
+                ps.setBoolean(sundayIndex + i, availability.getDays()[i]);
             }
-            ps.setInt(9, availability.getWeek());
             int rows = ps.executeUpdate();
             if (rows == 0){
                 throw new SQLException("Failed inserting availability.");
