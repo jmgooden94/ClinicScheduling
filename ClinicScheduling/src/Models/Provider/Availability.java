@@ -43,8 +43,8 @@ public class Availability {
     /**
      * Constructs a new Availability
      * @param days Boolean array indicating if the availability applies to a given day; 0 for sunday, 1 for monday, ...
-     * 6           for saturday
-     *             MUST HAVE LENGTH OF EXACTLY 7
+     *             6 for saturday
+     *             MUST HAVE LENGTH OF EXACTLY GlobalConfig.WEEK_LENGTH
      * @param start the time of day this availability begins at
      * @param end the time of day this availability ends at
      * @param week the week_of_month this availability occurs on; 0 for every week
@@ -54,7 +54,7 @@ public class Availability {
             throw new IllegalArgumentException("Week must be a valid week_of_month or 0 for all weeks.");
         }
         if (days.length != GlobalConfig.WEEK_LENGTH){
-            throw new IllegalArgumentException("Days array must have length " + GlobalConfig.WEEK_LENGTH + "; one index for each weekday.");
+            throw new IllegalArgumentException("Days array must have length " + GlobalConfig.WEEK_LENGTH + "; one index for each day.");
         }
         this.days = days;
         this.start = start;
