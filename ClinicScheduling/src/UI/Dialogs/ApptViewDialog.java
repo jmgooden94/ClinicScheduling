@@ -5,7 +5,6 @@ import Models.Appointment.ApptStatus;
 import Models.Patient.Address;
 import Models.Patient.Patient;
 import Utils.MySqlUtils;
-import com.sun.codemodel.internal.JOp;
 
 import javax.swing.*;
 import java.awt.*;
@@ -171,7 +170,30 @@ public class ApptViewDialog extends JDialog
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            // TODO pop another dialog for dr/patient cancel
+            // NOTE: If this array changes, switch/case must also change
+            String[] buttons = {"Provider Cancelled", "Patient Cancelled", "Do Not Cancel"};
+            int opt = JOptionPane.showOptionDialog(contentPanel, "Did patient or provider cancel this appointment?",
+                    "Cancel Appointment", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    null, buttons, buttons[2]);
+            // NOTE: These options are based on the buttons array
+            try
+            {
+                switch (opt)
+                {
+                    case 0:
+                        MySqlUtils.updateApptStatus(appointment.getId(), ApptStatus.CANCELLED_BY_PROVIDER);
+                        dispose();
+                        break;
+                    case 1:
+                        MySqlUtils.updateApptStatus(appointment.getId(), ApptStatus.CANCELLED_BY_PATIENT);
+                        dispose();
+                        break;
+                }
+            }
+            catch(SQLException ex)
+            {
+                // TODO: showError() <--- this method exists on Nic's branch
+            }
         }
     };
 

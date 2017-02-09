@@ -7,6 +7,7 @@ import javax.swing.event.ListSelectionListener;
 import Models.Appointment.Appointment;
 import Models.TimeOfDay;
 import UI.Dialogs.ApptViewDialog;
+import UI.MainView;
 import Utils.Appointment_ColoredDataCell;
 import Utils.ColoredDataCell;
 import Utils.AppointmentCellRenderer;
@@ -26,10 +27,11 @@ public class AppointmentView extends MultiColumnView
 	 * with no overlapping appointments.
 	 */
 	private List<ArrayList<Appointment>> appointments;
+	private MainView parent;
 
-	public AppointmentView(List<Appointment> appointments)
+	public AppointmentView(List<Appointment> appointments, MainView parent)
 	{
-
+		this.parent = parent;
 		timeList = this.createTimes();
 		if (appointments != null)
 		{
@@ -89,8 +91,8 @@ public class AppointmentView extends MultiColumnView
 					{
 						Appointment_ColoredDataCell cell = (Appointment_ColoredDataCell) objArray[selectedColumn][selectedRow];
 						Appointment a = cell.getAppointment();
-						// TODO: pop a dialog with this appoinments data
 						new ApptViewDialog(a);
+						parent.updateApptView();
 					}
 				}
 			}

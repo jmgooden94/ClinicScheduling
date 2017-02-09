@@ -211,7 +211,7 @@ public class MainView extends JFrame {
         {
             showError(ex);
         }
-        AppointmentView model = new AppointmentView(appts);
+        AppointmentView model = new AppointmentView(appts, this);
         calendarPanel.add(model.getView(), BorderLayout.CENTER);
         dateLabel.setText(dateFormater.format(date.getTime()));
     }
@@ -336,7 +336,7 @@ public class MainView extends JFrame {
     /**
      * Updates the appointment view
      */
-    private void updateApptView(){
+    public void updateApptView(){
         calendarPanel.removeAll();
         createAppointmentView(displayedDate);
         calendarPanel.updateUI();
