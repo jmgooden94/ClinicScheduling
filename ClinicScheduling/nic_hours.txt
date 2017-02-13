@@ -8,3 +8,4 @@ before tracking -> 12ish??
 02/01 -> 3  29
 02/03 -> 2  31
 02/06 -> 3.5    34.5
+Finished Night -> 3 37.5
