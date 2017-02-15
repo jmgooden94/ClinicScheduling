@@ -45,15 +45,17 @@ public class MySqlUtils
             loggedInUser = username;
             return true;
         }
-        catch (ClassNotFoundException e){
-            JOptionPane.showMessageDialog(new JFrame(),"Unable to load MySQL driver. Unable to connect to " +
+        catch (ClassNotFoundException e)
+        {
+            JOptionPane.showMessageDialog(new JFrame(), "Unable to load MySQL driver. Unable to connect to " +
                     "database. Contact developer.", "MySQL Error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
             return false;
         }
-        catch (SQLException ex) {
-            JOptionPane.showMessageDialog(new JFrame(),"Error connecting to database. Verify that MySQL is " +
-                    "running and/or check credentials", "MySQL Error", JOptionPane.ERROR_MESSAGE);
+        catch (SQLException ex)
+        {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
             return false;
         }
     }
@@ -128,9 +130,8 @@ public class MySqlUtils
             String g3 = "GRANT INSERT, SELECT, UPDATE, DELETE ON clinic.availability TO ?";
             String g4 = "GRANT INSERT, SELECT, UPDATE, DELETE ON clinic.patient TO ?";
             String g5 = "GRANT INSERT, SELECT, UPDATE, DELETE ON clinic.provider TO ?";
-            String g6 = "GRANT INSERT, SELECT, UPDATE, DELETE ON clinic.recurrence TO ?";
-            String g7 = "GRANT SELECT ON clinic.user TO ?";
-            String[] gs = {g1, g2, g3, g4, g5, g6, g7};
+            String g6 = "GRANT SELECT ON clinic.user TO ?";
+            String[] gs = {g1, g2, g3, g4, g5, g6};
             PreparedStatement ps;
             for(int i = 0; i < gs.length; i++){
                 ps = connection.prepareStatement(gs[i]);
@@ -363,7 +364,6 @@ public class MySqlUtils
         // For each Result in the availabilities ResultSet, construct a Java Availability and map it to its provider_id
         while(availabilities.next()) {
             Availability a = getAvailabilityFromResultSet(availabilities);
-            // TODO: Untested
             a.setId(availabilities.getInt("id"));
             Integer providerKey = availabilities.getInt("provider_fk");
             if (availabilityHashMap.containsKey(providerKey)) {
@@ -760,8 +760,6 @@ public class MySqlUtils
         return cancelCounts;
     }
 
-    // TODO: UNTESTED
-
     /**
      * Updates the appointment's status
      * @param apptId the appointment to update's id
@@ -786,7 +784,6 @@ public class MySqlUtils
         connection.commit();
     }
 
-    // TODO: UNTESTED
     /**
      * Deletes an availability from the database
      * @param availabilityId the id of the availability to delete
@@ -804,7 +801,6 @@ public class MySqlUtils
         connection.commit();
     }
 
-    // TODO: UNTESTED
     /**
      * Deletes the given provider from the database
      * @param p the provider to delete
