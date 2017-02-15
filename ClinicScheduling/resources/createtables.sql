@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS `clinic`.`Appointment` (
   `appt_type` VARCHAR(45) DEFAULT NULL,
   `status` VARCHAR(45) DEFAULT NULL,
   `smoker` TINYINT(0) NOT NULL DEFAULT 0,
+  `interpreter_used` TINYINT(1) DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `appt_patient_fk_idx` (`patient_fk` ASC),
   INDEX `appt_provider_fk_idx` (`provider_fk` ASC),
