@@ -654,10 +654,17 @@ public class MySqlUtils
      * @return the number of patients in the database who are smokers
      * @throws SQLException
      */
-    public static int getSmokerCount() throws SQLException
+    public static int getSmokerCount(GregorianCalendar start, GregorianCalendar end) throws SQLException
     {
-        String sql = "SELECT COUNT(DISTINCT clinic.appointment.patient_fk) FROM clinic.appointment WHERE clinic.appointment.smoker=1";
+        String sql = "SELECT COUNT(DISTINCT clinic.appointment.patient_fk) FROM clinic.appointment WHERE " +
+                "clinic.appointment.smoker=1 AND clinic.appointment.appt_type IS NOT NULL " +
+                "AND clinic.appointment.appt_type != \"" + SpecialType.PROVIDER_UNAVAILABLE.toString() +
+                "\" AND clinic.appointment.start_time BETWEEN ? AND ? AND clinic.appointment.status IS NULL";
         PreparedStatement ps = connection.prepareStatement(sql);
+        Timestamp begin = new Timestamp(start.getTimeInMillis());
+        Timestamp stop = new Timestamp(end.getTimeInMillis());
+        ps.setTimestamp(1, begin);
+        ps.setTimestamp(2, stop);
         ResultSet rs = ps.executeQuery();
         if (rs.next())
         {
@@ -670,10 +677,17 @@ public class MySqlUtils
     }
 
 
-    public static int getInterpCount() throws SQLException
+    public static int getInterpCount(GregorianCalendar start, GregorianCalendar end) throws SQLException
     {
-        String sql = "SELECT COUNT(id) FROM clinic.appointment WHERE clinic.appointment.interpreter_used=1";
+        String sql = "SELECT COUNT(id) FROM clinic.appointment WHERE " +
+                "clinic.appointment.interpreter_used = 1 AND clinic.appointment.appt_type IS NOT NULL " +
+                "AND clinic.appointment.appt_type != \"" + SpecialType.PROVIDER_UNAVAILABLE.toString() +
+                "\" AND clinic.appointment.start_time BETWEEN ? AND ? AND clinic.appointment.status IS NULL";
         PreparedStatement ps = connection.prepareStatement(sql);
+        Timestamp begin = new Timestamp(start.getTimeInMillis());
+        Timestamp stop = new Timestamp(end.getTimeInMillis());
+        ps.setTimestamp(1, begin);
+        ps.setTimestamp(2, stop);
         ResultSet rs = ps.executeQuery();
         if (rs.next())
         {
@@ -731,6 +745,29 @@ public class MySqlUtils
         return typeCounts;
     }
 
+    public static int getTotal(GregorianCalendar start, GregorianCalendar end) throws SQLException
+    {
+        String sql = "SELECT COUNT(id) FROM clinic.appointment WHERE " +
+                "clinic.appointment.start_time BETWEEN ? AND ? AND clinic.appointment.status IS NULL AND " +
+                "(clinic.appointment.appt_type != \"" + SpecialType.PROVIDER_UNAVAILABLE.toString() + "\" OR " +
+                "clinic.appointment.appt_type IS NULL)";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        Timestamp begin = new Timestamp(start.getTimeInMillis());
+        Timestamp stop = new Timestamp(end.getTimeInMillis());
+        ps.setTimestamp(1, begin);
+        ps.setTimestamp(2, stop);
+        ResultSet rs = ps.executeQuery();
+        if (rs.isBeforeFirst())
+        {
+            rs.next();
+            return rs.getInt(1);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
     /**
      * Gets the number of each special type of appointment
      * @param start the beginning date of the range to get stats for
@@ -742,16 +779,19 @@ public class MySqlUtils
             throws SQLException
     {
         HashMap<String, Integer> cancelCounts = new HashMap<>();
-        String sql = "SELECT clinic.appointment.status FROM clinic.appointment WHERE clinic.appointment.status IS NOT " +
-                "NULL AND clinic.appointment.appt_type != \"" + SpecialType.PROVIDER_UNAVAILABLE.toString() +
-                "\" AND clinic.appointment.start_time BETWEEN ? AND ?";
+        String sql = "SELECT clinic.appointment.status FROM clinic.appointment WHERE" +
+                " clinic.appointment.status IS NOT NULL AND" +
+                " (clinic.appointment.appt_type != \"" + SpecialType.PROVIDER_UNAVAILABLE.toString() +
+                "\" OR clinic.appointment.appt_type IS NULL)" +
+                " AND clinic.appointment.start_time BETWEEN ? AND ?" +
+                " AND clinic.appointment.status IS NOT NULL";
         PreparedStatement ps = connection.prepareStatement(sql);
         Timestamp begin = new Timestamp(start.getTimeInMillis());
         Timestamp stop = new Timestamp(end.getTimeInMillis());
         ps.setTimestamp(1, begin);
         ps.setTimestamp(2, stop);
         ResultSet rs = ps.executeQuery();
-        if (!rs.isBeforeFirst())
+        if (rs.isBeforeFirst())
         {
             while (rs.next())
             {

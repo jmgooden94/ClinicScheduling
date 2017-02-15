@@ -1,7 +1,5 @@
 package Models.Appointment;
 
-import Models.State;
-
 /**
  * Enum for special types of appointments
  */

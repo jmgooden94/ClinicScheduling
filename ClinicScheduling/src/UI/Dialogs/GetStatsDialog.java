@@ -164,13 +164,15 @@ public class GetStatsDialog extends JDialog
         try {
 
             HashMap<String, Integer> specialMap = MySqlUtils.getSpecialTypeCounts(start, end);
-            data.add(new JLabel("Number of appointments of type: "));
-            int total = 0;
+            int total = MySqlUtils.getTotal(start, end);
+            int special = 0;
             for(int n : specialMap.values())
             {
-                total += n;
+                special += n;
             }
-            data.add(new JLabel("       " + "Standard Appointments: " + total));
+            data.add(new JLabel("Total Appointments: " + total));
+            data.add(new JLabel("Number of appointments of type: "));
+            data.add(new JLabel("       " + "Regular Medical: " + (total - special)));
             for (String key : specialMap.keySet()) {
                 data.add(new JLabel("        " + SpecialType.valueOf(key).getName() + ": " + specialMap.get(key)));
             }
@@ -182,11 +184,11 @@ public class GetStatsDialog extends JDialog
                 data.add(new JLabel("        " + ApptStatus.valueOf(key).getName() + ": " + cancelMap.get(key)));
             }
 
-            int smokers = MySqlUtils.getSmokerCount();
+            int smokers = MySqlUtils.getSmokerCount(start, end);
 
             data.add(new JLabel("Smokers: " + smokers));
 
-            int interpsUsed = MySqlUtils.getInterpCount();
+            int interpsUsed = MySqlUtils.getInterpCount(start, end);
 
             data.add(new JLabel("Interpreters Used: " + interpsUsed));
 
