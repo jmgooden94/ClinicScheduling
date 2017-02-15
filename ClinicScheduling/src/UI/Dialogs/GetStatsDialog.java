@@ -176,7 +176,7 @@ public class GetStatsDialog extends JDialog
             }
 
             HashMap<String, Integer> cancelMap = MySqlUtils.getCancellationCounts(start, end);
-            data.add(new JLabel("Number of cancelations: "));
+            data.add(new JLabel("Number of Cancellations: "));
             for (String key : cancelMap.keySet())
             {
                 data.add(new JLabel("        " + ApptStatus.valueOf(key).getName() + ": " + cancelMap.get(key)));
@@ -185,6 +185,11 @@ public class GetStatsDialog extends JDialog
             int smokers = MySqlUtils.getSmokerCount();
 
             data.add(new JLabel("Smokers: " + smokers));
+
+            int interpsUsed = MySqlUtils.getInterpCount();
+
+            data.add(new JLabel("Interpreters Used: " + interpsUsed));
+
         }
         catch (SQLException ex)
         {

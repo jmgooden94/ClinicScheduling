@@ -101,7 +101,7 @@ public class RescheduleDialog extends JDialog
         canceledByBox.addItem("Provider");
         canceledByBox.addItem("Patient");
 
-        typeBox.add(new JLabel("Canceled By: "));
+        typeBox.add(new JLabel("Rescheduled By: "));
         typeBox.add(canceledByBox);
 
         contentPanel.add(typeBox);
@@ -245,7 +245,7 @@ public class RescheduleDialog extends JDialog
                     Appointment newAppt = new Appointment(appointment.getPatient(),
                             appointment.getProvider(), appointment.getReason(),
                             newStart, newEnd, appointment.getSpecialType(),
-                            appointment.getSmoker());
+                            appointment.getSmoker(), appointment.getInterpreterNeeded());
 
                     MySqlUtils.addAppointment(newAppt, newAppt.getProvider().getId());
                 }
