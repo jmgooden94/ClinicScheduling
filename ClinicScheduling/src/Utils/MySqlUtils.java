@@ -364,7 +364,6 @@ public class MySqlUtils
         // For each Result in the availabilities ResultSet, construct a Java Availability and map it to its provider_id
         while(availabilities.next()) {
             Availability a = getAvailabilityFromResultSet(availabilities);
-            // TODO: Untested
             a.setId(availabilities.getInt("id"));
             Integer providerKey = availabilities.getInt("provider_fk");
             if (availabilityHashMap.containsKey(providerKey)) {
