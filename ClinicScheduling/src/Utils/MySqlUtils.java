@@ -761,8 +761,6 @@ public class MySqlUtils
         return cancelCounts;
     }
 
-    // TODO: UNTESTED
-
     /**
      * Updates the appointment's status
      * @param apptId the appointment to update's id
@@ -787,7 +785,6 @@ public class MySqlUtils
         connection.commit();
     }
 
-    // TODO: UNTESTED
     /**
      * Deletes an availability from the database
      * @param availabilityId the id of the availability to delete
@@ -805,7 +802,6 @@ public class MySqlUtils
         connection.commit();
     }
 
-    // TODO: UNTESTED
     /**
      * Deletes the given provider from the database
      * @param p the provider to delete
