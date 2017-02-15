@@ -58,6 +58,11 @@ public class Appointment {
     private boolean smoker;
 
     /**
+     * If an interpreter will be used for this appointment
+     */
+    private boolean interpreterNeeded;
+
+    /**
      * The color the cells corresponding to this appointment
      * are to be rendered.
      */
@@ -76,9 +81,11 @@ public class Appointment {
      * @param apptStart The start of the appointment
      * @param apptEnd The end of the appointment
      * @param smoker The patient for this appointment smokes
+     * @param interpreterNeeded This appointment will require an interpreter
      */
     public Appointment(Patient patient, Provider provider, String reason,
-                       GregorianCalendar apptStart, GregorianCalendar apptEnd, SpecialType specialType, boolean smoker)
+                       GregorianCalendar apptStart, GregorianCalendar apptEnd, SpecialType specialType, boolean smoker,
+                       boolean interpreterNeeded)
     {
         if (patient == null || provider == null || apptStart == null || apptEnd == null){
             throw new IllegalArgumentException("patient, provider, apptStart, and apptEnd cannot be null");
@@ -95,6 +102,7 @@ public class Appointment {
         this.endTime = new TimeOfDay(this.apptEnd.get(Calendar.HOUR_OF_DAY),
                                         this.apptEnd.get(Calendar.MINUTE));
         this.smoker = smoker;
+        this.interpreterNeeded = interpreterNeeded;
     }
 
     public Patient getPatient(){
@@ -124,6 +132,8 @@ public class Appointment {
     }
 
     public boolean getSmoker(){ return smoker; }
+
+    public boolean getInterpreterNeeded() { return interpreterNeeded; }
 
     public Color getColor() { return this.color; }
 

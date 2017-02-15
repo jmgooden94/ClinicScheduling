@@ -11,7 +11,11 @@ public enum ProviderType {
     NURSE_PRACTICIONER ("Nurse Practicioner", "N.P."),
     LAB ("Lab", "Lab"),
     PHYSICAL_THERAPIST ("Physical Therapist", "P.T."),
-    INTAKE ("Intake", "In");
+    INTAKE ("Intake", "In"),
+    CHIROPRACTOR ("Chiropractor", "Chiro."),
+    COUNSELOR ("Counselor", "Couns."),
+    PHYSICIAN_ASSISTANT ("Physician Assistant", "P.A."),
+    INTERPRETER ("Interpreter", "Interp.");
 
     /**
      * The name of the provider type

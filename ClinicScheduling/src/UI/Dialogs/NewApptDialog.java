@@ -47,6 +47,7 @@ public class NewApptDialog extends JDialog
     private JComboBox providerCombo;
     private JComboBox stateCombo;
     private JCheckBox smokerCheckBox;
+    private JCheckBox interpreterCheckbox;
     private JDatePickerImpl jDatePicker;
     private int dialogResult = -1;
     private HashMap<Integer, Provider> providerMap;
@@ -68,7 +69,7 @@ public class NewApptDialog extends JDialog
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        setSize(600, 600);
+        setSize(600, 700);
         setLocationRelativeTo(null);
 
         buttonOK.addActionListener(new ActionListener() {
@@ -160,7 +161,7 @@ public class NewApptDialog extends JDialog
             }
             if (providerAvailable || availabilityCheckResult == JOptionPane.OK_OPTION)
             {
-                result = new Pair<>(new Appointment(newPatient, p, reasonBox.getText(), start, end, st, smokerCheckBox.isSelected()), provider_id);
+                result = new Pair<>(new Appointment(newPatient, p, reasonBox.getText(), start, end, st, smokerCheckBox.isSelected(), interpreterCheckbox.isSelected()), provider_id);
                 dialogResult = JOptionPane.OK_OPTION;
                 dispose();
             }

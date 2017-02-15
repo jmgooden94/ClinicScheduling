@@ -517,8 +517,8 @@ public class MySqlUtils
     {
         int address_id = addAddressIfNotExists(appointment.getPatient().getAddress());
         int patient_id = addOrUpdatePatient(appointment.getPatient(), address_id);
-        String sql = "INSERT INTO clinic.appointment(reason, start_time, end_time, provider_fk, patient_fk, appt_type, smoker)" +
-                " values(?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO clinic.appointment(reason, start_time, end_time, provider_fk, patient_fk, appt_type, smoker, interpreter_used)" +
+                " values(?,?,?,?,?,?,?,?)";
         PreparedStatement ps = connection.prepareStatement(sql);
         String reason = appointment.getReason();
         ps.setString(1, reason);
@@ -536,6 +536,7 @@ public class MySqlUtils
             ps.setNull(6, Types.VARCHAR);
         }
         ps.setBoolean(7, appointment.getSmoker());
+        ps.setBoolean(8, appointment.getInterpreterNeeded());
         ps.execute();
         connection.commit();
     }
@@ -588,7 +589,7 @@ public class MySqlUtils
             if (typeString != null){
                 st = SpecialType.valueOf(typeString);
             }
-            Appointment appt = new Appointment(p, providerMap.get(rs.getInt("provider_fk")), rs.getString("reason") , sc, ec, st, rs.getBoolean("smoker"));
+            Appointment appt = new Appointment(p, providerMap.get(rs.getInt("provider_fk")), rs.getString("reason") , sc, ec, st, rs.getBoolean("smoker"), rs.getBoolean("interpreter_used"));
             appt.setId(rs.getInt("id"));
             appointments.add(appt);
         }
@@ -656,6 +657,22 @@ public class MySqlUtils
     public static int getSmokerCount() throws SQLException
     {
         String sql = "SELECT COUNT(DISTINCT clinic.appointment.patient_fk) FROM clinic.appointment WHERE clinic.appointment.smoker=1";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next())
+        {
+            return rs.getInt(1);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+
+    public static int getInterpCount() throws SQLException
+    {
+        String sql = "SELECT COUNT(id) FROM clinic.appointment WHERE clinic.appointment.interpreter_used=1";
         PreparedStatement ps = connection.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
         if (rs.next())

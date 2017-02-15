@@ -85,6 +85,11 @@ public class ApptViewDialog extends JDialog
 
         boxPanel.add(reasonBox);
 
+        if (appointment.getInterpreterNeeded())
+        {
+            boxPanel.add(new JLabel("Interpreter is needed for this appointment."));
+        }
+
         outerPanel.add(boxPanel);
         outerPanel.add(buildButtonPanel());
         contentPanel.add(outerPanel);
