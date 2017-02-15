@@ -172,7 +172,7 @@ public class GetStatsDialog extends JDialog
             }
             data.add(new JLabel("Total Appointments: " + total));
             data.add(new JLabel("Number of appointments of type: "));
-            data.add(new JLabel("       " + "Regular Medical: " + (total - special)));
+            data.add(new JLabel("        " + "No Special Type Selected: " + (total - special)));
             for (String key : specialMap.keySet()) {
                 data.add(new JLabel("        " + SpecialType.valueOf(key).getName() + ": " + specialMap.get(key)));
             }
