@@ -130,9 +130,8 @@ public class MySqlUtils
             String g3 = "GRANT INSERT, SELECT, UPDATE, DELETE ON clinic.availability TO ?";
             String g4 = "GRANT INSERT, SELECT, UPDATE, DELETE ON clinic.patient TO ?";
             String g5 = "GRANT INSERT, SELECT, UPDATE, DELETE ON clinic.provider TO ?";
-            String g6 = "GRANT INSERT, SELECT, UPDATE, DELETE ON clinic.recurrence TO ?";
-            String g7 = "GRANT SELECT ON clinic.user TO ?";
-            String[] gs = {g1, g2, g3, g4, g5, g6, g7};
+            String g6 = "GRANT SELECT ON clinic.user TO ?";
+            String[] gs = {g1, g2, g3, g4, g5, g6};
             PreparedStatement ps;
             for(int i = 0; i < gs.length; i++){
                 ps = connection.prepareStatement(gs[i]);
