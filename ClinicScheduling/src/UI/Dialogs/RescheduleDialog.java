@@ -101,7 +101,7 @@ public class RescheduleDialog extends JDialog
         canceledByBox.addItem("Provider");
         canceledByBox.addItem("Patient");
 
-        typeBox.add(new JLabel("Canceled By: "));
+        typeBox.add(new JLabel("Rescheduled By: "));
         typeBox.add(canceledByBox);
 
         contentPanel.add(typeBox);
