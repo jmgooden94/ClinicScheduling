@@ -154,7 +154,7 @@ public class RescheduleDialog extends JDialog
 
         SpinnerNumberModel endMinutes = new SpinnerNumberModel(0, 0, 59, 15);
         endMinute = new JSpinner(endMinutes);
-        endMinute.setEditor(new JSpinner.NumberEditor(startMinute, "00"));
+        endMinute.setEditor(new JSpinner.NumberEditor(endMinute, "00"));
 
         endAmPm = new JComboBox<>();
         endAmPm.addItem("AM");
