@@ -107,7 +107,7 @@ public class Availability {
      */
     public boolean duringThis(GregorianCalendar c)
     {
-        int cWeekOfMonth = c.get(Calendar.WEEK_OF_MONTH);
+        int cWeekOfMonth = c.get(Calendar.DAY_OF_WEEK_IN_MONTH);
         int cDayOfWeek = c.get(Calendar.DAY_OF_WEEK);
         int cHour = c.get(Calendar.HOUR_OF_DAY);
         int cMinute = c.get(Calendar.MINUTE);

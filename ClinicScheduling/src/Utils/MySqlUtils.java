@@ -277,17 +277,17 @@ public class MySqlUtils
     public static int addSingleAvailability(int provider_id, Availability availability) throws SQLException
     {
         PreparedStatement ps;
-        String sql = "INSERT INTO clinic.availability(start_time, end_time, provider_fk, monday, tuesday, wednesday, thursday, friday, week) values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO clinic.availability(start_time, end_time, provider_fk, week, sunday, monday, tuesday, wednesday, thursday, friday, saturday) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
         ps.setTime(1, availability.getStart().toSqlTime());
         ps.setTime(2, availability.getEnd().toSqlTime());
         ps.setInt(3, provider_id);
+        ps.setInt(4, availability.getWeek());
         // The index of monday in the INSERT sql string (HARDCODED)
-        int mondayIndex = 4;
-        for (int i = 0; i < GlobalConfig.PROVIDER_WEEK_LENGTH; i++){
-            ps.setBoolean(mondayIndex + i, availability.getDays()[i]);
+        int sundayIndex = 5;
+        for (int i = 0; i < GlobalConfig.WEEK_LENGTH; i++){
+            ps.setBoolean(sundayIndex + i, availability.getDays()[i]);
         }
-        ps.setInt(9, availability.getWeek());
         int rows = ps.executeUpdate();
         if (rows == 0)
         {
@@ -605,7 +605,7 @@ public class MySqlUtils
                 "clinic.provider.id=clinic.availability.provider_fk WHERE ((clinic.availability.week=? OR " +
                 "clinic.availability.week=0) AND clinic.availability." + day + "=1) AND clinic.provider.active = 1";
         PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setInt(1, date.get(Calendar.WEEK_OF_MONTH));
+        ps.setInt(1, date.get(Calendar.DAY_OF_WEEK_IN_MONTH));
         // Calendar.DAY_OF_WEEK - 2 because Day.values is 0-indexed and excludes weekends, whereas Calendar.DAY_OF_WEEK
         // is 1-indexed starting with Sunday
         ResultSet rs = ps.executeQuery();
@@ -613,13 +613,18 @@ public class MySqlUtils
         if (!rs.isBeforeFirst()){
             return providers;
         }
+        List<Availability> l;
         while(rs.next()){
             int id = rs.getInt("id");
             Provider p = map.get(id);
             Availability a = getAvailabilityFromResultSet(rs);
-            p.setStart(a.getStart());
-            p.setEnd(a.getEnd());
-            providers.add(p);
+            l = new ArrayList<>();
+            l.add(a);
+            Provider newProvider = new Provider(p.getProviderType(), p.getFirstName(), p.getLastName(), l);
+            newProvider.setStart(a.getStart());
+            newProvider.setEnd(a.getEnd());
+            providers.add(newProvider);
+
         }
         return providers;
     }

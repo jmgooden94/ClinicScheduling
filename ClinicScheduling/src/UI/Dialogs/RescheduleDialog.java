@@ -224,13 +224,13 @@ public class RescheduleDialog extends JDialog
                 int day = datePicker.getModel().getDay();
 
                 int startHourVal = (int)startHour.getValue();
-                if (startAmPm.getSelectedItem().equals("PM"))
+                if (startAmPm.getSelectedItem().equals("PM") && startHourVal != 12)
                 {
                     startHourVal += 12;
                 }
 
                 int endHourVal = (int)endHour.getValue();
-                if (endAmPm.getSelectedItem().equals("PM"))
+                if (endAmPm.getSelectedItem().equals("PM") && endHourVal != 12)
                 {
                     endHourVal += 12;
                 }

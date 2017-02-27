@@ -183,7 +183,6 @@ public class MainView extends JFrame {
         NewApptDialog d = new NewApptDialog(providerMap);
         if(d.showDialog() == JOptionPane.OK_OPTION)
         {
-            // TODO: replace with tuple??
             Pair<Appointment, Integer> apptData = d.getResult();
             try {
                 MySqlUtils.addAppointment(apptData.getKey(), apptData.getValue());
