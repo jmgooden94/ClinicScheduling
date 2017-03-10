@@ -57,10 +57,12 @@ public class LoginDialog extends JDialog {
         String un = usernameBox.getText().trim();
         char[] plain = passwordBox.getPassword();
         String plainString = new String(plain);
-        boolean success = MySqlUtils.openConnection(un, plainString);
+        //boolean success = MySqlUtils.openConnection(un, plainString);
+        boolean success = MySqlUtils.openConnection("clinic_admin", "password");
         if(success){
             try {
-                role = MySqlUtils.getRole(un);
+                //role = MySqlUtils.getRole(un);
+                role = MySqlUtils.getRole("clinic_admin");
             }
             catch (SQLException sqle){
                 showError(sqle);

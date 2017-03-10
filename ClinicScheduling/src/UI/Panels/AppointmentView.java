@@ -36,8 +36,8 @@ public class AppointmentView extends MultiColumnView
 		timeList = this.createTimes();
 		if (appointments != null)
 		{
-			this.appointments = new ArrayList<ArrayList<Appointment>>();
-			this.appointments.add(new ArrayList<Appointment>());
+			this.appointments = new ArrayList<>();
+			this.appointments.add(new ArrayList<>());
 			this.appointments.get(0).addAll(appointments);
 
 			this.appointments.get(0).sort(Comparator.comparing(Appointment::getStartTime));
@@ -207,6 +207,8 @@ public class AppointmentView extends MultiColumnView
 	 * have the data to be displayed as well as info about
 	 * the color which should be rendered.
 	 * @return 2D array of ColoredDataCell
+	 *
+	 * WHY DOESN'T THIS BULLSHIT WORK????
 	 */
 	protected ColoredDataCell[][] buildTableObject()
 	{
@@ -226,6 +228,7 @@ public class AppointmentView extends MultiColumnView
 
 					if (a.during(t))
 					{
+						//System.out.println(a.testMethod() + " is during " + t.to12String());
 						obj[col + 1][i] = new Appointment_ColoredDataCell(a.displayString(), a.getColor(), a);
 					}
 				}

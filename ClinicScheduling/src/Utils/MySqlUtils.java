@@ -575,9 +575,11 @@ public class MySqlUtils
             throws SQLException
     {
         List<Appointment> appointments = new ArrayList<>();
-        GregorianCalendar sc = new GregorianCalendar();
-        GregorianCalendar ec = new GregorianCalendar();
+        GregorianCalendar sc;
+        GregorianCalendar ec;
         while(rs.next()){
+            sc = new GregorianCalendar();
+            ec = new GregorianCalendar();
             Address a = new Address(rs.getString("street"), rs.getString("city"), State.valueOf(rs.getString("state")), rs.getString("zip"));
             Patient p = new Patient(rs.getString("first_name"), rs.getString("last_name"), rs.getString("phone_number"), a);
             Timestamp s = rs.getTimestamp("start_time");
