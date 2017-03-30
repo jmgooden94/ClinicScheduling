@@ -8,10 +8,7 @@ import Models.Appointment.Appointment;
 import Models.TimeOfDay;
 import UI.Dialogs.ApptViewDialog;
 import UI.MainView;
-import Utils.Appointment_ColoredDataCell;
-import Utils.ColoredDataCell;
-import Utils.AppointmentCellRenderer;
-import Utils.GlobalConfig;
+import Utils.*;
 
 import java.awt.*;
 import java.util.*;
@@ -29,6 +26,7 @@ public class AppointmentView extends MultiColumnView
 	 */
 	private List<ArrayList<Appointment>> appointments;
 	private MainView parent;
+	private List<String> columnNames;
 
 	public AppointmentView(List<Appointment> appointments, MainView parent)
 	{
@@ -101,7 +99,8 @@ public class AppointmentView extends MultiColumnView
 
 		});
 
-		table.setTableHeader(null);
+		//table.setTableHeader(null);
+		table.getTableHeader().setFont(new Font("Arial", Font.PLAIN, 14));
 
 		// These two get grid lines to show up on Mac
 		table.setGridColor(Color.black);
@@ -120,86 +119,157 @@ public class AppointmentView extends MultiColumnView
 	}
 
 	/**
-	 * Orangizes the appointments in the list so that overlapping
-	 * appointments get moved to the next column.
-	 *
-	 * If the list when
-	 *      A
-	 *      B
-	 *      C
-	 * And A and B overlapped in time, then after this method it would be
-	 *      A   C
-	 *      B
-	 * Where C is now in it's own list.
-	 *
-	 * It also sets the number of columns that are going to be
-	 * needed in the table
+	 * Groups the appointments by doctor
 	 */
 	protected void organize()
 	{
-		int outer = 0;
+		List<Appointment> temp = new ArrayList<>();
+		temp.addAll(this.appointments.get(0));
 
-		// Loop through the top level lists, which
-		// correspond to columns
-		while (outer < this.appointments.size())
+		List<List<Appointment>> byProvider = new ArrayList<>();
+
+		temp.sort(new Comparator<Appointment>()
 		{
-			// If there's only 1 thing in this list then we're
-			// done here
-			if (this.appointments.get(outer).size() <= 1)
+			@Override
+			public int compare(Appointment o1, Appointment o2)
 			{
-				break;
+				return Integer.compare(o1.getProvider().getId(), o2.getProvider().getId());
 			}
 
-			Appointment a;
-			Appointment b;
+		});
 
-			int i = 0;
+		if (temp.size() > 0)
+		{
+			byProvider.add(new ArrayList<>());
+			byProvider.get(0).add(temp.get(0));
+			int currId = temp.get(0).getProvider().getId();
+			int byIndex = 0;
 
-			// Loop through the items in the column, moving them to the next column
-			// as necessary
-			while (i < this.appointments.get(outer).size() - 1)
+			int size = temp.size();
+			for (int i = 1; i < size; i++)
 			{
-				a = this.appointments.get(outer).get(i);
-				b = this.appointments.get(outer).get(i + 1);
-
-				// A flag to make sure that if two appointments after both
-				// overlap a, then they both get moved.
-				boolean moved = false;
-
-				// If the end time of the first appointment is
-				// earlier than the start time of the next appointment,
-				// then they overlap
-				if (b.getStartTime().compareTo(a.getEndTime()) < 0)
+				if (temp.get(i).getProvider().getId() != currId)
 				{
-					// Remove b from the array list and catch it
-					b = this.appointments.get(outer).remove(i + 1);
-
-					// If there isn't a list after this to put b in
-					// create one
-					if (outer == this.appointments.size() - 1)
-					{
-						this.appointments.add(new ArrayList<Appointment>());
-					}
-					// Add b to the end of the list
-					this.appointments.get(outer + 1).add(b);
-
-					moved = true;
+					byProvider.add(new ArrayList<>());
+					byIndex++;
+					currId = temp.get(i).getProvider().getId();
 				}
-				// Only increment if nothing moved.
-				if (!moved)
-				{
-					i++;
-				}
+				byProvider.get(byIndex).add(temp.get(i));
 			}
-
-			outer++;
 		}
 
-		// After you're done looping, you now know how many
-		// columns the table will need, set it now.
-		//
-		// Adding 1 is for the time column
-		this.columnCount = this.appointments.size() + 1;
+		this.columnNames = new ArrayList<>();
+		this.columnNames.add("Time");
+		this.appointments.clear();
+
+		for (int i = 0; i < byProvider.size(); i++)
+		{
+			this.appointments.add(new ArrayList<>());
+			this.appointments.get(i).addAll(byProvider.get(i));
+			this.columnNames.add(byProvider.get(i).get(0).getProvider().getName());
+		}
+
+		this.columnCount = byProvider.size() + 1;
+
+//		for (int i = 0; i < byProvider.size(); i++)
+//		{
+//			for (int j = 0; j < byProvider.get(i).size(); j++)
+//			{
+//				System.out.println(byProvider.get(i).get(j).testMethod());
+//			}
+//			System.out.println("=-=-=-=-=-");
+//		}
+	}
+
+	// This was the original implementation of organize, which tried to condense the
+	// appointments into as few columns as possible.
+//	/**
+//	 * Orangizes the appointments in the list so that overlapping
+//	 * appointments get moved to the next column.
+//	 *
+//	 * If the list when
+//	 *      A
+//	 *      B
+//	 *      C
+//	 * And A and B overlapped in time, then after this method it would be
+//	 *      A   C
+//	 *      B
+//	 * Where C is now in it's own list.
+//	 *
+//	 * It also sets the number of columns that are going to be
+//	 * needed in the table
+//	 */
+//	protected void organize()
+//	{
+//		int outer = 0;
+//
+//		// Loop through the top level lists, which
+//		// correspond to columns
+//		while (outer < this.appointments.size())
+//		{
+//			// If there's only 1 thing in this list then we're
+//			// done here
+//			if (this.appointments.get(outer).size() <= 1)
+//			{
+//				break;
+//			}
+//
+//			Appointment a;
+//			Appointment b;
+//
+//			int i = 0;
+//
+//			// Loop through the items in the column, moving them to the next column
+//			// as necessary
+//			while (i < this.appointments.get(outer).size() - 1)
+//			{
+//				a = this.appointments.get(outer).get(i);
+//				b = this.appointments.get(outer).get(i + 1);
+//
+//				// A flag to make sure that if two appointments after both
+//				// overlap a, then they both get moved.
+//				boolean moved = false;
+//
+//				// If the start time of the next appointment is
+//				// earlier than the end time of the first appointment,
+//				// then they overlap
+//				if (b.getStartTime().compareTo(a.getEndTime()) < 0)
+//				{
+//					// Remove b from the array list and catch it
+//					b = this.appointments.get(outer).remove(i + 1);
+//
+//					// If there isn't a list after this to put b in
+//					// create one
+//					if (outer == this.appointments.size() - 1)
+//					{
+//						this.appointments.add(new ArrayList<Appointment>());
+//					}
+//					// Add b to the end of the list
+//					this.appointments.get(outer + 1).add(b);
+//
+//					moved = true;
+//				}
+//				// Only increment if nothing moved.
+//				if (!moved)
+//				{
+//					i++;
+//				}
+//			}
+//
+//			outer++;
+//		}
+//
+//		// After you're done looping, you now know how many
+//		// columns the table will need, set it now.
+//		//
+//		// Adding 1 is for the time column
+//		this.columnCount = this.appointments.size() + 1;
+//	}
+
+	@Override
+	public String getColumnName(int index)
+	{
+		return this.columnNames.get(index);
 	}
 
 	/**

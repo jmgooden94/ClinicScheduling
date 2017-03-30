@@ -120,4 +120,20 @@ public class Provider {
     {
         return firstName + " " + lastName + ", " + providerType.getAbbreviation();
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        if (!Provider.class.isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+
+        Provider other = (Provider) obj;
+
+        return this.id == other.getId();
+    }
 }

@@ -69,9 +69,12 @@ public class TimeOfDay implements Comparable {
     public String to12String(){
         int h12 = hour;
         String ampm = "AM";
-        if (hour > 12){
+        if (hour >= 12){
             ampm = "PM";
-            h12 -= 12;
+            if (hour > 12)
+            {
+                h12 -= 12;
+            }
         }
         if (hour == 0){
             h12 = 12;

@@ -334,6 +334,7 @@ public class MySqlUtils
             String fn = providers.getString("first_name");
             String ln = providers.getString("last_name");
             String ptString = providers.getString("provider_type");
+
             ProviderType pt = ProviderType.fromName(ptString);
             Provider p = new Provider(pt, fn, ln, availabilityList);
             p.setId(id);
@@ -577,7 +578,8 @@ public class MySqlUtils
         List<Appointment> appointments = new ArrayList<>();
         GregorianCalendar sc;
         GregorianCalendar ec;
-        while(rs.next()){
+        while(rs.next())
+        {
             sc = new GregorianCalendar();
             ec = new GregorianCalendar();
             Address a = new Address(rs.getString("street"), rs.getString("city"), State.valueOf(rs.getString("state")), rs.getString("zip"));
@@ -588,8 +590,13 @@ public class MySqlUtils
             ec.setTimeInMillis(e.getTime());
             String typeString = rs.getString("appt_type");
             SpecialType st = null;
-            if (typeString != null){
+            if (typeString != null)
+            {
                 st = SpecialType.valueOf(typeString);
+            }
+            if (providerMap.get(rs.getInt("provider_fk")) == null)
+            {
+                System.out.println(rs.getInt("provider_fk"));
             }
             Appointment appt = new Appointment(p, providerMap.get(rs.getInt("provider_fk")), rs.getString("reason") , sc, ec, st, rs.getBoolean("smoker"), rs.getBoolean("interpreter_used"));
             appt.setId(rs.getInt("id"));
@@ -625,6 +632,7 @@ public class MySqlUtils
             Provider newProvider = new Provider(p.getProviderType(), p.getFirstName(), p.getLastName(), l);
             newProvider.setStart(a.getStart());
             newProvider.setEnd(a.getEnd());
+            newProvider.setId(id);
             providers.add(newProvider);
 
         }

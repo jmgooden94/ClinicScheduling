@@ -87,6 +87,22 @@ public class Appointment {
                        GregorianCalendar apptStart, GregorianCalendar apptEnd, SpecialType specialType, boolean smoker,
                        boolean interpreterNeeded)
     {
+        if (patient == null)
+        {
+            System.out.println("PATIENT");
+        }
+        if (provider == null)
+        {
+            System.out.println("PROVIDER");
+        }
+        if (apptStart == null)
+        {
+            System.out.println("START");
+        }
+        if (apptEnd == null)
+        {
+            System.out.println("END");
+        }
         if (patient == null || provider == null || apptStart == null || apptEnd == null){
             throw new IllegalArgumentException("patient, provider, apptStart, and apptEnd cannot be null");
         }
@@ -149,13 +165,18 @@ public class Appointment {
         SimpleDateFormat f = new SimpleDateFormat("MM-dd-yyyy HH:mm");
         String s = f.format(this.apptStart.getTime());
         String e = f.format(this.apptEnd.getTime());
-        return s + " - " + e;
+        return s + " - " + e + " (" + this.getProvider().getName() + ")";
     }
 
     public String displayString()
     {
-        return patient.toString() + " - " + provider.getName();
+        return patient.toString();
     }
+
+//    public String displayString()
+//    {
+//        return patient.toString() + " - " + provider.getName();
+//    }
 
     public void setId (int id) { this.id = id; }
 

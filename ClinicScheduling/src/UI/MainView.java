@@ -129,7 +129,7 @@ public class MainView extends JFrame {
             createAdminControls();
         }
 
-        setSize(1044, 700);
+        setSize(1244, 700);
         setLocationRelativeTo(null);
         setLayout(null);
         setContentPane(contentPane);
